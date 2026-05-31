@@ -6,7 +6,7 @@ export default function LandingHero() {
       {/* Full-bleed Background Image Box */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image 
-          src="/hero-banner.png" 
+          src="/hero-banner.webp" 
           alt="Stitch Hub B2B Merchandise Banner" 
           fill 
           sizes="100vw"

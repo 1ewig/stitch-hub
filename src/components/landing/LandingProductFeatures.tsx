@@ -11,7 +11,7 @@ export default function LandingProductFeatures() {
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="w-full md:w-1/2 aspect-square md:aspect-[4/3] bg-zinc-300 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center relative">
               <Image 
-                src="/polo.png" 
+                src="/polo.webp" 
                 alt="Minimalist Performance Polo" 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -39,7 +39,7 @@ export default function LandingProductFeatures() {
           <div className="flex flex-col md:flex-row-reverse items-center gap-12">
             <div className="w-full md:w-1/2 aspect-square md:aspect-[4/3] bg-zinc-300 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center relative">
               <Image 
-                src="/pouch.png" 
+                src="/pouch.webp" 
                 alt="EOC Tech Organizer Pouch" 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
