@@ -16,6 +16,7 @@ export default function LandingProductFeatures() {
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover hover:scale-105 transition-transform duration-500" 
+                priority
               />
             </div>
             <div className="w-full md:w-1/2 space-y-6">
