@@ -9,6 +9,7 @@ export default function LandingHero() {
           src="/hero-banner.png" 
           alt="Stitch Hub B2B Merchandise Banner" 
           fill 
+          sizes="100vw"
           className="object-cover object-top" 
           priority 
         />

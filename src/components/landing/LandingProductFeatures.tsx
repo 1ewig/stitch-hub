@@ -14,6 +14,7 @@ export default function LandingProductFeatures() {
                 src="/polo.png" 
                 alt="Minimalist Performance Polo" 
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover hover:scale-105 transition-transform duration-500" 
               />
             </div>
@@ -40,6 +41,7 @@ export default function LandingProductFeatures() {
                 src="/pouch.png" 
                 alt="EOC Tech Organizer Pouch" 
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover hover:scale-105 transition-transform duration-500" 
               />
             </div>
