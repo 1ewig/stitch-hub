@@ -211,25 +211,6 @@ body {
   }
 }
 
-/* Scrollbar customizations */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-neutral-50);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-300);
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-300);
-}
-
 /* Smooth active button state scaling */
 button:active, a:active {
   transform: scale(0.97);
