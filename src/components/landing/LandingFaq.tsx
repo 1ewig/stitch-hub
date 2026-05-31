@@ -1,0 +1,79 @@
+"use client";
+
+import { useState } from "react";
+
+export default function LandingFaq() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  const faqs = [
+    {
+      q: "What is your minimum B2B order volume?",
+      a: "Our bulk garment runs typically start at 100 units per style to balance raw material sourcing and setup costs. For high-volume projects or continuous fulfillment plans, we offer custom volume tiers."
+    },
+    {
+      q: "How does the AI Pantone matching actually operate?",
+      a: "Our model maps spectral data across fabric dye lots. By evaluating the material composition (e.g. 100% cotton vs. poly-blends) and sublimation heat metrics, it converts custom hex-codes to exact factory dye matches, keeping brand alignment flawless."
+    },
+    {
+      q: "What are your production and shipping timelines?",
+      a: "Standard B2B design physics validation takes 48 hours. Production generally takes 10 to 14 business days depending on volume, followed by fast, auditable customs routing and secure door-to-door courier delivery."
+    },
+    {
+      q: "Can we review structural samples before committing to production?",
+      a: "Absolutely. We build detailed digital physics mockups first. Once approved, you can request structural physical samples showing exact stitch and logo embroidery density prior to the bulk production lock."
+    }
+  ];
+
+  const toggle = (idx: number) => {
+    setOpenIdx(openIdx === idx ? null : idx);
+  };
+
+  return (
+    <section className="bg-[#f5f2eb] py-24 px-6 md:px-12 text-zinc-900 border-t border-zinc-200">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">Frequently Answered Queries</h2>
+          <p className="text-zinc-600 text-lg leading-relaxed max-w-2xl mx-auto">
+            Clear, transparent operational answers regarding our custom apparel logistics and tech integrations.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {faqs.map((faq, i) => {
+            const isOpen = openIdx === i;
+            return (
+              <div 
+                key={i} 
+                className="bg-white rounded-2xl border border-zinc-200/80 overflow-hidden transition-all duration-300 shadow-sm"
+              >
+                <button
+                  onClick={() => toggle(i)}
+                  className="w-full p-6 text-left flex justify-between items-center hover:bg-zinc-50 transition-colors cursor-pointer"
+                >
+                  <span className="font-bold text-lg text-zinc-900 pr-6">
+                    {faq.q}
+                  </span>
+                  <span className={`w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                    <svg className="w-4 h-4 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </span>
+                </button>
+
+                <div 
+                  className={`transition-all duration-300 ease-in-out ${
+                    isOpen ? "max-h-[300px] border-t border-zinc-100 p-6 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+                  }`}
+                >
+                  <p className="text-zinc-600 text-base leading-relaxed">
+                    {faq.a}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
