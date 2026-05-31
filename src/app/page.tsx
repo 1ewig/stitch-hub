@@ -1,45 +1,28 @@
-import React from "react";
-import LandingHeader from "../components/landing/LandingHeader";
 import LandingHero from "../components/landing/LandingHero";
-import LandingProcess from "../components/landing/LandingProcess";
-import LandingFeatures from "../components/landing/LandingFeatures";
-import LandingTestimonials from "../components/landing/LandingTestimonials";
-import LandingPricing from "../components/landing/LandingPricing";
-import LandingFaq from "../components/landing/LandingFaq";
-import LandingCta from "../components/landing/LandingCta";
+import LandingAiAdvantage from "../components/landing/LandingAiAdvantage";
+import LandingProductFeatures from "../components/landing/LandingProductFeatures";
+import LandingProductLineup from "../components/landing/LandingProductLineup";
 import LandingFooter from "../components/landing/LandingFooter";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-neutral-50 flex flex-col justify-between overflow-x-hidden font-body">
-      {/* 01. Dynamic sticky navbar */}
-      <LandingHeader />
+    <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
+      
+      {/* 1. HERO SECTION */}
+      <LandingHero />
 
-      <main className="flex-1 w-full space-y-4">
-        {/* 02. High-impact Hero & mockup dashboards */}
-        <LandingHero />
+      {/* 2. OUR AI ADVANTAGE SECTION (Glassmorphism) */}
+      <LandingAiAdvantage />
 
-        {/* 03. Interactive Step Process flow */}
-        <LandingProcess />
+      {/* 3. WHY CHOOSE OUR PRODUCTS (High Contrast Break) */}
+      <LandingProductFeatures />
 
-        {/* 04. Core Platform Capabilities list */}
-        <LandingFeatures />
+      {/* 4. OUR PRODUCT LINEUP */}
+      <LandingProductLineup />
 
-        {/* 05. verified corporate testimonials */}
-        <LandingTestimonials />
-
-        {/* 06. Toggle pricing matrices */}
-        <LandingPricing />
-
-        {/* 07. FAQ accordions support */}
-        <LandingFaq />
-
-        {/* 08. Launch CTA console triggers */}
-        <LandingCta />
-      </main>
-
-      {/* 09. Footer credits */}
+      {/* 5. BOTTOM CTA & FOOTER */}
       <LandingFooter />
-    </div>
+
+    </main>
   );
 }
