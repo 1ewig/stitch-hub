@@ -139,8 +139,8 @@ export default function CartDrawer() {
                         <h4 className="text-sm font-bold text-white leading-tight">
                           {item.product.title}
                         </h4>
-                        <span className="text-sm font-semibold text-[#d4af37]">
-                          ${(item.product.price * item.quantity).toFixed(2)}
+                        <span className="text-sm font-semibold text-zinc-500">
+                          Qty: {item.quantity}
                         </span>
                       </div>
                       <p className="text-xs text-zinc-500 mt-1">
@@ -208,13 +208,13 @@ export default function CartDrawer() {
           {cart.length > 0 && !isSuccess && (
             <div className="border-t border-zinc-900 bg-zinc-950 p-6 space-y-4">
               <div className="flex justify-between items-center text-zinc-400">
-                <span className="text-sm font-medium">Estimated Sourcing Total</span>
-                <span className="text-xl font-bold text-white">
-                  ${cartTotal.toFixed(2)}
+                <span className="text-sm font-medium">Sourcing Quote Status</span>
+                <span className="text-sm font-bold text-[#d4af37] uppercase tracking-wider">
+                  Pending Verification
                 </span>
               </div>
               <p className="text-xs text-zinc-500">
-                Sourcing volumes are subject to active material tier discounts. Prices calculated above represent baseline B2B target pricing.
+                Quote calculations are completed dynamically by our engine based on branding specs, material availability, and production timeline requirements.
               </p>
 
               <button

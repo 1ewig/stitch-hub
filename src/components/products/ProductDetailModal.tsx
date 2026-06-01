@@ -72,8 +72,8 @@ export default function ProductDetailModal({
                 <h3 className="text-2xl font-bold font-display text-white">
                   {product.title}
                 </h3>
-                <p className="text-[#d4af37] font-semibold text-lg mt-1">
-                  ${product.price.toFixed(2)} <span className="text-xs text-zinc-500 font-normal">/ unit (Base)</span>
+                <p className="text-[#d4af37] font-semibold text-xs uppercase tracking-wider mt-1">
+                  Sourcing MOQ: {minQty} units
                 </p>
               </div>
               <button
@@ -140,20 +140,20 @@ export default function ProductDetailModal({
             {/* B2B Sourcing Tier pricing discounts preview */}
             <div className="mb-6 bg-zinc-900/40 border border-zinc-900/80 rounded-xl p-3.5">
               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2.5">
-                Bulk Tier Discount Matrix
+                Sourcing Volume Matrix
               </h4>
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="p-2 bg-zinc-950 border border-zinc-900 rounded">
                   <p className="text-zinc-500">MOQ - 99</p>
-                  <p className="font-semibold text-zinc-300">Base Price</p>
+                  <p className="font-semibold text-zinc-300">Standard Tier</p>
                 </div>
                 <div className="p-2 bg-zinc-950 border border-zinc-900 rounded">
                   <p className="text-zinc-500">100 - 249</p>
-                  <p className="font-semibold text-emerald-400">10% Off</p>
+                  <p className="font-semibold text-emerald-400">High Volume Tier</p>
                 </div>
                 <div className="p-2 bg-zinc-950 border border-zinc-900 rounded">
                   <p className="text-zinc-500">250+</p>
-                  <p className="font-semibold text-emerald-400">15% Off</p>
+                  <p className="font-semibold text-emerald-400">Enterprise Tier</p>
                 </div>
               </div>
             </div>
@@ -193,15 +193,15 @@ export default function ProductDetailModal({
           <div className="border-t border-zinc-900 pt-6 mt-auto">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <p className="text-xs text-zinc-500">Active Tier Sourcing Price</p>
+                <p className="text-xs text-zinc-500">Selected Quantity</p>
                 <p className="text-lg font-bold text-white">
-                  ${currentPrice.toFixed(2)} <span className="text-xs text-zinc-500 font-normal">/ unit</span>
+                  {currentQty} <span className="text-xs text-zinc-500 font-normal">units</span>
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-zinc-500">Subtotal</p>
-                <p className="text-lg font-bold text-[#d4af37]">
-                  ${(currentPrice * currentQty).toFixed(2)}
+                <p className="text-xs text-zinc-500">Estimated Quote</p>
+                <p className="text-[#d4af37] font-semibold text-xs uppercase tracking-wider mt-1">
+                  Calculated on Submission
                 </p>
               </div>
             </div>
