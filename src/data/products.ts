@@ -4,7 +4,7 @@ export const catalog: Product[] = [
   {
     title: "Gildan 18500 Hoodie",
     cat: "Apparel",
-    img: "/hoodie.webp",
+    img: "/images/products/apparel/hoodie.webp",
     price: 39.99,
     description: "Heavyweight 8.0 oz cotton blend fleece featuring double-needle stitching, double-lined hood with dyed-to-match drawcord. Highly durable and optimized for screen printing or embroidery.",
     moq: 25,
@@ -12,7 +12,7 @@ export const catalog: Product[] = [
   {
     title: "Matte Black Tumbler",
     cat: "Drinkware",
-    img: "/tumbler.webp",
+    img: "/images/products/drinkware/tumbler.webp",
     price: 19.99,
     description: "Double-wall vacuum insulated stainless steel tumbler. Keeps drinks cold for 24 hours or hot for 12 hours. Matte powder-coat finish ideal for clean laser engraving.",
     moq: 50,
@@ -20,7 +20,7 @@ export const catalog: Product[] = [
   {
     title: "Under Armour Polo",
     cat: "Performance",
-    img: "/polo.webp",
+    img: "/images/products/performance/polo.webp",
     price: 29.99,
     description: "High-performance tech fabric engineered for breathability and rapid drying. Anti-odor technology prevents the growth of odor-causing microbes. Perfect for premium corporate branding.",
     moq: 25,
@@ -28,7 +28,7 @@ export const catalog: Product[] = [
   {
     title: "Tech Organizer",
     cat: "Accessories",
-    img: "/pouch.webp",
+    img: "/images/products/accessories/pouch.webp",
     price: 14.99,
     description: "Water-resistant woven fabric organizer with elastic loops, zip pockets, and segmented compartments. Sleek solution to keep cords, chargers, and tech accessories secure on the go.",
     moq: 50,
@@ -36,7 +36,7 @@ export const catalog: Product[] = [
   {
     title: "Minimalist Leather Wallet",
     cat: "Accessories",
-    img: "/wallet.png",
+    img: "/images/products/accessories/wallet.png",
     price: 24.99,
     description: "Crafted from full-grain premium leather. Slim profile designed for front-pocket comfort. RFID blocking technology keeps data secure. Classic heat-deboss customization available.",
     moq: 25,
@@ -44,7 +44,7 @@ export const catalog: Product[] = [
   {
     title: "Ceramic Travel Mug",
     cat: "Drinkware",
-    img: "/travel_mug.png",
+    img: "/images/products/drinkware/travel_mug.png",
     price: 17.99,
     description: "Ergonomically designed high-fire ceramic mug featuring an insulating silicone grip sleeve and spill-resistant travel lid. Dishwasher and microwave safe.",
     moq: 50,
@@ -52,7 +52,7 @@ export const catalog: Product[] = [
   {
     title: "Quarter-Zip Windbreaker",
     cat: "Performance",
-    img: "/windbreaker.png",
+    img: "/images/products/performance/windbreaker.png",
     price: 49.99,
     description: "Ultra-lightweight packable ripstop wind shell. Wind and water resistant with adjustable drawcord hem. Ideal for outdoor training or rugged lifestyle events.",
     moq: 25,
@@ -60,7 +60,7 @@ export const catalog: Product[] = [
   {
     title: "Premium Cotton Tee",
     cat: "Apparel",
-    img: "/tshirt.png",
+    img: "/images/products/apparel/tshirt.png",
     price: 18.99,
     description: "100% ring-spun combed cotton tee. Super-soft hand feel with modern tailored fit. Reinforced shoulder-to-shoulder taping for shape retention over time.",
     moq: 50,
@@ -68,7 +68,7 @@ export const catalog: Product[] = [
   {
     title: "Eco-Friendly Tote Bag",
     cat: "Accessories",
-    img: "/tote.png",
+    img: "/images/products/accessories/tote.png",
     price: 9.99,
     description: "Crafted from 100% recycled organic cotton canvas. Heavy-duty construction with reinforced handles. Generous layout designed to support heavy volume branding.",
     moq: 100,
@@ -76,7 +76,7 @@ export const catalog: Product[] = [
   {
     title: "Thermo Insulated Flask",
     cat: "Drinkware",
-    img: "/flask.png",
+    img: "/images/products/drinkware/flask.png",
     price: 27.99,
     description: "Premium grade 18/8 stainless steel construction featuring leakproof loop cap. Designed to withstand demanding B2B shipping schedules and active usage.",
     moq: 50,
