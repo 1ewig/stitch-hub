@@ -1,38 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Header from "../../components/Header";
 import LandingFooter from "../../components/landing/LandingFooter";
 import ProductFilters from "../../components/products/ProductFilters";
 import ProductCard from "../../components/products/ProductCard";
 import ProductDetailModal from "../../components/products/ProductDetailModal";
-import { catalog } from "../../data/products";
-import { Product } from "../../hooks/useCart";
+import { useProductsFilter } from "../../hooks/useProductsFilter";
 
 export default function ProductsPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("price-asc");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-  // Filters & Sorting logic
-  const filteredProducts = catalog
-    .filter((product) => {
-      const matchCat =
-        selectedCategory === "All" || product.cat === selectedCategory;
-      const matchSearch = product.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      return matchCat && matchSearch;
-    })
-    .sort((a, b) => {
-      if (sortBy === "price-asc") return a.price - b.price;
-      if (sortBy === "price-desc") return b.price - a.price;
-      if (sortBy === "name-asc") return a.title.localeCompare(b.title);
-      return 0;
-    });
-
-  const categories = ["All", "Apparel", "Drinkware", "Performance", "Accessories"];
+  const {
+    selectedCategory,
+    setSelectedCategory,
+    searchQuery,
+    setSearchQuery,
+    sortBy,
+    setSortBy,
+    selectedProduct,
+    setSelectedProduct,
+    filteredProducts,
+    categories,
+    clearFilters,
+  } = useProductsFilter();
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
@@ -80,10 +69,7 @@ export default function ProductsPage() {
             </svg>
             <p className="text-zinc-500 font-medium">No sourcing matches found.</p>
             <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("All");
-              }}
+              onClick={clearFilters}
               className="mt-2 text-sm text-[#d4af37] hover:underline font-semibold cursor-pointer"
             >
               Clear filters
