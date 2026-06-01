@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+interface LandingFaqProps {
+  openIdx: number | null;
+  onToggle: (idx: number) => void;
+}
 
-export default function LandingFaq() {
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
-
+export default function LandingFaq({ openIdx, onToggle }: LandingFaqProps) {
   const faqs = [
     {
       q: "What is your minimum B2B order volume?",
@@ -23,10 +24,6 @@ export default function LandingFaq() {
       a: "Absolutely. We build detailed digital physics mockups first. Once approved, you can request structural physical samples showing exact stitch and logo embroidery density prior to the bulk production lock."
     }
   ];
-
-  const toggle = (idx: number) => {
-    setOpenIdx(openIdx === idx ? null : idx);
-  };
 
   return (
     <section className="bg-[#f5f2eb] py-24 px-6 md:px-12 text-zinc-900 border-t border-zinc-200">
@@ -47,7 +44,7 @@ export default function LandingFaq() {
                 className="bg-white rounded-2xl border border-zinc-200/80 overflow-hidden transition-all duration-300 shadow-sm"
               >
                 <button
-                  onClick={() => toggle(i)}
+                  onClick={() => onToggle(i)}
                   className="w-full p-6 text-left flex justify-between items-center hover:bg-zinc-50 transition-colors cursor-pointer"
                 >
                   <span className="font-bold text-lg text-zinc-900 pr-6">

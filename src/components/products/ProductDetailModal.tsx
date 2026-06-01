@@ -1,48 +1,41 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import type { Product } from "../../types";
-import { useCartStore } from "../../stores/cart-store";
 
 interface ProductDetailModalProps {
   product: Product | null;
   onClose: () => void;
+  quantity: number;
+  size: string;
+  customNotes: string;
+  minQty: number;
+  currentQty: number;
+  currentPrice: number;
+  isApparel: boolean;
+  setQuantity: (qty: number) => void;
+  setSize: (sz: string) => void;
+  setCustomNotes: (notes: string) => void;
+  handleAddToCart: () => void;
 }
 
 export default function ProductDetailModal({
   product,
   onClose,
+  quantity,
+  size,
+  customNotes,
+  minQty,
+  currentQty,
+  currentPrice,
+  isApparel,
+  setQuantity,
+  setSize,
+  setCustomNotes,
+  handleAddToCart,
 }: ProductDetailModalProps) {
-  const addToCart = useCartStore((s) => s.addToCart);
-  const [quantity, setQuantity] = useState(50);
-  const [size, setSize] = useState("M");
-  const [customNotes, setCustomNotes] = useState("");
-
   if (!product) return null;
-
-  // Sync initial MOQ
-  const minQty = product.moq || 25;
-  const currentQty = Math.max(quantity, minQty);
-
-  const getDiscountedPrice = (qty: number) => {
-    if (qty >= 250) return product.price * 0.85; // 15% off
-    if (qty >= 100) return product.price * 0.9;  // 10% off
-    return product.price;
-  };
-
-  const currentPrice = getDiscountedPrice(currentQty);
-
-  const handleAddToCart = () => {
-    const finalProduct = {
-      ...product,
-      price: currentPrice, // Capture active tier price
-    };
-    addToCart(finalProduct, currentQty, size, customNotes);
-    onClose();
-  };
-
-  const isApparel = product.cat === "Apparel" || product.cat === "Performance";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-black/80 backdrop-blur-sm overflow-y-auto">

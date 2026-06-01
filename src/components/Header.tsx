@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useCartStore } from "../stores/cart-store";
 
-export default function Header() {
-  const pathname = usePathname();
-  const cartCount = useCartStore((s) => s.cart.reduce((acc, item) => acc + item.quantity, 0));
-  const setIsOpen = useCartStore((s) => s.setIsOpen);
+interface HeaderProps {
+  cartCount: number;
+  currentPath: string;
+  onCartClick: () => void;
+}
 
+export default function Header({ cartCount, currentPath, onCartClick }: HeaderProps) {
   const isLinkActive = (path: string) => {
-    if (path === "/" && pathname === "/") return true;
-    if (path === "/products" && pathname.startsWith("/products")) return true;
+    if (path === "/" && currentPath === "/") return true;
+    if (path === "/products" && currentPath.startsWith("/products")) return true;
     return false;
   };
 
@@ -59,7 +59,7 @@ export default function Header() {
 
           {/* Cart Icon / Action */}
           <button
-            onClick={() => setIsOpen(true)}
+            onClick={onCartClick}
             className="relative p-2 text-zinc-400 hover:text-white transition-colors duration-200 focus:outline-none cursor-pointer"
             aria-label="Open cart"
           >

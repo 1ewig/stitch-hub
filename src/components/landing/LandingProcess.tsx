@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+interface LandingProcessProps {
+  activeStep: number;
+  setActiveStep: (step: number) => void;
+}
 
-export default function LandingProcess() {
-  const [activeStep, setActiveStep] = useState(0);
-
+export default function LandingProcess({ activeStep, setActiveStep }: LandingProcessProps) {
   const steps = [
     {
       num: "01",
