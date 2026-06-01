@@ -9,7 +9,7 @@ export default function LandingFooter() {
       </div>
 
       <div className="max-w-7xl mx-auto border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="text-2xl font-black tracking-widest text-white">ASCEND<span className="text-[#d4af37]">.</span></div>
+        <div className="text-2xl font-black tracking-widest text-white">STITCH<span className="text-[#d4af37]"> HUB</span></div>
         <div className="flex gap-8 text-sm font-medium text-zinc-400">
           <a href="#" className="hover:text-white transition-colors">Products</a>
           <a href="#" className="hover:text-white transition-colors">AI Logistics</a>
@@ -17,7 +17,7 @@ export default function LandingFooter() {
           <a href="#" className="hover:text-white transition-colors">Admin Login</a>
         </div>
         <div className="text-xs text-zinc-600">
-          © 2026 Ascend B2B. All rights reserved.
+          © 2026 Stitch Hub. All rights reserved.
         </div>
       </div>
     </footer>
