@@ -1,3 +1,4 @@
+import Header from "../components/Header";
 import LandingHero from "../components/landing/LandingHero";
 import LandingAiAdvantage from "../components/landing/LandingAiAdvantage";
 import LandingProcess from "../components/landing/LandingProcess";
@@ -11,6 +12,9 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
       
+      {/* HEADER */}
+      <Header />
+
       {/* 1. HERO SECTION */}
       <LandingHero />
 
