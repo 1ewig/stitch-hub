@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { useCart, Product } from "../hooks/useCart";
+import { useCart, Product } from "../../hooks/useCart";
 
 interface ProductDetailModalProps {
   product: Product | null;
