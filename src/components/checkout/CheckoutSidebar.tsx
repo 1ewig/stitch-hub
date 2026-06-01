@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CartItem } from "../../hooks/useCart";
+import type { CartItem } from "../../types";
 
 interface CheckoutSidebarProps {
   cart: CartItem[];

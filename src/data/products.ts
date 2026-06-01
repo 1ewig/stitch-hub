@@ -1,4 +1,4 @@
-import { Product } from "../hooks/useCart";
+import { Product } from "../types";
 
 export const catalog: Product[] = [
   {

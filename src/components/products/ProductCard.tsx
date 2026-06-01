@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Product } from "../../hooks/useCart";
+import type { Product } from "../../types";
 
 interface ProductCardProps {
   product: Product;
