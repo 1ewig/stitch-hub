@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "../stores/cart-store";
@@ -11,26 +11,8 @@ export default function CartDrawer() {
   const setIsOpen = useCartStore((s) => s.setIsOpen);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeFromCart = useCartStore((s) => s.removeFromCart);
-  const clearCart = useCartStore((s) => s.clearCart);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   if (!isOpen) return null;
-
-  const handleSubmitQuote = () => {
-    setIsSubmitting(true);
-    // Simulate complex AI logistics computation
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-        clearCart();
-        setIsOpen(false);
-      }, 3000);
-    }, 2000);
-  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -69,31 +51,7 @@ export default function CartDrawer() {
 
           {/* Body Content */}
           <div className="flex-1 overflow-y-auto px-6 py-4">
-            {isSuccess ? (
-              <div className="h-full flex flex-col items-center justify-center text-center px-4 animate-scaleIn">
-                <div className="h-16 w-16 rounded-full bg-[#d4af37]/10 flex items-center justify-center mb-6 border border-[#d4af37]/30">
-                  <svg
-                    className="h-8 w-8 text-[#d4af37]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2 font-display">
-                  Quote Request Submitted!
-                </h3>
-                <p className="text-sm text-zinc-400">
-                  Our advanced AI logic engine has initiated manufacturing physics calculations. A sourcing manager will contact you with material specs within 15 minutes.
-                </p>
-              </div>
-            ) : cart.length === 0 ? (
+            {cart.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center">
                 <svg
                   className="h-12 w-12 text-zinc-600 mb-4"
@@ -148,7 +106,7 @@ export default function CartDrawer() {
 
                       {item.customNotes && (
                         <p className="text-xs text-zinc-400 bg-zinc-900/50 border border-zinc-900 px-2 py-1 rounded mt-1.5 line-clamp-1 italic">
-                          "{item.customNotes}"
+                          &ldquo;{item.customNotes}&rdquo;
                         </p>
                       )}
 
@@ -204,7 +162,7 @@ export default function CartDrawer() {
           </div>
 
           {/* Footer controls */}
-          {cart.length > 0 && !isSuccess && (
+          {cart.length > 0 && (
             <div className="border-t border-zinc-900 bg-zinc-950 p-6 space-y-4">
               <div className="flex justify-between items-center text-zinc-400">
                 <span className="text-sm font-medium">Sourcing Quote Status</span>
