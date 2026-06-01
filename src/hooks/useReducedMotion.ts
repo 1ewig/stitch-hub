@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useReducedMotionStore } from "../stores/reduced-motion-store";
 
 export function useReducedMotion() {
-  const [prefersReduced, setPrefersReduced] = useState(false);
+  const prefersReduced = useReducedMotionStore((s) => s.prefersReduced);
+  const setPrefersReduced = useReducedMotionStore((s) => s.setPrefersReduced);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -15,7 +17,7 @@ export function useReducedMotion() {
 
     mediaQuery.addEventListener("change", listener);
     return () => mediaQuery.removeEventListener("change", listener);
-  }, []);
+  }, [setPrefersReduced]);
 
   return prefersReduced;
 }
