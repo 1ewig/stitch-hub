@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LandingHero() {
   return (
@@ -29,11 +30,14 @@ export default function LandingHero() {
         </p>
         
         {/* Metallic Shiny Gold Button */}
-        <button className="relative group overflow-hidden px-12 py-4 rounded-full font-bold text-lg text-black bg-gradient-to-r from-[#b38e20] via-[#ebd06f] to-[#b38e20] bg-[length:200%_auto] hover:bg-right transition-all duration-500 transform hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:shadow-[0_0_40px_rgba(212,175,55,0.7)] cursor-pointer">
+        <Link
+          href="/products"
+          className="relative group overflow-hidden px-12 py-4 rounded-full font-bold text-lg text-black bg-gradient-to-r from-[#b38e20] via-[#ebd06f] to-[#b38e20] bg-[length:200%_auto] hover:bg-right transition-all duration-500 transform hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:shadow-[0_0_40px_rgba(212,175,55,0.7)] cursor-pointer"
+        >
           {/* Shimmer overlay light effect */}
           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer" />
           <span className="relative z-10">Begin Your Custom Creation</span>
-        </button>
+        </Link>
       </div>
     </section>
   );
