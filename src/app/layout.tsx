@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import CartDrawer from "../components/CartDrawer";
+import CartDrawerWrapper from "../components/CartDrawerWrapper";
 
 export const metadata: Metadata = {
   title: "StitchHub - Bulk Apparel Manufacturing & Sourcing",
@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
-        <CartDrawer />
+        <CartDrawerWrapper />
       </body>
     </html>
   );

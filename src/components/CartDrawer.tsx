@@ -3,14 +3,23 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCartStore } from "../stores/cart-store";
+import type { CartItem } from "../types";
 
-export default function CartDrawer() {
-  const cart = useCartStore((s) => s.cart);
-  const isOpen = useCartStore((s) => s.isOpen);
-  const setIsOpen = useCartStore((s) => s.setIsOpen);
-  const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const removeFromCart = useCartStore((s) => s.removeFromCart);
+interface CartDrawerProps {
+  cart: CartItem[];
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  updateQuantity: (title: string, size: string, quantity: number) => void;
+  removeFromCart: (title: string, size: string) => void;
+}
+
+export default function CartDrawer({
+  cart,
+  isOpen,
+  setIsOpen,
+  updateQuantity,
+  removeFromCart,
+}: CartDrawerProps) {
 
   if (!isOpen) return null;
 
