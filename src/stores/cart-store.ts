@@ -65,7 +65,7 @@ export const useCartStore = create<CartState>()(
         });
       },
 
-      clearCart: () => set({ cart: [], isOpen: false }),
+      clearCart: () => set({ cart: [] }),
     }),
     {
       name: "stitchhub_cart",

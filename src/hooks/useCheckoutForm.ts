@@ -1,41 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCart } from "./useCart";
+import { useCartStore } from "../stores/cart-store";
+import { useCheckoutFormStore, generateMessageFromCart } from "../stores/checkout-form-store";
 
 export function useCheckoutForm() {
   const router = useRouter();
-  const { cart, clearCart } = useCart();
-
-  const [toEmail, setToEmail] = useState("stitchhub@sourcing.com");
-  const [subject, setSubject] = useState("Custom Corporate Merchandise Sourcing Request");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [message, setMessage] = useState("");
+  const cart = useCartStore((s) => s.cart);
+  const clearCart = useCartStore((s) => s.clearCart);
+  const {
+    toEmail,
+    subject,
+    message,
+    isSubmitting,
+    isSuccess,
+    setToEmail,
+    setSubject,
+    setMessage,
+    setIsSubmitting,
+    setIsSuccess,
+  } = useCheckoutFormStore();
 
   useEffect(() => {
-    if (cart.length > 0) {
-      const itemsList = cart
-        .map((item) => `- ${item.product.title} (Qty: ${item.quantity} units, Size: ${item.size || "Standard"})`)
-        .join("\n");
-      
-      const specsList = cart
-        .filter((item) => item.customNotes)
-        .map((item) => `- ${item.product.title}: "${item.customNotes}"`)
-        .join("\n");
-
-      setMessage(
-        `Hi Stitch Hub Team,\n\nI would like to initiate a premium sourcing quote for our upcoming corporate brand launch. We are interested in ordering the following custom products:\n\n${itemsList}\n\n${
-          specsList ? `Branding Specifications:\n${specsList}\n\n` : ""
-        }Please provide details regarding production timelines, bulk volume updates, and sample mockup approvals.\n\nBest regards,\n[Enter Your Name]\n[Enter Company Name]`
-      );
-    } else {
-      setMessage(
-        `Hi Stitch Hub Team,\n\nI would like to initiate a premium sourcing quote for custom merchandise. Please help us evaluate custom garment options, insulated drinkware, and tech organizing pouches.\n\nBest regards,\n[Enter Your Name]\n[Enter Company Name]`
-      );
-    }
-  }, [cart]);
+    setMessage(generateMessageFromCart(cart));
+  }, [cart, setMessage]);
 
   const handleSubmit = () => {
     setIsSubmitting(true);
