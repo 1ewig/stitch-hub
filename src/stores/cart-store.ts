@@ -50,17 +50,23 @@ export const useCartStore = create<CartState>()(
       },
 
       updateQuantity: (title, size, quantity) => {
-        if (quantity <= 0) {
+        const { cart } = get();
+        const item = cart.find(
+          (i) => i.product.title === title && i.size === size
+        );
+        if (!item) return;
+
+        const clamped = Math.max(quantity, item.product.moq);
+        if (clamped <= 0) {
           const { removeFromCart } = get();
           removeFromCart(title, size);
           return;
         }
-        const { cart } = get();
         set({
-          cart: cart.map((item) =>
-            item.product.title === title && item.size === size
-              ? { ...item, quantity }
-              : item
+          cart: cart.map((i) =>
+            i.product.title === title && i.size === size
+              ? { ...i, quantity: clamped }
+              : i
           ),
         });
       },

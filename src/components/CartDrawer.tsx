@@ -12,7 +12,6 @@ export default function CartDrawer() {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeFromCart = useCartStore((s) => s.removeFromCart);
   const clearCart = useCartStore((s) => s.clearCart);
-  const cartTotal = useCartStore((s) => s.cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0));
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -164,7 +163,8 @@ export default function CartDrawer() {
                                 item.quantity - 5
                               )
                             }
-                            className="px-2 py-1 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                            disabled={item.quantity <= item.product.moq}
+                            className="px-2 py-1 text-zinc-400 hover:text-white transition-colors disabled:text-zinc-700 disabled:cursor-not-allowed cursor-pointer"
                             aria-label="Decrease quantity"
                           >
                             -5
