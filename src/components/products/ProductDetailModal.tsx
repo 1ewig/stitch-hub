@@ -7,12 +7,10 @@ import type { Product } from "../../types";
 interface ProductDetailModalProps {
   product: Product | null;
   onClose: () => void;
-  quantity: number;
   size: string;
   customNotes: string;
   minQty: number;
   currentQty: number;
-  currentPrice: number;
   isApparel: boolean;
   setQuantity: (qty: number) => void;
   setSize: (sz: string) => void;
@@ -23,12 +21,10 @@ interface ProductDetailModalProps {
 export default function ProductDetailModal({
   product,
   onClose,
-  quantity,
   size,
   customNotes,
   minQty,
   currentQty,
-  currentPrice,
   isApparel,
   setQuantity,
   setSize,

@@ -2,13 +2,18 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Header from "../../components/Header";
 import LandingFooter from "../../components/landing/LandingFooter";
 import CheckoutForm from "../../components/checkout/CheckoutForm";
 import CheckoutSidebar from "../../components/checkout/CheckoutSidebar";
+import { useCartStore } from "../../stores/cart-store";
 import { useCheckoutForm } from "../../hooks/useCheckoutForm";
 
 export default function CheckoutPage() {
+  const pathname = usePathname();
+  const cartCount = useCartStore((s) => s.cart.reduce((acc, item) => acc + item.quantity, 0));
+  const setIsOpen = useCartStore((s) => s.setIsOpen);
   const {
     cart,
     toEmail,
@@ -24,7 +29,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
-      <Header />
+      <Header cartCount={cartCount} currentPath={pathname} onCartClick={() => setIsOpen(true)} />
 
       <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto">
         {/* Navigation Breadcrumb */}
