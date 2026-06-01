@@ -3,18 +3,16 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "../hooks/useCart";
+import { useCartStore } from "../stores/cart-store";
 
 export default function CartDrawer() {
-  const {
-    cart,
-    isOpen,
-    setIsOpen,
-    updateQuantity,
-    removeFromCart,
-    cartTotal,
-    clearCart,
-  } = useCart();
+  const cart = useCartStore((s) => s.cart);
+  const isOpen = useCartStore((s) => s.isOpen);
+  const setIsOpen = useCartStore((s) => s.setIsOpen);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const removeFromCart = useCartStore((s) => s.removeFromCart);
+  const clearCart = useCartStore((s) => s.clearCart);
+  const cartTotal = useCartStore((s) => s.cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0));
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

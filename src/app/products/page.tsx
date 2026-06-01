@@ -6,22 +6,21 @@ import LandingFooter from "../../components/landing/LandingFooter";
 import ProductFilters from "../../components/products/ProductFilters";
 import ProductCard from "../../components/products/ProductCard";
 import ProductDetailModal from "../../components/products/ProductDetailModal";
-import { useProductsFilter } from "../../hooks/useProductsFilter";
+import { catalog } from "../../data/products";
+import { useProductFilterStore, getFilteredProducts, CATEGORIES } from "../../stores/product-filter-store";
 
 export default function ProductsPage() {
-  const {
-    selectedCategory,
-    setSelectedCategory,
-    searchQuery,
-    setSearchQuery,
-    sortBy,
-    setSortBy,
-    selectedProduct,
-    setSelectedProduct,
-    filteredProducts,
-    categories,
-    clearFilters,
-  } = useProductsFilter();
+  const selectedCategory = useProductFilterStore((s) => s.selectedCategory);
+  const setSelectedCategory = useProductFilterStore((s) => s.setSelectedCategory);
+  const searchQuery = useProductFilterStore((s) => s.searchQuery);
+  const setSearchQuery = useProductFilterStore((s) => s.setSearchQuery);
+  const sortBy = useProductFilterStore((s) => s.sortBy);
+  const setSortBy = useProductFilterStore((s) => s.setSortBy);
+  const selectedProduct = useProductFilterStore((s) => s.selectedProduct);
+  const setSelectedProduct = useProductFilterStore((s) => s.setSelectedProduct);
+  const clearFilters = useProductFilterStore((s) => s.clearFilters);
+
+  const filteredProducts = getFilteredProducts(catalog, selectedCategory, searchQuery, sortBy);
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
@@ -48,7 +47,7 @@ export default function ProductsPage() {
           setSearchQuery={setSearchQuery}
           sortBy={sortBy}
           setSortBy={setSortBy}
-          categories={categories}
+          categories={CATEGORIES}
         />
 
         {/* Results grid */}

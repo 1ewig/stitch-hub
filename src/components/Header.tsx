@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCart } from "../hooks/useCart";
+import { useCartStore } from "../stores/cart-store";
 
 export default function Header() {
   const pathname = usePathname();
-  const { cartCount, setIsOpen } = useCart();
+  const cartCount = useCartStore((s) => s.cart.reduce((acc, item) => acc + item.quantity, 0));
+  const setIsOpen = useCartStore((s) => s.setIsOpen);
 
   const isLinkActive = (path: string) => {
     if (path === "/" && pathname === "/") return true;

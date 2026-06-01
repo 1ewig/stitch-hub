@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { CartProvider } from "../hooks/useCart";
 import CartDrawer from "../components/CartDrawer";
 
 export const metadata: Metadata = {
@@ -16,10 +15,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <CartProvider>
-          {children}
-          <CartDrawer />
-        </CartProvider>
+        {children}
+        <CartDrawer />
       </body>
     </html>
   );

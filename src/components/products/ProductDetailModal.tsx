@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { useCart, Product } from "../../hooks/useCart";
+import type { Product } from "../../types";
+import { useCartStore } from "../../stores/cart-store";
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -13,7 +14,7 @@ export default function ProductDetailModal({
   product,
   onClose,
 }: ProductDetailModalProps) {
-  const { addToCart } = useCart();
+  const addToCart = useCartStore((s) => s.addToCart);
   const [quantity, setQuantity] = useState(50);
   const [size, setSize] = useState("M");
   const [customNotes, setCustomNotes] = useState("");
