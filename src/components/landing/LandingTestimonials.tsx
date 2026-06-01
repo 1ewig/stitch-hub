@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function LandingTestimonials() {
   const reviews = [
     {
@@ -55,7 +53,7 @@ export default function LandingTestimonials() {
                 </div>
 
                 <p className="text-zinc-300 text-base leading-relaxed italic">
-                  "{review.quote}"
+                  &ldquo;{review.quote}&rdquo;
                 </p>
               </div>
 
