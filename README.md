@@ -35,95 +35,60 @@ This repository contains the full-stack landing page for the Stitch Hub platform
 |-------|-----------|
 | **Framework** | [Next.js 16](https://nextjs.org/) (App Router, Turbopack) |
 | **Language** | TypeScript |
+| **Database** | Supabase PostgreSQL + [Drizzle ORM](https://orm.drizzle.team/) |
+| **Authentication** | [Supabase Auth](https://supabase.com/docs/guides/auth) (replaced NextAuth Credentials provider) |
 | **Styling** | Tailwind CSS v4 |
-| **Images** | `next/image` — optimized WebP with responsive `sizes` and priority preloading |
-| **Animation** | CSS keyframes + Tailwind transitions |
-| **State** | React `useState` (lightweight, no external store) |
-| **Icons** | Inline SVG |
-| **Fonts** | Plus Jakarta Sans · Inter (Google Fonts) |
-
----
-
-## ✦ Performance Highlights
-
-- **100% WebP image assets** — 90%+ file size reduction vs. PNG equivalents
-- **Responsive `sizes` attributes** — Next.js generates optimal `srcset` per viewport
-- **LCP-optimized `priority` preloading** on above-the-fold images
-- **Static pre-rendering** — all routes output as static HTML at build time
-- **Turbopack** — sub-5 second production builds
-
----
-
-## ✦ Project Structure
-
-```
-src/
-├── app/
-│   ├── page.tsx            # Page composition (section assembly)
-│   ├── layout.tsx          # Root layout with metadata
-│   ├── globals.css         # Design system tokens & base styles
-│   ├── animations.css      # Custom keyframe animations
-│   └── icon.svg            # Luxury SVG favicon
-│
-└── components/
-    └── landing/
-        ├── LandingHero.tsx             # Hero section
-        ├── LandingAiAdvantage.tsx      # AI feature cards
-        ├── LandingProcess.tsx          # Interactive process timeline
-        ├── LandingProductFeatures.tsx  # Featured product showcase
-        ├── LandingProductLineup.tsx    # Product catalog grid
-        ├── LandingTestimonials.tsx     # Client review matrix
-        ├── LandingFaq.tsx              # FAQ accordion panel
-        └── LandingFooter.tsx           # Bottom CTA & footer links
-
-public/
-├── hero-banner.webp    # Full-bleed hero background
-├── polo.webp           # Performance polo studio shot
-├── pouch.webp          # Tech organizer pouch shot
-├── hoodie.webp         # Gildan 18500 hoodie with hood up
-└── tumbler.webp        # Matte black drinkware shot
-```
+| **Images** | Optimized WebP images (q=85) for LCP and visual performance |
+| **State** | Zustand (global cart and filter state) |
+| **Inference** | Local custom Ollama B2B reasoning agent |
 
 ---
 
 ## ✦ Getting Started
 
-**Prerequisites**: Node.js 18+ and npm.
+**Prerequisites**: Node.js 18+, npm, and a Supabase project.
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/1ewig/stitch-hub.git
-cd stitch-hub
-
 # 2. Install dependencies
 npm install
-
-# 3. Run the development server
-npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
+### 3. Environment Variables
+Copy `.env.example` to `.env` and fill in the active environment variables:
 ```bash
-# Production build
+cp .env.example .env
+```
+Provide the `DATABASE_URL` (direct PostgreSQL connection) and Supabase credentials:
+* `NEXT_PUBLIC_SUPABASE_URL`
+* `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### 4. Database Setup & Triggers
+Run Drizzle migrations to setup the tables and register the Supabase Auth user synchronization triggers:
+```bash
+npm run db:migrate
+```
+
+### 5. Running the Application
+```bash
+# Start development server
+npm run dev
+
+# Build for production
 npm run build
 npm run start
 ```
 
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
 ---
 
-## ✦ Design System
-
-The color palette is built around a **black canvas** with **liquid gold** accents — reinforcing exclusivity and corporate credibility.
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| Gold Primary | `#d4af37` | CTAs, highlights, stars, dividers |
-| Gold Deep | `#b38e20` | Button gradients, shimmer starts |
-| Gold Light | `#ebd06f` | Button shimmer peaks, hover states |
-| Surface Dark | `#09090b` (zinc-950) | Primary page background |
-| Glass Fill | `rgba(255,255,255,0.05)` | Glassmorphic card backgrounds |
-| Cream | `#f5f2eb` | High-contrast light section break |
+## ✦ Database User Synchronization (Supabase Auth)
+The authentication system synchronizes registered users from Supabase Auth (`auth.users`) to the public `user` table automatically using Postgres triggers.
+To handle duplicate testing scenarios and dashboard deletions:
+* An `AFTER INSERT` trigger (`on_auth_user_created`) inserts or overrides user profiles in the public `user` table.
+* An `AFTER DELETE` trigger (`on_auth_user_deleted`) automatically cleans up public user records and cascaded data on dashboard deletion.
 
 ---
 
