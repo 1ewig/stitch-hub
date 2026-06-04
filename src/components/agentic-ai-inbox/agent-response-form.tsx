@@ -10,6 +10,8 @@ interface CheckoutFormProps {
   message: string;
   setMessage: (val: string) => void;
   isSuccess: boolean;
+  attachedFiles: File[];
+  setAttachedFiles: (files: File[]) => void;
 }
 
 export default function CheckoutForm({
@@ -20,7 +22,17 @@ export default function CheckoutForm({
   message,
   setMessage,
   isSuccess,
+  attachedFiles,
+  setAttachedFiles,
 }: CheckoutFormProps) {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setAttachedFiles([...attachedFiles, ...filesArray]);
+    }
+  };
   
   // 🔍 Check if your custom Qwen model triggered an engineering escalation freeze
   const isEscalated = message.includes("<action>PAUSE</action>") || message.includes("escalate_to_admin");
@@ -120,13 +132,25 @@ export default function CheckoutForm({
       </div>
 
       {/* Attach Sourcing Files Mockup */}
-      <div className="border border-dashed border-zinc-800 rounded-xl p-4 flex items-center justify-center hover:border-zinc-700 transition-colors cursor-pointer bg-zinc-900/10">
-        <span className="flex items-center gap-2.5 text-xs text-zinc-400 hover:text-white font-semibold">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-          </svg>
-          Attach Artwork Mockups or Sourcing Worksheets
-        </span>
+      <div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          multiple
+          className="hidden"
+        />
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          className="border border-dashed border-zinc-800 rounded-xl p-4 flex items-center justify-center hover:border-zinc-700 transition-colors cursor-pointer bg-zinc-900/10"
+        >
+          <span className="flex items-center gap-2.5 text-xs text-zinc-400 hover:text-white font-semibold">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+            </svg>
+            Attach Artwork Mockups or Sourcing Worksheets
+          </span>
+        </div>
       </div>
     </div>
   );

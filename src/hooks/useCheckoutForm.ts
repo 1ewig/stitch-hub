@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "../stores/cart-store";
 import { useCheckoutFormStore, generateMessageFromCart } from "../stores/checkout-form-store";
@@ -10,6 +10,8 @@ export function useCheckoutForm() {
   const cart = useCartStore((s) => s.cart);
   const clearCart = useCartStore((s) => s.clearCart);
   
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+
   const {
     toEmail,
     subject,
@@ -65,6 +67,7 @@ export function useCheckoutForm() {
       setTimeout(() => {
         setIsSuccess(false);
         clearCart();
+        setAttachedFiles([]); // Reset attachments
         router.push("/");
       }, 5000);
 
@@ -87,5 +90,7 @@ export function useCheckoutForm() {
     message,
     setMessage,
     handleSubmit,
+    attachedFiles,
+    setAttachedFiles,
   };
 }

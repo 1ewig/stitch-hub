@@ -19,6 +19,8 @@ export default function CheckoutPage() {
     message,
     setMessage,
     handleSubmit,
+    attachedFiles,
+    setAttachedFiles,
   } = useCheckoutForm();
 
   return (
@@ -51,6 +53,8 @@ export default function CheckoutPage() {
               message={message}
               setMessage={setMessage}
               isSuccess={isSuccess}
+              attachedFiles={attachedFiles}
+              setAttachedFiles={setAttachedFiles}
             />
           </div>
 
@@ -62,6 +66,8 @@ export default function CheckoutPage() {
               isSuccess={isSuccess}
               handleSubmit={handleSubmit}
               message={message}
+              attachedFiles={attachedFiles}
+              setAttachedFiles={setAttachedFiles}
             />
           </div>
           
