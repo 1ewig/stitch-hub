@@ -14,9 +14,9 @@ interface PageProps {
 
 export default function ProductDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { product, notFound, detail } = useProductDetailPage(id);
+  const { product, detail } = useProductDetailPage(id);
 
-  if (notFound) {
+  if (!product) {
     return (
       <main className="min-h-screen bg-zinc-950 text-white flex flex-col justify-between font-sans">
         <section className="py-24 text-center max-w-xl mx-auto px-6">

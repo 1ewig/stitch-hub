@@ -14,7 +14,6 @@ export function useProductDetailPage(id: string) {
 
   return {
     product,
-    notFound: product === null,
     detail,
   };
 }
