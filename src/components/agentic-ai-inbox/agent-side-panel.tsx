@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { CartItem } from "../../types";
+import GoldButton from "../ui/GoldButton";
 
 interface CheckoutSidebarProps {
   cart: CartItem[];
@@ -28,29 +29,14 @@ export default function CheckoutSidebar({
 
   return (
     <div className="space-y-6">
-      {/* Metallic Shiny Gold Button */}
-      <button
+      <GoldButton
         disabled={isSubmitting || isSuccess || cart.length === 0}
         onClick={handleSubmit}
-        className={`w-full relative group overflow-hidden px-8 py-4 rounded-full font-bold text-base text-black bg-linear-to-r from-[#b38e20] via-[#ebd06f] to-[#b38e20] bg-size-[200%_auto] hover:bg-right transition-all duration-500 flex items-center justify-center disabled:opacity-40 cursor-pointer ${
-          isEscalated ? "shadow-[0_0_35px_rgba(239,68,68,0.2)]" : "shadow-[0_0_35px_rgba(212,175,55,0.4)]"
-        }`}
+        loading={isSubmitting}
+        className={isEscalated ? "shadow-[0_0_35px_rgba(239,68,68,0.2)]" : "shadow-[0_0_35px_rgba(212,175,55,0.4)]"}
       >
-        {isSubmitting ? (
-          <div className="flex items-center gap-2">
-            <svg className="animate-spin h-5 w-5 text-black" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
-            <span>Analyzing Sourcing Specs...</span>
-          </div>
-        ) : (
-          <>
-            <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer" />
-            <span>Generate Agentic Sales Response</span>
-          </>
-        )}
-      </button>
+        {isSubmitting ? "Analyzing Sourcing Specs..." : "Generate Agentic Sales Response"}
+      </GoldButton>
 
       {/* AI suggestions card */}
       <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-3.5">

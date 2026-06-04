@@ -2,8 +2,8 @@
 
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import type { CartItem } from "../types";
+import GoldButton from "./ui/GoldButton";
 
 interface QuantityInputProps {
   item: CartItem;
@@ -234,14 +234,9 @@ export default function CartDrawer({
                 Quote calculations are completed dynamically by our engine based on branding specs, material availability, and production timeline requirements.
               </p>
 
-              <Link
-                href="/products/checkout"
-                onClick={() => setIsOpen(false)}
-                className="w-full relative group overflow-hidden px-6 py-3.5 rounded-full font-bold text-sm text-black bg-linear-to-r from-[#b38e20] via-[#ebd06f] to-[#b38e20] bg-size-[200%_auto] hover:bg-right transition-all duration-500 flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.2)] cursor-pointer text-center"
-              >
-                <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer" />
-                <span>Begin Sourcing Checkout</span>
-              </Link>
+              <GoldButton href="/products/checkout" onClick={() => setIsOpen(false)} size="md">
+                Begin Sourcing Checkout
+              </GoldButton>
             </div>
           )}
         </div>
