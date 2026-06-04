@@ -1,76 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
-import { signIn } from "next-auth/react";
-import { registerUser } from "../signup/register"; 
+import React from "react";
+import { useAuth } from "../../../hooks/useAuth";
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  // Unified Form Inputs State
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    if (isLogin) {
-      try {
-        const res = await signIn("credentials", {
-          redirect: false,
-          email,
-          password,
-        });
-
-        if (res?.error) {
-          setError("Invalid email or password. Please try again.");
-          setLoading(false);
-        } else {
-          setSuccess("Success! Directing to workspace...");
-          
-          // 🔥 FORCE NEXT.JS 16 TO RESET ROUTER COOKIE BOUNDARIES AT ROOT LAYER
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 800);
-        }
-      } catch (err) {
-        setError("An unexpected error occurred during login.");
-        setLoading(false);
-      }
-    } else {
-      try {
-        const formData = new FormData();
-        formData.append("name", name);
-        formData.append("email", email);
-        formData.append("password", password);
-
-        const res = await registerUser(formData);
-
-        if (res?.error) {
-          setError(res.error);
-        } else {
-          setSuccess("Account created successfully! Switching to sign in...");
-          setTimeout(() => {
-            setIsLogin(true);
-            setSuccess("");
-            setPassword("");
-          }, 2000);
-        }
-      } catch (err) {
-        setError("Database communication failure during registration.");
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
+  const {
+    isLogin,
+    loading,
+    error,
+    success,
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    rememberMe,
+    setRememberMe,
+    handleSubmit,
+    toggleMode,
+    handleForgotPassword,
+  } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#090a0c] flex items-center justify-center px-4 relative overflow-hidden font-sans select-none">
@@ -158,7 +108,7 @@ export default function AuthPage() {
               </label>
               <button
                 type="button"
-                onClick={() => alert("Password reset route activation coming soon!")}
+                onClick={handleForgotPassword}
                 className="text-[#d4af37] hover:underline cursor-pointer font-medium"
               >
                 Forgot password?
@@ -190,11 +140,7 @@ export default function AuthPage() {
         <div className="text-center pt-2">
           <button
             type="button"
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setError("");
-              setSuccess("");
-            }}
+            onClick={toggleMode}
             className="text-xs text-zinc-500 hover:text-white transition-colors cursor-pointer"
           >
             {isLogin ? (
