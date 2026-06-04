@@ -57,17 +57,6 @@ export const catalog: Product[] = [
     customization: "Heat Debossing"
   },
   {
-    id: "ceramic-travel-mug",
-    title: "Ceramic Travel Mug",
-    cat: "Drinkware",
-    img: "/images/products/drinkware/travel_mug.webp",
-    price: 17.99,
-    priceRange: "$6.20 - $10.99",
-    description: "Ergonomically designed high-fire ceramic mug featuring an insulating silicone grip sleeve and spill-resistant travel lid. Dishwasher and microwave safe.",
-    moq: 50,
-    customization: "Screen Print"
-  },
-  {
     id: "quarter-zip-windbreaker",
     title: "Quarter-Zip Windbreaker",
     cat: "Performance",
@@ -77,28 +66,6 @@ export const catalog: Product[] = [
     description: "Ultra-lightweight packable ripstop wind shell. Wind and water resistant with adjustable drawcord hem. Ideal for outdoor training or rugged lifestyle events.",
     moq: 25,
     customization: "Screen Print | Embroidery"
-  },
-  {
-    id: "premium-cotton-tee",
-    title: "Premium Cotton Tee",
-    cat: "Apparel",
-    img: "/images/products/apparel/tshirt.webp",
-    price: 18.99,
-    priceRange: "$4.50 - $8.99",
-    description: "100% ring-spun combed cotton tee. Super-soft hand feel with modern tailored fit. Reinforced shoulder-to-shoulder taping for shape retention over time.",
-    moq: 50,
-    customization: "Digital Print | Screen Print"
-  },
-  {
-    id: "eco-friendly-tote-bag",
-    title: "Eco-Friendly Tote Bag",
-    cat: "Accessories",
-    img: "/images/products/accessories/tote.webp",
-    price: 9.99,
-    priceRange: "$2.10 - $4.99",
-    description: "Crafted from 100% recycled organic cotton canvas. Heavy-duty construction with reinforced handles. Generous layout designed to support heavy volume branding.",
-    moq: 100,
-    customization: "Screen Print"
   },
   {
     id: "thermo-insulated-flask",
