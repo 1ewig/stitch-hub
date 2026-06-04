@@ -15,6 +15,13 @@
       "when": 1780560073559,
       "tag": "0001_left_white_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780560500000,
+      "tag": "0002_fix_auth_trigger",
+      "breakpoints": false
     }
   ]
 }
