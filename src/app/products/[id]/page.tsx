@@ -1,13 +1,10 @@
 "use client";
 
-import React, { use, useState } from "react";
+import React, { use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import LandingFooter from "../../../components/landing/LandingFooter";
-import { catalog } from "../../../data/products";
-import { useCartStore } from "../../../stores/cart-store";
-import { useProductDetail } from "../../../hooks/useProductDetail";
+import { useProductDetailPage } from "../../../hooks/useProductDetailPage";
 
 interface PageProps {
   params: Promise<{
@@ -17,20 +14,9 @@ interface PageProps {
 
 export default function ProductDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const router = useRouter();
-  
-  // Find product by id
-  const product = catalog.find((p) => p.id === id) || null;
+  const { product, notFound, detail } = useProductDetailPage(id);
 
-  const setIsOpen = useCartStore((s) => s.setIsOpen);
-
-  // Hook for B2B customization states
-  const detail = useProductDetail(product, () => {
-    // Open cart drawer and let user know it was added
-    setIsOpen(true);
-  });
-
-  if (!product) {
+  if (notFound) {
     return (
       <main className="min-h-screen bg-zinc-950 text-white flex flex-col justify-between font-sans">
         <section className="py-24 text-center max-w-xl mx-auto px-6">
