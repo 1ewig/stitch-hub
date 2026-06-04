@@ -71,9 +71,10 @@ export function useCheckoutForm() {
         router.push("/");
       }, 5000);
 
-    } catch (err: any) {
+    } catch (err) {
       console.error("Agent communication failure:", err);
-      alert(`AI Operations Node Exception: ${err.message || "Network Timeout"}`);
+      const message = err instanceof Error ? err.message : "Network Timeout";
+      alert(`AI Operations Node Exception: ${message}`);
     } finally {
       setIsSubmitting(false);
     }

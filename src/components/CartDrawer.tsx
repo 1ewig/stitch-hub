@@ -11,29 +11,33 @@ interface QuantityInputProps {
 }
 
 function CartItemQuantityInput({ item, updateQuantity }: QuantityInputProps) {
-  const [localVal, setLocalVal] = React.useState(item.quantity.toString());
+  const [editing, setEditing] = React.useState(false);
+  const [draft, setDraft] = React.useState(item.quantity.toString());
 
-  React.useEffect(() => {
-    setLocalVal(item.quantity.toString());
-  }, [item.quantity]);
+  const handleFocus = () => {
+    setDraft(item.quantity.toString());
+    setEditing(true);
+  };
 
   const handleBlur = () => {
-    let parsed = parseInt(localVal, 10);
+    setEditing(false);
+    let parsed = parseInt(draft, 10);
     const minVal = item.product.moq;
     if (isNaN(parsed) || parsed < minVal) {
       parsed = minVal;
     }
-    setLocalVal(parsed.toString());
+    const finalStr = parsed.toString();
+    setDraft(finalStr);
     updateQuantity(item.product.title, item.size, parsed);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalVal(e.target.value);
+    setDraft(e.target.value);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleBlur();
+      (e.target as HTMLInputElement).blur();
     }
   };
 
@@ -41,7 +45,8 @@ function CartItemQuantityInput({ item, updateQuantity }: QuantityInputProps) {
     <input
       type="number"
       min={item.product.moq}
-      value={localVal}
+      value={editing ? draft : item.quantity}
+      onFocus={handleFocus}
       onChange={handleChange}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}

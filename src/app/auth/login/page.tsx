@@ -144,7 +144,7 @@ export default function AuthPage() {
             className="text-xs text-zinc-500 hover:text-white transition-colors cursor-pointer"
           >
             {isLogin ? (
-              <span>Don't have an account? <span className="text-[#d4af37] font-medium hover:underline">Sign up</span></span>
+              <span>Don&apos;t have an account? <span className="text-[#d4af37] font-medium hover:underline">Sign up</span></span>
             ) : (
               <span>Already have an account? <span className="text-[#d4af37] font-medium hover:underline">Sign in</span></span>
             )}
