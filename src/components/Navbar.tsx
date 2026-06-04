@@ -1,27 +1,20 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
-import { useCartStore } from "../stores/cart-store"; 
+import { useNavbar } from "../hooks/useNavbar";
 
 export default function Navbar() {
-  const { data: session, status } = useSession();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const cartCount = useCartStore((s) => s.cart.reduce((acc, item) => acc + item.quantity, 0));
-  const setIsOpen = useCartStore((s) => s.setIsOpen);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const {
+    session,
+    status,
+    cartCount,
+    openCart,
+    dropdownOpen,
+    setDropdownOpen,
+    dropdownRef,
+    handleSignOut,
+  } = useNavbar();
 
   return (
     <nav className="w-full bg-black border-b border-zinc-900 sticky top-0 z-50 px-6 md:px-12 backdrop-blur-md">
@@ -48,9 +41,9 @@ export default function Navbar() {
         {/* Right Side: Cart Icon + Authentication */}
         <div className="flex items-center gap-6">
           
-          {/* 🎯 The Cart Button Trigger */}
+          {/* The Cart Button Trigger */}
           <button 
-            onClick={() => setIsOpen(true)}
+            onClick={openCart}
             className="relative p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer group"
           >
             <svg className="w-6 h-6 group-hover:scale-105 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,7 +86,7 @@ export default function Navbar() {
                   </Link>
 
                   <div className="border-t border-zinc-900 mt-1 pt-1">
-                    <button onClick={() => signOut({ callbackUrl: "/auth/login" })} className="w-full text-left px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer">
+                    <button onClick={handleSignOut} className="w-full text-left px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer">
                       Sign Out
                     </button>
                   </div>
