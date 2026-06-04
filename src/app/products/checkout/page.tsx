@@ -2,10 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import LandingFooter from "../../components/landing/LandingFooter";
-import CheckoutForm from "../../components/agentic-ai-inbox/agent-response-form";
-import CheckoutSidebar from "../../components/agentic-ai-inbox/agent-side-panel";
-import { useCheckoutForm } from "../../hooks/useCheckoutForm";
+import LandingFooter from "../../../components/landing/LandingFooter";
+import CheckoutForm from "../../../components/agentic-ai-inbox/agent-response-form";
+import CheckoutSidebar from "../../../components/agentic-ai-inbox/agent-side-panel";
+import { useCheckoutForm } from "../../../hooks/useCheckoutForm";
 
 export default function CheckoutPage() {
   const {

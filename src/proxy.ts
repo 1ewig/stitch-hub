@@ -6,7 +6,7 @@ export const proxy = auth((req) => {
 
   // Define our protected dashboard boundaries
   const isSecureRoute = 
-    pathname.startsWith("/checkout") || 
+    pathname.startsWith("/products/checkout") || 
     pathname.startsWith("/chat") || 
     pathname.startsWith("/admin");
 
@@ -18,5 +18,5 @@ export const proxy = auth((req) => {
 
 // Tells Next.js exactly which paths to trigger the proxy gatekeeper on
 export const config = {
-  matcher: ["/checkout/:path*", "/chat/:path*", "/admin/:path*"],
+  matcher: ["/products/checkout/:path*", "/chat/:path*", "/admin/:path*"],
 };

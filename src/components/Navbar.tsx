@@ -41,7 +41,7 @@ export default function Navbar() {
         <div className="hidden md:flex gap-8 text-sm font-medium text-zinc-400">
           <Link href="/" className="hover:text-white transition-colors">Home</Link>
           <Link href="/products" className="hover:text-white transition-colors">Products</Link>
-          <Link href="/checkout" className="hover:text-white transition-colors">AI Sourcing</Link>
+          <Link href="/products/checkout" className="hover:text-white transition-colors">AI Sourcing</Link>
           <Link href="/chat" className="hover:text-white transition-colors">Operations Chat</Link>
         </div>
 
@@ -88,7 +88,7 @@ export default function Navbar() {
                     Partner Profile
                   </Link>
 
-                  <Link href="/checkout" onClick={() => setDropdownOpen(false)} className="block w-full text-left px-4 py-2.5 text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors">
+                  <Link href="/products/checkout" onClick={() => setDropdownOpen(false)} className="block w-full text-left px-4 py-2.5 text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors">
                     Order Workspace
                   </Link>
 
