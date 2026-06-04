@@ -60,7 +60,7 @@ export const catalog: Product[] = [
     id: "thermo-insulated-flask",
     title: "Thermo Insulated Flask",
     cat: "Drinkware",
-    img: "/images/products/drinkware/flask.webp",
+    img: "/images/products/drinkware/flask.png",
     price: 27.99,
     priceRange: "$12.50 - $18.00",
     description: "Premium grade 18/8 stainless steel construction featuring leakproof loop cap. Designed to withstand demanding B2B shipping schedules and active usage.",
