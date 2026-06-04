@@ -46,17 +46,6 @@ export const catalog: Product[] = [
     customization: "High-Fidelity Embroidery"
   },
   {
-    id: "minimalist-leather-wallet",
-    title: "Minimalist Leather Wallet",
-    cat: "Accessories",
-    img: "/images/products/accessories/wallet.webp",
-    price: 24.99,
-    priceRange: "$11.00 - $15.50",
-    description: "Crafted from full-grain premium leather. Slim profile designed for front-pocket comfort. RFID blocking technology keeps data secure. Classic heat-deboss customization available.",
-    moq: 25,
-    customization: "Heat Debossing"
-  },
-  {
     id: "quarter-zip-windbreaker",
     title: "Quarter-Zip Windbreaker",
     cat: "Performance",
