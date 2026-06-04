@@ -1,0 +1,104 @@
+import { Product } from "../types";
+
+export const catalog: Product[] = [
+  {
+    title: "Gildan 18500 Hoodie",
+    cat: "Apparel",
+    img: "/images/products/apparel/hoodie.webp",
+    price: 39.99, 
+    priceRange: "$14.20 - $22.50", 
+    description: "Heavyweight 8.0 oz cotton blend fleece featuring double-needle stitching, double-lined hood with dyed-to-match drawcord. Highly durable and optimized for screen printing or embroidery.",
+    moq: 25,
+    customization: "Screen Print | Embroidery"
+  },
+  {
+    title: "Matte Black Tumbler",
+    cat: "Drinkware",
+    img: "/images/products/drinkware/tumbler.webp",
+    price: 19.99,
+    priceRange: "$8.50 - $12.99",
+    description: "Double-wall vacuum insulated stainless steel tumbler. Keeps drinks cold for 24 hours or hot for 12 hours. Matte powder-coat finish ideal for clean laser engraving.",
+    moq: 50,
+    customization: "Laser Engraved"
+  },
+  {
+    title: "Under Armour Polo",
+    cat: "Performance",
+    img: "/images/products/performance/polo.webp",
+    price: 29.99,
+    priceRange: "$16.80 - $24.00",
+    description: "High-performance tech fabric engineered for breathability and rapid drying. Anti-odor technology prevents the growth of odor-causing microbes. Perfect for premium corporate branding.",
+    moq: 25,
+    customization: "Embroidery | Heat Transfer"
+  },
+  {
+    title: "Tech Organizer",
+    cat: "Accessories",
+    img: "/images/products/accessories/pouch.webp",
+    price: 14.99,
+    priceRange: "$5.20 - $9.50",
+    description: "Water-resistant woven fabric organizer with elastic loops, zip pockets, and segmented compartments. Sleek solution to keep cords, chargers, and tech accessories secure on the go.",
+    moq: 50,
+    customization: "High-Fidelity Embroidery"
+  },
+  {
+    title: "Minimalist Leather Wallet",
+    cat: "Accessories",
+    img: "/images/products/accessories/wallet.webp",
+    price: 24.99,
+    priceRange: "$11.00 - $15.50",
+    description: "Crafted from full-grain premium leather. Slim profile designed for front-pocket comfort. RFID blocking technology keeps data secure. Classic heat-deboss customization available.",
+    moq: 25,
+    customization: "Heat Debossing"
+  },
+  {
+    title: "Ceramic Travel Mug",
+    cat: "Drinkware",
+    img: "/images/products/drinkware/travel_mug.webp",
+    price: 17.99,
+    priceRange: "$6.20 - $10.99",
+    description: "Ergonomically designed high-fire ceramic mug featuring an insulating silicone grip sleeve and spill-resistant travel lid. Dishwasher and microwave safe.",
+    moq: 50,
+    customization: "Screen Print"
+  },
+  {
+    title: "Quarter-Zip Windbreaker",
+    cat: "Performance",
+    img: "/images/products/performance/windbreaker.webp",
+    price: 49.99,
+    priceRange: "$22.00 - $31.50",
+    description: "Ultra-lightweight packable ripstop wind shell. Wind and water resistant with adjustable drawcord hem. Ideal for outdoor training or rugged lifestyle events.",
+    moq: 25,
+    customization: "Screen Print | Embroidery"
+  },
+  {
+    title: "Premium Cotton Tee",
+    cat: "Apparel",
+    img: "/images/products/apparel/tshirt.webp",
+    price: 18.99,
+    priceRange: "$4.50 - $8.99",
+    description: "100% ring-spun combed cotton tee. Super-soft hand feel with modern tailored fit. Reinforced shoulder-to-shoulder taping for shape retention over time.",
+    moq: 50,
+    customization: "Digital Print | Screen Print"
+  },
+  {
+    title: "Eco-Friendly Tote Bag",
+    cat: "Accessories",
+    img: "/images/products/accessories/tote.webp",
+    price: 9.99,
+    priceRange: "$2.10 - $4.99",
+    description: "Crafted from 100% recycled organic cotton canvas. Heavy-duty construction with reinforced handles. Generous layout designed to support heavy volume branding.",
+    moq: 100,
+    customization: "Screen Print"
+  },
+  {
+    title: "Thermo Insulated Flask",
+    cat: "Drinkware",
+    img: "/images/products/drinkware/flask.webp",
+    price: 27.99,
+    priceRange: "$12.50 - $18.00",
+    description: "Premium grade 18/8 stainless steel construction featuring leakproof loop cap. Designed to withstand demanding B2B shipping schedules and active usage.",
+    moq: 50,
+    customization: "Laser Engraved | Screen Print"
+  }
+];
