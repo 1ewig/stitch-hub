@@ -1,39 +1,25 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
-import Header from "../../components/Header";
 import LandingFooter from "../../components/landing/LandingFooter";
 import ProductFilters from "../../components/products/ProductFilters";
 import ProductCard from "../../components/products/ProductCard";
-import ProductDetailModal from "../../components/products/ProductDetailModal";
 import { catalog } from "../../data/products";
-import { useCartStore } from "../../stores/cart-store";
 import { useProductFilterStore, getFilteredProducts, CATEGORIES } from "../../stores/product-filter-store";
-import { useProductDetail } from "../../hooks/useProductDetail";
 
 export default function ProductsPage() {
-  const pathname = usePathname();
-  const cartCount = useCartStore((s) => s.cart.reduce((acc, item) => acc + item.quantity, 0));
-  const setIsOpen = useCartStore((s) => s.setIsOpen);
   const selectedCategory = useProductFilterStore((s) => s.selectedCategory);
   const setSelectedCategory = useProductFilterStore((s) => s.setSelectedCategory);
   const searchQuery = useProductFilterStore((s) => s.searchQuery);
   const setSearchQuery = useProductFilterStore((s) => s.setSearchQuery);
   const sortBy = useProductFilterStore((s) => s.sortBy);
   const setSortBy = useProductFilterStore((s) => s.setSortBy);
-  const selectedProduct = useProductFilterStore((s) => s.selectedProduct);
-  const setSelectedProduct = useProductFilterStore((s) => s.setSelectedProduct);
   const clearFilters = useProductFilterStore((s) => s.clearFilters);
 
   const filteredProducts = getFilteredProducts(catalog, selectedCategory, searchQuery, sortBy);
-  const detail = useProductDetail(selectedProduct, () => setSelectedProduct(null));
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
-      {/* Navigation Header */}
-      <Header cartCount={cartCount} currentPath={pathname} onCartClick={() => setIsOpen(true)} />
-
       {/* Main Container */}
       <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto">
         {/* Page title with nice gradient accent */}
@@ -87,7 +73,6 @@ export default function ProductsPage() {
               <ProductCard
                 key={i}
                 product={product}
-                onClick={() => setSelectedProduct(product)}
               />
             ))}
           </div>
@@ -96,23 +81,6 @@ export default function ProductsPage() {
 
       {/* Footer */}
       <LandingFooter />
-
-      {/* Product Sourcing Spec modal overlay */}
-      {selectedProduct && (
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          size={detail.size}
-          customNotes={detail.customNotes}
-          minQty={detail.minQty}
-          currentQty={detail.currentQty}
-          isApparel={detail.isApparel}
-          setQuantity={detail.setQuantity}
-          setSize={detail.setSize}
-          setCustomNotes={detail.setCustomNotes}
-          handleAddToCart={detail.handleAddToCart}
-        />
-      )}
     </main>
   );
 }

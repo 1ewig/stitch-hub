@@ -2,6 +2,7 @@ import { Product } from "../types";
 
 export const catalog: Product[] = [
   {
+    id: "gildan-18500-hoodie",
     title: "Gildan 18500 Hoodie",
     cat: "Apparel",
     img: "/images/products/apparel/hoodie.webp",
@@ -12,6 +13,7 @@ export const catalog: Product[] = [
     customization: "Screen Print | Embroidery"
   },
   {
+    id: "matte-black-tumbler",
     title: "Matte Black Tumbler",
     cat: "Drinkware",
     img: "/images/products/drinkware/tumbler.webp",
@@ -22,6 +24,7 @@ export const catalog: Product[] = [
     customization: "Laser Engraved"
   },
   {
+    id: "under-armour-polo",
     title: "Under Armour Polo",
     cat: "Performance",
     img: "/images/products/performance/polo.webp",
@@ -32,6 +35,7 @@ export const catalog: Product[] = [
     customization: "Embroidery | Heat Transfer"
   },
   {
+    id: "tech-organizer",
     title: "Tech Organizer",
     cat: "Accessories",
     img: "/images/products/accessories/pouch.webp",
@@ -42,6 +46,7 @@ export const catalog: Product[] = [
     customization: "High-Fidelity Embroidery"
   },
   {
+    id: "minimalist-leather-wallet",
     title: "Minimalist Leather Wallet",
     cat: "Accessories",
     img: "/images/products/accessories/wallet.webp",
@@ -52,6 +57,7 @@ export const catalog: Product[] = [
     customization: "Heat Debossing"
   },
   {
+    id: "ceramic-travel-mug",
     title: "Ceramic Travel Mug",
     cat: "Drinkware",
     img: "/images/products/drinkware/travel_mug.webp",
@@ -62,6 +68,7 @@ export const catalog: Product[] = [
     customization: "Screen Print"
   },
   {
+    id: "quarter-zip-windbreaker",
     title: "Quarter-Zip Windbreaker",
     cat: "Performance",
     img: "/images/products/performance/windbreaker.webp",
@@ -72,6 +79,7 @@ export const catalog: Product[] = [
     customization: "Screen Print | Embroidery"
   },
   {
+    id: "premium-cotton-tee",
     title: "Premium Cotton Tee",
     cat: "Apparel",
     img: "/images/products/apparel/tshirt.webp",
@@ -82,6 +90,7 @@ export const catalog: Product[] = [
     customization: "Digital Print | Screen Print"
   },
   {
+    id: "eco-friendly-tote-bag",
     title: "Eco-Friendly Tote Bag",
     cat: "Accessories",
     img: "/images/products/accessories/tote.webp",
@@ -92,6 +101,7 @@ export const catalog: Product[] = [
     customization: "Screen Print"
   },
   {
+    id: "thermo-insulated-flask",
     title: "Thermo Insulated Flask",
     cat: "Drinkware",
     img: "/images/products/drinkware/flask.webp",
