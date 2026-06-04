@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/authentication/auth";
+import { auth } from "@/app/auth/auth";
 import { db } from "@/db";
 import { emailLogs, invoices } from "@/db/schema";
 
