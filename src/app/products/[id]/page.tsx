@@ -158,19 +158,6 @@ export default function ProductDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Custom Logo Upload Spec */}
-            <div className="mb-8">
-              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
-                Branding Specifications
-              </label>
-              <textarea
-                value={detail.customNotes}
-                onChange={(e) => detail.setCustomNotes(e.target.value)}
-                placeholder="E.g., Front chest logo print, metallic gold embroider detail on sleeve..."
-                className="w-full h-24 bg-zinc-900/50 border border-zinc-800 rounded-2xl px-4 py-3 text-sm text-zinc-200 placeholder-zinc-600 focus:border-[#d4af37] focus:outline-none resize-none transition-colors"
-              />
-            </div>
-
             {/* B2B Sourcing Tier pricing discounts preview */}
             <div className="mb-8 bg-zinc-950/60 border border-zinc-900/80 rounded-2xl p-5">
               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">

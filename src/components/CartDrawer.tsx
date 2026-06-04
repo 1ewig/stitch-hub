@@ -5,6 +5,51 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CartItem } from "../types";
 
+interface QuantityInputProps {
+  item: CartItem;
+  updateQuantity: (title: string, size: string, quantity: number) => void;
+}
+
+function CartItemQuantityInput({ item, updateQuantity }: QuantityInputProps) {
+  const [localVal, setLocalVal] = React.useState(item.quantity.toString());
+
+  React.useEffect(() => {
+    setLocalVal(item.quantity.toString());
+  }, [item.quantity]);
+
+  const handleBlur = () => {
+    let parsed = parseInt(localVal, 10);
+    const minVal = item.product.moq;
+    if (isNaN(parsed) || parsed < minVal) {
+      parsed = minVal;
+    }
+    setLocalVal(parsed.toString());
+    updateQuantity(item.product.title, item.size, parsed);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalVal(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleBlur();
+    }
+  };
+
+  return (
+    <input
+      type="number"
+      min={item.product.moq}
+      value={localVal}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      className="w-16 bg-transparent text-center text-xs font-semibold text-white focus:outline-none border-x border-zinc-800 h-full py-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+    />
+  );
+}
+
 interface CartDrawerProps {
   cart: CartItem[];
   isOpen: boolean;
@@ -136,9 +181,10 @@ export default function CartDrawer({
                           >
                             -5
                           </button>
-                          <span className="px-3 text-xs font-semibold text-white">
-                            {item.quantity} units
-                          </span>
+                          <CartItemQuantityInput
+                            item={item}
+                            updateQuantity={updateQuantity}
+                          />
                           <button
                             onClick={() =>
                               updateQuantity(
