@@ -79,29 +79,29 @@ export default function Navbar() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-3 w-56 bg-[#121316] border border-zinc-800 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] py-2 z-50 animate-scaleIn">
                   <div className="px-4 py-3 border-b border-zinc-900">
-                    <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Authenticated Partner</p>
+                    <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Partner Account</p>
                     <p className="text-sm font-semibold text-white truncate mt-0.5">{session.user.name}</p>
                     <p className="text-xs text-zinc-400 truncate mt-0.5">{session.user.email}</p>
                   </div>
 
                   <Link href="/profile" onClick={() => setDropdownOpen(false)} className="block w-full text-left px-4 py-2.5 text-xs font-medium text-zinc-300 hover:text-[#d4af37] hover:bg-white/5 transition-colors">
-                    Partner Profile <span className="text-zinc-600 text-[10px] ml-1">(Static Holder)</span>
+                    Partner Profile
                   </Link>
 
                   <Link href="/checkout" onClick={() => setDropdownOpen(false)} className="block w-full text-left px-4 py-2.5 text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors">
-                    B2B Order Workspace
+                    Order Workspace
                   </Link>
 
                   <div className="border-t border-zinc-900 mt-1 pt-1">
-                    <button onClick={() => signOut({ callbackUrl: "/login" })} className="w-full text-left px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer">
-                      Disconnect Hub Session
+                    <button onClick={() => signOut({ callbackUrl: "/auth/login" })} className="w-full text-left px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer">
+                      Sign Out
                     </button>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <Link href="/login" className="text-xs tracking-wider uppercase font-bold text-black bg-[#d4af37] hover:bg-[#ebd06f] px-5 py-2.5 rounded-full transition-all duration-300 shadow-[0_4px_15px_rgba(212,175,55,0.15)]">
+            <Link href="/auth/login" className="text-xs tracking-wider uppercase font-bold text-black bg-[#d4af37] hover:bg-[#ebd06f] px-5 py-2.5 rounded-full transition-all duration-300 shadow-[0_4px_15px_rgba(212,175,55,0.15)]">
               Sign In
             </Link>
           )}

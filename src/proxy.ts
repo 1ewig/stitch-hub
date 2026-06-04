@@ -12,7 +12,7 @@ export const proxy = auth((req) => {
 
   // If trying to access a secure dashboard and aren't logged in, redirect to login
   if (isSecureRoute && !isLoggedIn) {
-    return Response.redirect(new URL("/login", req.nextUrl));
+    return Response.redirect(new URL("/auth/login", req.nextUrl));
   }
 });
 

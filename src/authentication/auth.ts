@@ -81,6 +81,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   pages: {
-    signIn: "/login", // Points NextAuth to login page route
+    signIn: "/auth/login", // Points NextAuth to login page route
   },
 });
