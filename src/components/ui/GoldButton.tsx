@@ -11,6 +11,7 @@ interface GoldButtonProps {
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   shimmer?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 const sizeStyles: Record<string, string> = {
@@ -28,6 +29,7 @@ export default function GoldButton({
   size = "lg",
   loading = false,
   shimmer = true,
+  type = "button",
 }: GoldButtonProps) {
   const base =
     "relative group overflow-hidden rounded-full font-bold text-black bg-linear-to-r from-[#b38e20] via-[#ebd06f] to-[#b38e20] bg-size-[200%_auto] hover:bg-right transition-all duration-500 flex items-center justify-center disabled:opacity-40 cursor-pointer";
@@ -64,7 +66,7 @@ export default function GoldButton({
   }
 
   return (
-    <button onClick={onClick} disabled={disabled} className={btnClass}>
+    <button onClick={onClick} disabled={disabled} type={type} className={btnClass}>
       {content}
     </button>
   );
