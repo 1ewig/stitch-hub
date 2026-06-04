@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/app/auth/auth";
+import { createClient } from "@/utils/supabase/server";
 import { db } from "@/db";
 import { emailLogs, invoices } from "@/db/schema";
 
-export const POST = auth(async function POST(req) {
-  if (!req.auth || !req.auth.user || !req.auth.user.id) {
+export async function POST(req: Request) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized access blocked." }, { status: 401 });
   }
 
@@ -16,11 +19,12 @@ export const POST = auth(async function POST(req) {
       return NextResponse.json({ error: "Cannot initialize sourcing matrix with an empty cart." }, { status: 400 });
     }
 
-    const currentUserId = req.auth.user.id;
+    const currentUserId = user.id;
+    const userName = user.user_metadata?.name || user.email?.split("@")[0] || "User";
 
     // Build context layout containing items snapshot data for Qwen to evaluate
     const userContextPrompt = `
-      Customer Identity: ${req.auth.user.name}
+      Customer Identity: ${userName}
       Sourcing Email Context Target: ${toEmail}
       Subject Title Line: ${subject}
       
@@ -89,4 +93,4 @@ export const POST = auth(async function POST(req) {
     console.error("Critical core failure:", error);
     return NextResponse.json({ error: "Internal agent reasoning breakdown." }, { status: 500 });
   }
-});
+}

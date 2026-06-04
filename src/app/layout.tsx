@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
+import SupabaseProvider from "@/providers/SupabaseProvider";
 import Navbar from "@/components/Navbar";
 import CartDrawerWrapper from "../components/CartDrawerWrapper";
 import "./globals.css";
@@ -17,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white antialiased">
-        {/* SessionProvider broadcasts user authentication states down the entire application tree */}
-        <SessionProvider>
+        {/* SupabaseProvider broadcasts user authentication states down the entire application tree */}
+        <SupabaseProvider>
           {/* Universal Dark-Luxury Header Controller */}
           <Navbar />
           
@@ -26,7 +26,7 @@ export default function RootLayout({
           
           {/* Your friend's sliding cart system element */}
           <CartDrawerWrapper />
-        </SessionProvider>
+        </SupabaseProvider>
       </body>
     </html>
   );

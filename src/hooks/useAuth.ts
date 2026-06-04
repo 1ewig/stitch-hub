@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { registerUser } from "../app/auth/signup/register";
+import { createClient } from "../utils/supabase/client";
 
 export function useAuth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,16 +19,17 @@ export function useAuth() {
     setSuccess("");
     setLoading(true);
 
+    const supabase = createClient();
+
     if (isLogin) {
       try {
-        const res = await signIn("credentials", {
-          redirect: false,
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
-        if (res?.error) {
-          setError("Invalid email or password. Please try again.");
+        if (signInError) {
+          setError(signInError.message || "Invalid email or password. Please try again.");
           setLoading(false);
         } else {
           setSuccess("Success! Directing to workspace...");
@@ -44,26 +44,41 @@ export function useAuth() {
       }
     } else {
       try {
-        const formData = new FormData();
-        formData.append("name", name);
-        formData.append("email", email);
-        formData.append("password", password);
+        // Registering a user through Supabase Auth
+        // Pass name in user metadata options
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name: name,
+              role: "client", // Assigns them the default B2B client tier in metadata
+            },
+          },
+        });
 
-        const res = await registerUser(formData);
-
-        if (res?.error) {
-          setError(res.error);
+        if (signUpError) {
+          setError(signUpError.message || "Registration failed.");
+          setLoading(false);
         } else {
-          setSuccess("Account created successfully! Switching to sign in...");
-          setTimeout(() => {
-            setIsLogin(true);
-            setSuccess("");
-            setPassword("");
-          }, 2000);
+          // Note: If email confirmation is enabled on Supabase, the user might need to check their inbox.
+          // By default, if auto-confirm is enabled, it returns the user directly.
+          if (data.session) {
+            setSuccess("Account created and logged in! Directing to workspace...");
+            setTimeout(() => {
+              window.location.href = "/";
+            }, 800);
+          } else {
+            setSuccess("Account created successfully! Please check your email for verification, or switch to sign in.");
+            setTimeout(() => {
+              setIsLogin(true);
+              setSuccess("");
+              setPassword("");
+            }, 3000);
+          }
         }
       } catch {
-        setError("Database communication failure during registration.");
-      } finally {
+        setError("Supabase communication failure during registration.");
         setLoading(false);
       }
     }

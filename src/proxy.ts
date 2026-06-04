@@ -1,8 +1,11 @@
-import { auth } from "@/app/auth/auth";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { updateSession } from "@/utils/supabase/middleware";
 
-export const proxy = auth((req) => {
-  const isLoggedIn = !!req.auth;
-  const { pathname } = req.nextUrl;
+export async function proxy(request: NextRequest) {
+  const { supabaseResponse, user } = await updateSession(request);
+  const isLoggedIn = !!user;
+  const { pathname } = request.nextUrl;
 
   // Define our protected dashboard boundaries
   const isSecureRoute = 
@@ -12,9 +15,11 @@ export const proxy = auth((req) => {
 
   // If trying to access a secure dashboard and aren't logged in, redirect to login
   if (isSecureRoute && !isLoggedIn) {
-    return Response.redirect(new URL("/auth/login", req.nextUrl));
+    return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
   }
-});
+
+  return supabaseResponse;
+}
 
 // Tells Next.js exactly which paths to trigger the proxy gatekeeper on
 export const config = {
