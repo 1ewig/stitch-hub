@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
 
 export function useAuth() {
@@ -12,6 +12,19 @@ export function useAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Check if email was remembered on mount
+  useEffect(() => {
+    try {
+      const savedEmail = localStorage.getItem("remembered_email");
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setRememberMe(true);
+      }
+    } catch (e) {
+      console.warn("Failed to read from localStorage:", e);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +45,17 @@ export function useAuth() {
           setError(signInError.message || "Invalid email or password. Please try again.");
           setLoading(false);
         } else {
+          // Handle "Remember me" on successful login
+          try {
+            if (rememberMe) {
+              localStorage.setItem("remembered_email", email);
+            } else {
+              localStorage.removeItem("remembered_email");
+            }
+          } catch (e) {
+            console.warn("Failed to write to localStorage:", e);
+          }
+
           setSuccess("Success! Directing to workspace...");
 
           setTimeout(() => {
