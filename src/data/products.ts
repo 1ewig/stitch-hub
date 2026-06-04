@@ -110,5 +110,60 @@ export const catalog: Product[] = [
     description: "Premium grade 18/8 stainless steel construction featuring leakproof loop cap. Designed to withstand demanding B2B shipping schedules and active usage.",
     moq: 50,
     customization: "Laser Engraved | Screen Print"
+  },
+  {
+    id: "stitch-hub-heavyweight-hoodie",
+    title: "Premium Heavyweight Hoodie (Stitch Hub Original)",
+    cat: "Apparel",
+    img: "/images/products/apparel/premium_heavyweight_hoodie.png",
+    price: 49.99,
+    priceRange: "$24.50 - $39.99",
+    description: "Super heavyweight premium fleece designed for maximum comfort and structure. Perfect for casual corporate wear and high-end brand merchandising.",
+    moq: 25,
+    customization: "Screen Print | Puff Print | Chest Embroidery"
+  },
+  {
+    id: "stitch-hub-corporate-polo",
+    title: "Minimalist Corporate Polo (Stitch Hub Original)",
+    cat: "Apparel",
+    img: "/images/products/apparel/corporate_polo.png",
+    price: 34.99,
+    priceRange: "$18.00 - $28.50",
+    description: "Sleek, structured polo featuring premium knit collar and cuffs. Tailored specifically for modern uniforming and formal corporate gifting.",
+    moq: 25,
+    customization: "Precision Embroidery"
+  },
+  {
+    id: "stitch-hub-insulated-tumbler",
+    title: "Insulated Matte Tumbler (Stitch Hub Original)",
+    cat: "Drinkware",
+    img: "/images/products/drinkware/matte_tumbler.png",
+    price: 22.99,
+    priceRange: "$9.99 - $14.99",
+    description: "Double-wall vacuum insulated tumbler with a rich matte hardware finish. Supports 360° cylindrical rotary printing or ultra-clean laser engraving.",
+    moq: 50,
+    customization: "Rotary Print | Laser Engraved"
+  },
+  {
+    id: "stitch-hub-tech-organizer",
+    title: "EDC Tech Organizer Pouch (Stitch Hub Original)",
+    cat: "Accessories",
+    img: "/images/products/accessories/tech_organizer.png",
+    price: 19.99,
+    priceRange: "$8.00 - $12.50",
+    description: "Tactical and functional EDC tech pouch with complex fabric textures, elastic loops, and zip pockets. Ideal for carrying cables, power banks, and cards.",
+    moq: 50,
+    customization: "Rubber Patch | Woven Label | Heat Transfer"
+  },
+  {
+    id: "stitch-hub-acoustic-panel",
+    title: "Framed Acoustic Art Panel (Stitch Hub Original)",
+    cat: "Accessories",
+    img: "/images/products/accessories/acoustic_panel.png",
+    price: 89.99,
+    priceRange: "$45.00 - $69.00",
+    description: "Interior tech-office acoustic panels featuring premium sound dampening insulation, wrapped in custom full-bleed digital canvas with sleek framing options.",
+    moq: 10,
+    customization: "Full-Bleed Digital Print | Custom Color Frame"
   }
 ];
