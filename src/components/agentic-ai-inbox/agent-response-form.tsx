@@ -1,7 +1,12 @@
 "use client";
 
+// ──────────────────────────────────────────────
+// agent-response-form.tsx — Agent email response composition form with escalation support
+// ──────────────────────────────────────────────
+
 import React from "react";
 
+// Props for the agent response composition form
 interface CheckoutFormProps {
   toEmail: string;
   setToEmail: (val: string) => void;
@@ -14,6 +19,7 @@ interface CheckoutFormProps {
   setAttachedFiles: (files: File[]) => void;
 }
 
+// Agent response email form — composes To/Subject/message and handles file attachments
 export default function CheckoutForm({
   toEmail,
   setToEmail,
@@ -27,6 +33,7 @@ export default function CheckoutForm({
 }: CheckoutFormProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  // Append newly selected files to the existing attached files array
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
@@ -34,14 +41,15 @@ export default function CheckoutForm({
     }
   };
   
-  // 🔍 Check if your custom Qwen model triggered an engineering escalation freeze
+  // Detect escalation from AI response — checks for PAUSE tag or admin escalation keyword
   const isEscalated = message.includes("<action>PAUSE</action>") || message.includes("escalate_to_admin");
 
+  // Render success confirmation when request is submitted, otherwise show the form
   if (isSuccess) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center px-4 py-16 animate-scaleIn">
         {isEscalated ? (
-          // 🔥 LUXURY CRITICAL ESCALATION PRESENTATION GRID
+          // Escalated success presentation — warning styling with pulse animation for paused requests
           <>
             <div className="h-20 w-20 rounded-full bg-red-500/10 flex items-center justify-center mb-6 border border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.15)] animate-pulse">
               <svg className="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -56,7 +64,7 @@ export default function CheckoutForm({
             </p>
           </>
         ) : (
-          // STANDARD SUCCESS PRESENTATION GRID
+          // Standard success presentation — gold checkmark and confirmation message
           <>
             <div className="h-20 w-20 rounded-full bg-[#d4af37]/10 flex items-center justify-center mb-6 border border-[#d4af37]/30">
               <svg className="h-10 w-10 text-[#d4af37]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -77,7 +85,7 @@ export default function CheckoutForm({
 
   return (
     <div className="space-y-6 animate-scaleIn">
-      {/* To: Input */}
+      {/* Recipient email input */}
       <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
           To: <span className="text-zinc-300 font-semibold">{toEmail}</span>
@@ -91,7 +99,7 @@ export default function CheckoutForm({
         />
       </div>
 
-      {/* Subject Input */}
+      {/* Subject line input */}
       <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
           Subject:
@@ -105,7 +113,7 @@ export default function CheckoutForm({
         />
       </div>
 
-      {/* Editor Rich text formatting toolbar */}
+      {/* Rich text formatting toolbar — bold, italic, underline etc */}
       <div className="flex items-center gap-1.5 border-b border-zinc-800 pb-3">
         {["B", "I", "U", "U2", ">", "S", "⋮"].map((action, i) => (
           <button
@@ -118,7 +126,7 @@ export default function CheckoutForm({
         ))}
       </div>
 
-      {/* Editor Textarea */}
+      {/* Message body textarea — applies red styling when escalated, default gold focus otherwise */}
       <div>
         <textarea
           value={message}
@@ -131,7 +139,7 @@ export default function CheckoutForm({
         />
       </div>
 
-      {/* Attach Sourcing Files Mockup */}
+      {/* File attachment drop zone — click triggers hidden file input for mockups/worksheets */}
       <div>
         <input
           type="file"

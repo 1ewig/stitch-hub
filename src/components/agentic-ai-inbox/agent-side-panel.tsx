@@ -1,19 +1,25 @@
 "use client";
 
+// ──────────────────────────────────────────────
+// agent-side-panel.tsx — Side panel for agent inbox with submit, suggestions, cart & files
+// ──────────────────────────────────────────────
+
 import React from "react";
 import type { CartItem } from "../../types";
 import GoldButton from "../ui/GoldButton";
 
+// Props for the side panel — cart, submission state, escalation context, and attachments
 interface CheckoutSidebarProps {
   cart: CartItem[];
   isSubmitting: boolean;
   isSuccess: boolean;
   handleSubmit: () => void;
-  message: string; // 🎯 Added message string context parameter
+  message: string; // Message text used to detect escalation patterns
   attachedFiles: File[];
   setAttachedFiles: (files: File[]) => void;
 }
 
+// Side panel — handles form submission, displays sourcing cart, attached files, and AI suggestions
 export default function CheckoutSidebar({
   cart,
   isSubmitting,
@@ -24,11 +30,12 @@ export default function CheckoutSidebar({
   setAttachedFiles,
 }: CheckoutSidebarProps) {
   
-  // 🔍 Read if the active string array contains an escalation callout
+  // Detect escalation from AI response — checks for PAUSE action tag or admin escalation keyword
   const isEscalated = message.includes("<action>PAUSE</action>") || message.includes("escalate_to_admin");
 
   return (
     <div className="space-y-6">
+      {/* Submit button — red glow when escalated, gold glow otherwise. Disabled while submitting or cart empty */}
       <GoldButton
         disabled={isSubmitting || isSuccess || cart.length === 0}
         onClick={handleSubmit}
@@ -38,7 +45,7 @@ export default function CheckoutSidebar({
         {isSubmitting ? "Analyzing Sourcing Specs..." : "Generate Agentic Sales Response"}
       </GoldButton>
 
-      {/* AI suggestions card */}
+      {/* AI-suggested actions card — prepopulated follow-ups the agent can click */}
       <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-3.5">
         <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
           AI Sourcing Suggestions
@@ -53,7 +60,7 @@ export default function CheckoutSidebar({
         </ul>
       </div>
 
-      {/* Order Details summary card */}
+      {/* Sourcing specifications summary — cart items with scroll, client company, and status badge */}
       <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-4">
         <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
           Sourcing Specifications
@@ -61,6 +68,7 @@ export default function CheckoutSidebar({
         {cart.length === 0 ? (
           <p className="text-sm text-zinc-500 italic">No products added in sourcing list.</p>
         ) : (
+          {/* Scrollable cart item list — each row shows product, size, and quantity */}
           <div className="space-y-3 max-h-55 overflow-y-auto pr-1">
             {cart.map((item, index) => (
               <div
@@ -83,7 +91,7 @@ export default function CheckoutSidebar({
         <div className="flex justify-between items-center text-xs text-zinc-400">
           <span>Sourcing Status</span>
           
-          {/* 🔥 Dynamic Status Badge Configuration */}
+          {/* Dynamic status badge — shows "Escalated to Admin" (red/pulse) or "Draft Sourcing" (green/ping) */}
           {isEscalated ? (
             <span className="font-bold text-red-400 flex items-center gap-1.5 uppercase text-[10px] tracking-wider bg-red-950/30 border border-red-900/40 px-2 py-0.5 rounded">
               <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
@@ -98,7 +106,7 @@ export default function CheckoutSidebar({
         </div>
       </div>
 
-      {/* Attached Assets AI-parsed */}
+      {/* Attached files section — type detection for image/sheet/PDF, with remove button per file */}
       {attachedFiles.length > 0 && (
         <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-3">
           <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
@@ -106,6 +114,7 @@ export default function CheckoutSidebar({
           </h4>
           <div className="space-y-2.5">
             {attachedFiles.map((file, i) => {
+              // Detect file type by MIME or extension — currently supports Image, Sheet, PDF, and generic File
               const isImage = file.type.startsWith("image/") || file.name.endsWith(".png") || file.name.endsWith(".jpg") || file.name.endsWith(".jpeg") || file.name.endsWith(".webp");
               const isSheet = file.name.endsWith(".xlsx") || file.name.endsWith(".xls") || file.name.endsWith(".csv");
               let typeLabel = "File";
@@ -123,6 +132,7 @@ export default function CheckoutSidebar({
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-zinc-600 uppercase font-bold">{typeLabel}</span>
+                    {/* Remove file from attachment list by filtering out this index */}
                     <button
                       onClick={() => setAttachedFiles(attachedFiles.filter((_, idx) => idx !== i))}
                       className="text-zinc-500 hover:text-red-400 transition-colors p-0.5 cursor-pointer rounded hover:bg-zinc-900"
