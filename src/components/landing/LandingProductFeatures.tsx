@@ -1,5 +1,10 @@
+// ──────────────────────────────────────────────
+// LandingProductFeatures — Alternating image/text feature rows for product highlights
+// ──────────────────────────────────────────────
+
 import Image from "next/image";
 
+/** Two feature rows alternating between image‑left and image‑right layout */
 export default function LandingProductFeatures() {
   return (
     <section className="bg-[#f5f2eb] py-24 px-6 md:px-12 text-zinc-900">

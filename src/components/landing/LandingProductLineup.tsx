@@ -1,5 +1,10 @@
+// ──────────────────────────────────────────────
+// LandingProductLineup — Product grid with four category cards and hover overlay
+// ──────────────────────────────────────────────
+
 import Image from "next/image";
 
+/** 2×2 product grid showing category thumbnails with hover‑reveal gradient */
 export default function LandingProductLineup() {
   return (
     <section className="bg-zinc-950 py-24 px-6 md:px-12 border-t border-zinc-900">

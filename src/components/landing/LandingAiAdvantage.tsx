@@ -1,3 +1,8 @@
+// ──────────────────────────────────────────────
+// LandingAiAdvantage — Three‑card grid highlighting AI‑powered features with glassmorphism
+// ──────────────────────────────────────────────
+
+/** Three glassmorphism cards demonstrating AI capabilities */
 export default function LandingAiAdvantage() {
   return (
     <section className="bg-black py-24 px-6 md:px-12 relative overflow-hidden">
@@ -7,6 +12,7 @@ export default function LandingAiAdvantage() {
       <div className="max-w-7xl mx-auto relative z-10">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-white">Our AI Advantage</h2>
         
+        {/* Card Data Mapping — inline array of AI feature cards rendered in a 3‑column grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             {
@@ -25,6 +31,7 @@ export default function LandingAiAdvantage() {
               icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
             }
           ].map((card, i) => (
+            {/* Glassmorphism Card — translucent glass bg with backdrop blur, gold border on hover */}
             <div key={i} className="bg-white/5 backdrop-blur-xl p-8 rounded-2xl border border-white/10 hover:bg-white/10 hover:border-[#d4af37]/40 transition-all duration-300">
               <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center mb-6 border border-white/5 shadow-inner">
                 <svg className="w-5 h-5 text-[#d4af37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">

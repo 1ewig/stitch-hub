@@ -1,5 +1,10 @@
+// ──────────────────────────────────────────────
+// LandingCta — Call‑to‑action section with headline and gold button
+// ──────────────────────────────────────────────
+
 import Link from "next/link";
 
+/** Simple CTA banner: heading + gold link button to /products */
 export default function LandingCta() {
   return (
     <section className="bg-black pt-24 px-6 border-t border-zinc-900">

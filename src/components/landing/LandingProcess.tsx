@@ -1,3 +1,7 @@
+// ──────────────────────────────────────────────
+// LandingProcess — Step‑by‑step B2B sourcing process with step selector and detail panel
+// ──────────────────────────────────────────────
+
 "use client";
 
 interface LandingProcessProps {
@@ -5,7 +9,9 @@ interface LandingProcessProps {
   setActiveStep: (step: number) => void;
 }
 
+/** Interactive process flow: grid of step cards + active step detail panel */
 export default function LandingProcess({ activeStep, setActiveStep }: LandingProcessProps) {
+  // ── Steps data: each object defines a sourcing stage with title, description, and feature list ──
   const steps = [
     {
       num: "01",
@@ -50,7 +56,7 @@ export default function LandingProcess({ activeStep, setActiveStep }: LandingPro
           </p>
         </div>
 
-        {/* Step Selector Grid */}
+        {/* Step Selector Grid — clicking a step button sets it active and reveals its detail panel below */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
           {steps.map((step, i) => (
             <button
@@ -74,8 +80,9 @@ export default function LandingProcess({ activeStep, setActiveStep }: LandingPro
           ))}
         </div>
 
-        {/* Active Step Showcase Frame */}
+        {/* Active Step Showcase Frame — detail panel shows the currently selected step's info and features */}
         <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 p-8 md:p-12 rounded-3xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Active Step Content (7 cols) — badge, title, description, feature checklist */}
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/20 text-xs text-[#d4af37] font-semibold tracking-wide">
               STEP {steps[activeStep].num} • {steps[activeStep].subtitle}

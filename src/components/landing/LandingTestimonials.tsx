@@ -1,4 +1,10 @@
+// ──────────────────────────────────────────────
+// LandingTestimonials — Customer testimonial cards with star ratings and ambient glow
+// ──────────────────────────────────────────────
+
+/** Three-column testimonial grid showing reviews from brand leaders */
 export default function LandingTestimonials() {
+  // ── Review data: name, role, company, quote, and star rating ──
   const reviews = [
     {
       name: "Marcus Vance",
@@ -43,7 +49,7 @@ export default function LandingTestimonials() {
               className="bg-white/3 backdrop-blur-xl p-8 rounded-3xl border border-white/5 hover:border-[#d4af37]/30 hover:bg-white/6 transition-all duration-300 flex flex-col justify-between"
             >
               <div className="space-y-6">
-                {/* Gold Stars */}
+                {/* Gold Stars — renders `rating` filled star SVGs inline */}
                 <div className="flex gap-1">
                   {[...Array(review.rating)].map((_, starIdx) => (
                     <svg key={starIdx} className="w-5 h-5 text-[#d4af37]" fill="currentColor" viewBox="0 0 20 20">

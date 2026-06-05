@@ -1,6 +1,11 @@
+// ──────────────────────────────────────────────
+// LandingHero — Full‑bleed banner hero section with CTA button
+// ──────────────────────────────────────────────
+
 import Image from "next/image";
 import Link from "next/link";
 
+/** Full-screen hero with background image, gradient overlay, and gold CTA button */
 export default function LandingHero() {
   return (
     <section className="relative w-full min-h-[85vh] flex flex-col justify-end items-center px-6 md:px-12 overflow-hidden bg-black pb-16 md:pb-24">
