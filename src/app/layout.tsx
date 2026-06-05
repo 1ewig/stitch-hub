@@ -1,3 +1,6 @@
+// ──────────────────────────────────────────────────────
+// layout.tsx — Root layout wrapping all pages (route: /)
+// ──────────────────────────────────────────────────────
 import type { Metadata } from "next";
 import SupabaseProvider from "@/providers/SupabaseProvider";
 import Navbar from "@/components/Navbar";
@@ -9,6 +12,7 @@ export const metadata: Metadata = {
   description: "A premium operational command center and sourcing platform for high-volume custom garment runs.",
 };
 
+/** Root layout — wraps every page with auth provider, global nav, and cart drawer */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -17,14 +21,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white antialiased">
-        {/* SupabaseProvider broadcasts user authentication states down the entire application tree */}
+        {/* Provider layer: Supabase auth context broadcast to entire tree */}
         <SupabaseProvider>
-          {/* Universal Dark-Luxury Header Controller */}
+          {/* Global dark-luxury navigation bar */}
           <Navbar />
           
+          {/* Page-specific content rendered by the router */}
           <main>{children}</main>
           
-          {/* Your friend's sliding cart system element */}
+          {/* Slide-out cart drawer accessible from any page */}
           <CartDrawerWrapper />
         </SupabaseProvider>
       </body>

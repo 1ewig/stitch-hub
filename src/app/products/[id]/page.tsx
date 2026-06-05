@@ -1,3 +1,6 @@
+// ──────────────────────────────────────────────────────
+// page.tsx — Product detail page (route: /products/[id])
+// ──────────────────────────────────────────────────────
 "use client";
 
 import React, { use } from "react";
@@ -19,14 +22,17 @@ interface PageProps {
   }>;
 }
 
+/** Product detail — shows not-found fallback or full product content with customization, sizing, volume, and add-to-cart */
 export default function ProductDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const { product, detail } = useProductDetailPage(id);
 
+  /* ── Not-found state — product is missing or invalid id ── */
   if (!product) {
     return (
       <main className="min-h-screen bg-zinc-950 text-white flex flex-col justify-between font-sans">
         <section className="py-24 text-center max-w-xl mx-auto px-6">
+          {/* Error icon */}
           <svg
             className="h-16 w-16 text-zinc-700 mx-auto mb-6"
             fill="none"
@@ -44,6 +50,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           <p className="text-zinc-500 mb-8">
             The requested baseline item is either discontinued or does not exist in our sourcing directory.
           </p>
+          {/* Link back to the full directory */}
           <Link
             href="/products"
             className="inline-block px-8 py-3 rounded-full bg-[#d4af37] text-black font-bold hover:bg-[#b38e20] transition-colors"
@@ -56,34 +63,47 @@ export default function ProductDetailPage({ params }: PageProps) {
     );
   }
 
+  /* ── Product found — two-column detail layout ── */
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
+      {/* Breadcrumb navigation (Products > Product Name) */}
       <ProductBreadcrumb />
 
+      {/* ── Split layout: image (5 cols) + info/customization (7 cols) ── */}
       <section className="py-8 px-6 md:px-12 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
+
+        {/* Left zone: product image with category badge */}
         <div className="lg:col-span-5">
           <ProductImage src={product.img} alt={product.title} category={product.cat} />
         </div>
 
+        {/* Right zone: product info, customization, sizing, volume matrix, stepper, add-to-cart */}
         <div className="lg:col-span-7 flex flex-col justify-between">
           <div className="bg-zinc-900/30 border border-zinc-900 p-8 rounded-3xl backdrop-blur-md">
+            {/* Title, description, minimum order qty */}
             <ProductInfo title={product.title} description={product.description} minQty={detail.minQty} />
 
+            {/* Available customization methods (embroidery, screen-print, etc.) — conditionally rendered */}
             {product.customization && (
               <CustomizationMethods methods={product.customization} />
             )}
 
+            {/* Size selector — only visible for apparel-type products */}
             <SizeSelector visible={detail.isApparel} selectedSize={detail.size} onSelect={detail.setSize} />
 
+            {/* Volume-based pricing matrix table */}
             <SourcingVolumeMatrix />
 
+            {/* Quantity stepper with min-qty enforcement */}
             <VolumeStepper minQty={detail.minQty} currentQty={detail.currentQty} onChange={detail.setQuantity} />
 
+            {/* Add-to-cart button with current qty snapshot */}
             <AddToCartButton currentQty={detail.currentQty} onAdd={detail.handleAddToCart} />
           </div>
         </div>
       </section>
 
+      {/* Reusable landing footer */}
       <LandingFooter />
     </main>
   );

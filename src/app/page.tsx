@@ -1,3 +1,6 @@
+// ──────────────────────────────────────────────────────
+// page.tsx — Home / landing page (route: /)
+// ──────────────────────────────────────────────────────
 "use client";
 
 import { useLandingProcess } from "../hooks/useLandingProcess";
@@ -12,40 +15,39 @@ import LandingFaq from "../components/landing/LandingFaq";
 import LandingCta from "../components/landing/LandingCta";
 import LandingFooter from "../components/landing/LandingFooter";
 
+/** Home page — composes the full landing funnel from hero to footer */
 export default function Home() {
   const { activeStep, setActiveStep } = useLandingProcess();
   const { openIdx, toggle } = useLandingFaq();
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
-      
-      {/* 1. HERO SECTION */}
+      {/* 1. Hero — headline, sub-copy, primary CTA */}
       <LandingHero />
 
-      {/* 2. OUR AI ADVANTAGE SECTION (Glassmorphism) */}
+      {/* 2. AI advantage — glassmorphism card showcasing proprietary AI differentiator */}
       <LandingAiAdvantage />
 
-      {/* 3. B2B OPERATIONAL PROCESS FLOW */}       
+      {/* 3. B2B process flow — interactive step-through of the operational pipeline */}
       <LandingProcess activeStep={activeStep} setActiveStep={setActiveStep} />
 
-      {/* 4. WHY CHOOSE OUR PRODUCTS (High Contrast Break) */}
+      {/* 4. Product features — high-contrast break-out highlighting key product benefits */}
       <LandingProductFeatures />
 
-      {/* 5. OUR PRODUCT LINEUP */}
+      {/* 5. Product lineup — grid of available sourcing categories */}
       <LandingProductLineup />
 
-      {/* 6. VERIFIED B2B TESTIMONIALS */}
+      {/* 6. Testimonials — verified B2B social proof carousel */}
       <LandingTestimonials />
 
-      {/* 7. FREQUENTLY ANSWERED QUERIES (Accordions) */}
+      {/* 7. FAQ — accordion-driven frequently asked queries */}
       <LandingFaq openIdx={openIdx} onToggle={toggle} />
 
-      {/* 8. BOTTOM CTA */}
+      {/* 8. Bottom CTA — final conversion call-to-action before footer */}
       <LandingCta />
 
-      {/* 9. FOOTER */}
+      {/* 9. Footer — links, legal, brand */}
       <LandingFooter />
-
     </main>
   );
 }

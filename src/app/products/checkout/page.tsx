@@ -1,3 +1,6 @@
+// ──────────────────────────────────────────────────────
+// page.tsx — Checkout / sourcing-quote inbox (route: /products/checkout)
+// ──────────────────────────────────────────────────────
 "use client";
 
 import React from "react";
@@ -7,6 +10,7 @@ import CheckoutForm from "../../../components/agentic-ai-inbox/agent-response-fo
 import CheckoutSidebar from "../../../components/agentic-ai-inbox/agent-side-panel";
 import { useCheckoutForm } from "../../../hooks/useCheckoutForm";
 
+/** Checkout page — split-panel email composer + AI-powered quote sidebar */
 export default function CheckoutPage() {
   const {
     cart,
@@ -25,9 +29,10 @@ export default function CheckoutPage() {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black pt-12">
-      
+
       <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto">
-        {/* Navigation Breadcrumb */}
+
+        {/* ── Breadcrumb navigation: Home / Products / Checkout ── */}
         <div className="mb-8 flex items-center gap-2 text-xs text-zinc-500 uppercase tracking-widest font-bold">
           <Link href="/" className="hover:text-white transition-colors">
             Home
@@ -40,10 +45,10 @@ export default function CheckoutPage() {
           <span className="text-[#d4af37]">Sourcing Quote checkout</span>
         </div>
 
-        {/* Split container designed precisely like reference image */}
+        {/* ── Split-panel layout: email form (left) + AI sidebar (right) ── */}
         <div className="bg-[#0b0c0e] border border-zinc-900 rounded-2xl overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 max-w-6xl mx-auto min-h-170">
-          
-          {/* LEFT PANEL: Email Editor Layout */}
+
+          {/* Left panel: email editor with to, subject, message body, and file attachments */}
           <div className="lg:col-span-7 p-6 md:p-8 border-r border-zinc-900 flex flex-col justify-between">
             <CheckoutForm
               toEmail={toEmail}
@@ -58,7 +63,7 @@ export default function CheckoutPage() {
             />
           </div>
 
-          {/* RIGHT PANEL: AI suggestion, Summary details & Deploy */}
+          {/* Right panel: cart summary, AI-generated quote preview, and submit action */}
           <div className="lg:col-span-5 p-6 md:p-8 bg-[#0e0f12] flex flex-col justify-between">
             <CheckoutSidebar
               cart={cart}
@@ -70,10 +75,11 @@ export default function CheckoutPage() {
               setAttachedFiles={setAttachedFiles}
             />
           </div>
-          
+
         </div>
       </section>
 
+      {/* Reusable landing footer */}
       <LandingFooter />
     </main>
   );

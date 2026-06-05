@@ -1,3 +1,6 @@
+// ──────────────────────────────────────────────────────
+// page.tsx — Product listing / B2B sourcing directory (route: /products)
+// ──────────────────────────────────────────────────────
 "use client";
 
 import React from "react";
@@ -6,6 +9,7 @@ import ProductFilters from "../../components/products/ProductFilters";
 import ProductCard from "../../components/products/ProductCard";
 import { useProducts } from "../../hooks/useProducts";
 
+/** Products listing page — renders filtered grid or empty-state fallback */
 export default function ProductsPage() {
   const {
     selectedCategory,
@@ -21,9 +25,11 @@ export default function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
-      {/* Main Container */}
+
+      {/* ── Main container: title + filters + results ── */}
       <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto">
-        {/* Page title with nice gradient accent */}
+
+        {/* Page header with gold-accent title and descriptive sub-text */}
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight font-display text-white">
             B2B Sourcing <span className="text-[#d4af37]">Directory</span>
@@ -33,7 +39,7 @@ export default function ProductsPage() {
           </p>
         </div>
 
-        {/* Dynamic Filters Area */}
+        {/* Dynamic filter bar: category, search, sort */}
         <ProductFilters
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
@@ -44,8 +50,9 @@ export default function ProductsPage() {
           categories={categories}
         />
 
-        {/* Results grid */}
+        {/* Empty state vs. product grid */}
         {filteredProducts.length === 0 ? (
+          /* ── No results — search-icon placeholder with clear-filters action ── */
           <div className="py-24 text-center">
             <svg
               className="h-12 w-12 text-zinc-700 mx-auto mb-4"
@@ -69,6 +76,7 @@ export default function ProductsPage() {
             </button>
           </div>
         ) : (
+          /* ── Product grid — 1/2/4 column responsive layout ── */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {filteredProducts.map((product, i) => (
               <ProductCard
@@ -80,7 +88,7 @@ export default function ProductsPage() {
         )}
       </section>
 
-      {/* Footer */}
+      {/* Reusable landing footer */}
       <LandingFooter />
     </main>
   );
