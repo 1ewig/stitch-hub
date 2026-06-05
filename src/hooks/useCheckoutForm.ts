@@ -1,10 +1,18 @@
 "use client";
 
+// ─────────────────────────────────────────────────────────────
+// useCheckoutForm — Cart review, message generation, and agent submission
+// ─────────────────────────────────────────────────────────────
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "../stores/cart-store";
 import { useCheckoutFormStore, generateMessageFromCart } from "../stores/checkout-form-store";
 
+/**
+ * Returns cart data, form fields, a file-attachment array, and a handleSubmit that POSTs
+ * to /api/agent. On success it displays the AI response for 5 s then redirects to "/".
+ */
 export function useCheckoutForm() {
   const router = useRouter();
   const cart = useCartStore((s) => s.cart);
@@ -25,12 +33,12 @@ export function useCheckoutForm() {
     setIsSuccess,
   } = useCheckoutFormStore();
 
-  // Automatically construct initial template guidelines whenever items inside the cart array update
+  // Sync the message text area with a cart-derived template whenever the cart changes
   useEffect(() => {
     setMessage(generateMessageFromCart(cart));
   }, [cart, setMessage]);
 
-  // 🎯 CONNECT FRONTEND TO SECURE BACKEND CORE API NODE
+  // POST cart + message to /api/agent, display AI response, then redirect after 5 s
   const handleSubmit = async () => {
     if (cart.length === 0) {
       alert("Your sourcing manifest is currently empty. Add catalog styles before requesting optimization.");
@@ -47,7 +55,7 @@ export function useCheckoutForm() {
         },
         body: JSON.stringify({
           cart,
-          message,   // Sent as the custom specifications payload to your system prompt
+          message,
           toEmail,
           subject,
         }),
@@ -59,15 +67,15 @@ export function useCheckoutForm() {
         throw new Error(data.error || "An integration failure occurred during agent processing.");
       }
 
-      // 🧠 Feed the calculated AI response back into your friend's store to update the text box live!
+      // Overwrite message with the AI-generated response returned from the agent
       setMessage(data.generatedMessage);
       setIsSuccess(true);
 
-      // Give your customer exactly 5 seconds to look at their freshly minted invoice notification before clean context reset
+      // Show success state for 5 s, then reset cart and redirect to home
       setTimeout(() => {
         setIsSuccess(false);
         clearCart();
-        setAttachedFiles([]); // Reset attachments
+        setAttachedFiles([]);
         router.push("/");
       }, 5000);
 

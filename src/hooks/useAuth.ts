@@ -1,8 +1,16 @@
 "use client";
 
+// ─────────────────────────────────────────────────────────────
+// useAuth — Login / signup / forgot-password form state machine
+// ─────────────────────────────────────────────────────────────
+
 import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
 
+/**
+ * Returns form state (email, password, name, rememberMe) plus submit / toggle / forgot-password handlers.
+ * Manages loading / error / success UX and redirects on completion.
+ */
 export function useAuth() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -13,7 +21,7 @@ export function useAuth() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  // Check if email was remembered on mount
+  // Hydrate remembered email from localStorage on mount
   useEffect(() => {
     try {
       const savedEmail = localStorage.getItem("remembered_email");
@@ -34,6 +42,7 @@ export function useAuth() {
 
     const supabase = createClient();
 
+    // ── Login branch ──────────────────────────────────────
     if (isLogin) {
       try {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -45,7 +54,7 @@ export function useAuth() {
           setError(signInError.message || "Invalid email or password. Please try again.");
           setLoading(false);
         } else {
-          // Handle "Remember me" on successful login
+          // Persist (or clear) remembered email based on rememberMe toggle
           try {
             if (rememberMe) {
               localStorage.setItem("remembered_email", email);
@@ -66,17 +75,17 @@ export function useAuth() {
         setError("An unexpected error occurred during login.");
         setLoading(false);
       }
+    // ── Signup branch ─────────────────────────────────────
     } else {
       try {
-        // Registering a user through Supabase Auth
-        // Pass name in user metadata options
+        // Create user via Supabase Auth; store display name + default B2B role in metadata
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: {
               name: name,
-              role: "client", // Assigns them the default B2B client tier in metadata
+              role: "client",
             },
           },
         });
@@ -85,13 +94,13 @@ export function useAuth() {
           setError(signUpError.message || "Registration failed.");
           setLoading(false);
         } else {
-          // Note: If email confirmation is enabled on Supabase, the user might need to check their inbox.
-          // By default, if auto-confirm is enabled, it returns the user directly.
+          // Auto-confirm enabled — session returned, redirect immediately
           if (data.session) {
             setSuccess("Account created and logged in! Directing to workspace...");
             setTimeout(() => {
               window.location.href = "/";
             }, 800);
+          // Email-confirm enabled — no session, prompt user to verify
           } else {
             setSuccess("Account created successfully! Please check your email for verification, or switch to sign in.");
             setTimeout(() => {
@@ -108,12 +117,14 @@ export function useAuth() {
     }
   };
 
+  // Switch between login / signup forms and clear transient state
   const toggleMode = () => {
     setIsLogin(!isLogin);
     setError("");
     setSuccess("");
   };
 
+  // Sends a Supabase password-reset email; user must click the link to proceed
   const handleForgotPassword = async () => {
     if (!email) {
       setError("Please enter your email address first to request a password reset.");
