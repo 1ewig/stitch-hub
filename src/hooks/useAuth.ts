@@ -114,8 +114,31 @@ export function useAuth() {
     setSuccess("");
   };
 
-  const handleForgotPassword = () => {
-    alert("Password reset route activation coming soon!");
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Please enter your email address first to request a password reset.");
+      return;
+    }
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    const supabase = createClient();
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+
+      if (resetError) {
+        setError(resetError.message || "Failed to trigger password reset process.");
+      } else {
+        setSuccess("Success! A password reset link has been dispatched to your email.");
+      }
+    } catch {
+      setError("An unexpected error occurred during password reset.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
