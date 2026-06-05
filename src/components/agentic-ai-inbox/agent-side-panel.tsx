@@ -68,8 +68,8 @@ export default function CheckoutSidebar({
         {cart.length === 0 ? (
           <p className="text-sm text-zinc-500 italic">No products added in sourcing list.</p>
         ) : (
-          {/* Scrollable cart item list — each row shows product, size, and quantity */}
           <div className="space-y-3 max-h-55 overflow-y-auto pr-1">
+            {/* Scrollable cart item list — each row shows product, size, and quantity */}
             {cart.map((item, index) => (
               <div
                 key={index}
