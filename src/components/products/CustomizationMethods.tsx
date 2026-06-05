@@ -1,4 +1,9 @@
+// ──────────────────────────────────────────────
+// CustomizationMethods — Displays the eligible embroidery / print methods for a product
+// ──────────────────────────────────────────────
+
 interface CustomizationMethodsProps {
+  /** Comma- or bullet-separated list of available customization methods (e.g. "Embroidery, Screen Print") */
   methods: string;
 }
 

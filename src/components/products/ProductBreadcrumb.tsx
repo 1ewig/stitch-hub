@@ -1,3 +1,7 @@
+// ──────────────────────────────────────────────
+// ProductBreadcrumb — "Back to Directory" link with arrow icon; navigates to /products
+// ──────────────────────────────────────────────
+
 import Link from "next/link";
 
 export default function ProductBreadcrumb() {

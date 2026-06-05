@@ -1,14 +1,22 @@
+// ──────────────────────────────────────────────
+// ProductFilters — Category tabs, search input with clear button, and sort dropdown
+// ──────────────────────────────────────────────
+
 "use client";
 
 import React from "react";
 
 interface ProductFiltersProps {
+  /** Currently active category filter */
   selectedCategory: string;
   setSelectedCategory: (cat: string) => void;
+  /** Current search query text */
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  /** Current sort key (e.g. "price-asc", "price-desc", "name-asc") */
   sortBy: string;
   setSortBy: (sort: string) => void;
+  /** Array of all available category labels */
   categories: string[];
 }
 
@@ -23,7 +31,7 @@ export default function ProductFilters({
 }: ProductFiltersProps) {
   return (
     <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between border-b border-zinc-900 pb-8 mb-12 animate-scaleIn">
-      {/* Category Tabs */}
+      {/* ── Category Tabs ── */}
       <div className="flex flex-wrap gap-2">
         {categories.map((cat) => (
           <button
@@ -40,9 +48,9 @@ export default function ProductFilters({
         ))}
       </div>
 
-      {/* Search & Sort Panel */}
+      {/* ── Search & Sort Panel ── */}
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-        {/* Search Input */}
+        {/* Search Input with clear button */}
         <div className="relative flex-1 sm:w-64">
           <input
             type="text"
@@ -51,6 +59,7 @@ export default function ProductFilters({
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-zinc-900 border border-zinc-800 rounded-full px-5 py-2.5 text-sm text-zinc-200 placeholder-zinc-500 focus:border-[#d4af37] focus:outline-none"
           />
+          {/* Clear icon appears only when query is non-empty */}
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
@@ -63,7 +72,7 @@ export default function ProductFilters({
           )}
         </div>
 
-        {/* Sort Select */}
+        {/* Sort dropdown */}
         <div className="relative">
           <select
             value={sortBy}
@@ -74,6 +83,7 @@ export default function ProductFilters({
             <option value="price-desc">Price: High to Low</option>
             <option value="name-asc">Name: A to Z</option>
           </select>
+          {/* Custom chevron indicator */}
           <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-zinc-500">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

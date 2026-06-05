@@ -1,6 +1,13 @@
+// ──────────────────────────────────────────────
+// ProductInfo — Heading, description, and MOQ callout for the product detail page
+// ──────────────────────────────────────────────
+
 interface ProductInfoProps {
+  /** Product display name */
   title: string;
+  /** Full product description text */
   description: string;
+  /** Minimum order quantity shown as a sourcing MOQ label */
   minQty: number;
 }
 

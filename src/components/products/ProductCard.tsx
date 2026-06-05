@@ -1,3 +1,7 @@
+// ──────────────────────────────────────────────
+// ProductCard — Catalog grid card with image, title, category badge, and MOQ metadata
+// ──────────────────────────────────────────────
+
 "use client";
 
 import Image from "next/image";
@@ -5,7 +9,9 @@ import Link from "next/link";
 import type { Product } from "../../types";
 
 interface ProductCardProps {
+  /** Product data object (id, img, title, cat, moq, etc.) */
   product: Product;
+  /** Optional click override (e.g. for analytics or drawer close) */
   onClick?: () => void;
 }
 
@@ -17,6 +23,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       className="group cursor-pointer flex flex-col justify-between"
     >
       <div>
+        {/* Image fill with hover scale effect */}
         <div className="w-full aspect-4/5 bg-zinc-900 rounded-2xl mb-4 overflow-hidden border border-zinc-900 group-hover:border-[#d4af37]/40 transition-colors flex items-center justify-center relative shadow-sm">
           <Image
             src={product.img}
@@ -32,6 +39,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           </h4>
         </div>
       </div>
+      {/* Category / MOQ footer metadata */}
       <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 border-t border-zinc-900/60 pt-3">
         <span>Category: {product.cat}</span>
         <span>Min Qty: {product.moq}</span>
