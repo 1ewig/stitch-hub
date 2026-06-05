@@ -1,7 +1,14 @@
+// ─────────────────────────────────────────────────────────────────────
+// AuthInput.tsx — Reusable form input with built-in password visibility toggle
+// ─────────────────────────────────────────────────────────────────────
+
 "use client";
 
 import { useState } from "react";
 
+// Props mirror a native <input /> but enforce controlled value + onChange.
+// When `type` is "password", the component renders a toggle button that
+// switches the input between visible text and masked characters.
 interface AuthInputProps {
   label: string;
   type: string;
@@ -12,6 +19,9 @@ interface AuthInputProps {
   autoComplete?: string;
 }
 
+/** Renders a labelled input field. For password fields it shows an eye / eye-off
+ * icon button that toggles the input type between "password" (masked) and "text"
+ * (visible), giving the user control over credential visibility. */
 export default function AuthInput({
   label,
   type,
@@ -21,8 +31,11 @@ export default function AuthInput({
   required,
   autoComplete,
 }: AuthInputProps) {
+  // ── Password toggle state ──
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
+  // When the field is a password and the user has opted to show it, switch
+  // the rendered type to "text" so the browser displays the characters.
   const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
   return (
@@ -37,11 +50,14 @@ export default function AuthInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           autoComplete={autoComplete}
+          // Extra right padding (pr-10) reserves space for the toggle icon
+          // so the text doesn't overlap it.
           className={`w-full bg-[#18191d] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:border-[#d4af37] focus:outline-none transition-colors ${
             isPassword ? "pr-10" : ""
           }`}
           placeholder={placeholder}
         />
+        {/* ── Visibility toggle: only rendered for password fields ── */}
         {isPassword && (
           <button
             type="button"
@@ -49,6 +65,7 @@ export default function AuthInput({
             className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors cursor-pointer"
           >
             {showPassword ? (
+              // Eye-off icon — indicates passwords are currently visible
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -58,6 +75,7 @@ export default function AuthInput({
                 />
               </svg>
             ) : (
+              // Eye icon — indicates password is currently masked
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"

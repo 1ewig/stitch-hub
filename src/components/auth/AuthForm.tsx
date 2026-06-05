@@ -1,8 +1,15 @@
+// ─────────────────────────────────────────────────────────────────────
+// AuthForm.tsx — Shared auth form with conditional sign-up fields
+// ─────────────────────────────────────────────────────────────────────
+
 "use client";
 
 import GoldButton from "../ui/GoldButton";
 import AuthInput from "./AuthInput";
 
+// Props consumed from the parent auth hook. isLogin toggles which fields /
+// extras are rendered (name field only for sign-up, remember-me checkbox
+// and forgot-password button only for sign-in).
 interface AuthFormProps {
   isLogin: boolean;
   loading: boolean;
@@ -18,6 +25,10 @@ interface AuthFormProps {
   handleForgotPassword: () => void;
 }
 
+/** Renders the login or sign-up form. The full-name field only appears
+ * during sign-up; the "remember me" checkbox and "forgot password" link
+ * only appear during login. The submit button label adapts to the current
+ * mode and shows a loading state. */
 export default function AuthForm({
   isLogin,
   loading,
@@ -34,6 +45,7 @@ export default function AuthForm({
 }: AuthFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* ── Sign-up only: Full Name field (animated in) ── */}
       {!isLogin && (
         <div className="transition-all duration-300 transform origin-top animate-scaleIn">
           <AuthInput
@@ -48,6 +60,7 @@ export default function AuthForm({
         </div>
       )}
 
+      {/* ── Shared: Email field ── */}
       <AuthInput
         label="Email Address"
         type="email"
@@ -58,6 +71,7 @@ export default function AuthForm({
         autoComplete="email"
       />
 
+      {/* ── Shared: Password field (autoComplete varies) ── */}
       <AuthInput
         label="Password"
         type="password"
@@ -68,6 +82,7 @@ export default function AuthForm({
         autoComplete={isLogin ? "current-password" : "new-password"}
       />
 
+      {/* ── Login only: Remember-me checkbox + Forgot-password link ── */}
       {isLogin && (
         <div className="flex items-center justify-between text-xs pt-1">
           <label className="flex items-center gap-2 text-zinc-400 cursor-pointer select-none">
@@ -89,6 +104,7 @@ export default function AuthForm({
         </div>
       )}
 
+      {/* ── Submit / CTA button ── */}
       <GoldButton
         type="submit"
         disabled={loading}
