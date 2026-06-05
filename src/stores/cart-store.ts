@@ -1,7 +1,15 @@
+// ──────────────────────────────────────────────
+// cart-store.ts — Persistent shopping cart state
+// ──────────────────────────────────────────────
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Product, CartItem } from "../types";
 
+/**
+ * Manages the shopping cart items and drawer visibility.
+ * Persisted to localStorage so cart survives page reloads.
+ */
 interface CartState {
   cart: CartItem[];
   isOpen: boolean;
@@ -12,6 +20,10 @@ interface CartState {
   clearCart: () => void;
 }
 
+/**
+ * Shopping cart store — items, drawer state, add/remove/update logic.
+ * Wrapped in persist() so the cart outlives a page refresh.
+ */
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
@@ -22,6 +34,8 @@ export const useCartStore = create<CartState>()(
 
       addToCart: (product, quantity, size, customNotes) => {
         const { cart } = get();
+        // If the same product+size already exists, bump the quantity
+        // instead of creating a duplicate line item.
         const existingIndex = cart.findIndex(
           (item) => item.product.title === product.title && item.size === size
         );
@@ -41,6 +55,7 @@ export const useCartStore = create<CartState>()(
           newCart = [...cart, { product, quantity, size, customNotes }];
         }
 
+        // Open the cart drawer so the user sees the item was added.
         set({ cart: newCart, isOpen: true });
       },
 
@@ -56,6 +71,7 @@ export const useCartStore = create<CartState>()(
         );
         if (!item) return;
 
+        // Clamp to MOQ so the user can't go below the minimum order quantity.
         const clamped = Math.max(quantity, item.product.moq);
         if (clamped <= 0) {
           const { removeFromCart } = get();
@@ -74,7 +90,7 @@ export const useCartStore = create<CartState>()(
       clearCart: () => set({ cart: [] }),
     }),
     {
-      name: "stitchhub_cart",
+      name: "stitchhub_cart", // localStorage key
     }
   )
 );

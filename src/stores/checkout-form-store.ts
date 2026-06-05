@@ -1,6 +1,14 @@
+// ──────────────────────────────────────────────
+// checkout-form-store.ts — Checkout / inquiry form state & message builder
+// ──────────────────────────────────────────────
+
 import { create } from "zustand";
 import type { CartItem } from "../types";
 
+/**
+ * Holds the raw form fields (to, subject, message) and submission
+ * flags that back the "Contact Us" / sourcing-request form.
+ */
 interface CheckoutFormState {
   toEmail: string;
   subject: string;
@@ -14,6 +22,10 @@ interface CheckoutFormState {
   setIsSuccess: (val: boolean) => void;
 }
 
+/**
+ * Form store — lives alongside the cart store so the contact/sourcing
+ * form can be pre-filled with default values and reset after submit.
+ */
 export const useCheckoutFormStore = create<CheckoutFormState>()((set) => ({
   toEmail: "stitchhub@sourcing.com",
   subject: "Custom Corporate Merchandise Sourcing Request",
@@ -34,6 +46,12 @@ Best regards,
   setIsSuccess: (isSuccess) => set({ isSuccess }),
 }));
 
+/**
+ * Build a human-readable email body from the current cart contents.
+ * Used when the user navigates from cart → checkout so the message
+ * field is pre-populated with a summary of every item, its quantity,
+ * size, and any custom branding notes.
+ */
 export function generateMessageFromCart(cart: CartItem[]): string {
   if (cart.length > 0) {
     const itemsList = cart
