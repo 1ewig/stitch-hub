@@ -20,9 +20,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-64 bg-[#0a0a0f]/40 backdrop-blur-3xl border-r border-white/10 flex flex-col hidden md:flex shrink-0 relative z-10 shadow-2xl">
         {/* Brand Header */}
         <div className="h-20 flex items-center px-8 border-b border-white/10">
-          <h1 className="text-xl font-bold font-display tracking-tight text-white flex items-center gap-2">
-            <span className="text-[#d4af37]">S</span> STITCH<span className="font-light">HUB</span>
-          </h1>
+          <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+            <svg className="w-6 h-6 text-[#d4af37] group-hover:scale-110 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <div className="text-xl font-black tracking-widest text-white select-none">
+              STITCH<span className="text-[#d4af37]">HUB</span>
+            </div>
+          </Link>
         </div>
 
         {/* Navigation Links */}
@@ -32,6 +37,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#d4af37]/20 text-[#d4af37] border border-[#d4af37]/30 shadow-[0_0_15px_rgba(212,175,55,0.15)] transition-colors backdrop-blur-md">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
             <span className="text-sm font-medium">Dashboard</span>
+          </Link>
+
+          <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors backdrop-blur-md">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+            <span className="text-sm font-medium">Product Catalog</span>
           </Link>
 
           <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors backdrop-blur-md">

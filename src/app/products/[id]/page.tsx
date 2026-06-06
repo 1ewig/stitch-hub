@@ -25,7 +25,16 @@ interface PageProps {
 /** Product detail — shows not-found fallback or full product content with customization, sizing, volume, and add-to-cart */
 export default function ProductDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { product, detail } = useProductDetailPage(id);
+  const { product, detail, loading } = useProductDetailPage(id);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-zinc-950 text-white flex flex-col justify-center items-center font-sans">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#d4af37]"></div>
+        <p className="mt-4 text-xs text-zinc-400 font-mono uppercase tracking-wider">Synchronizing Sourcing Node...</p>
+      </main>
+    );
+  }
 
   /* ── Not-found state — product is missing or invalid id ── */
   if (!product) {

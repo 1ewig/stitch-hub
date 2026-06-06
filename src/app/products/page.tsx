@@ -21,6 +21,7 @@ export default function ProductsPage() {
     clearFilters,
     filteredProducts,
     categories,
+    loading,
   } = useProducts();
 
   return (
@@ -51,7 +52,12 @@ export default function ProductsPage() {
         />
 
         {/* Empty state vs. product grid */}
-        {filteredProducts.length === 0 ? (
+        {loading ? (
+          <div className="py-24 flex flex-col justify-center items-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#d4af37] mb-3"></div>
+            <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Querying Sourcing Registry...</span>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           /* ── No results — search-icon placeholder with clear-filters action ── */
           <div className="py-24 text-center">
             <svg

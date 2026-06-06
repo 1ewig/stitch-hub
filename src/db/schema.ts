@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, jsonb, integer, doublePrecision } from "drizzle-orm/pg-core";
 
 // ==========================================
 // 1. SUPABASE AUTH SYNCHRONIZED USER TABLE
@@ -35,5 +35,22 @@ export const invoices = pgTable("invoices", {
   totalAmount: text("total_amount").notNull(),
   status: text("status").default("unpaid").notNull(), // paid, unpaid, shipping
   itemsSnapshot: jsonb("items_snapshot").notNull(), // Captures the cart array state permanently
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ==========================================
+// 3. PRODUCT CATALOG TABLE
+// ==========================================
+
+export const products = pgTable("products", {
+  id: text("id").primaryKey(), // e.g., 'gildan-18500-hoodie'
+  title: text("title").notNull(),
+  cat: text("cat").notNull(),
+  img: text("img").notNull(),
+  price: doublePrecision("price").notNull(),
+  priceRange: text("price_range").notNull(),
+  description: text("description").notNull(),
+  moq: integer("moq").notNull(),
+  customization: text("customization").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

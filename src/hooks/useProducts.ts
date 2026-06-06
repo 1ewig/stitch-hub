@@ -1,17 +1,17 @@
 "use client";
 
-// ─────────────────────────────────────────────────────────────
-// useProducts — Catalog filtering / sorting via product-filter-store selectors
-// ─────────────────────────────────────────────────────────────
-
+import { useEffect, useState } from "react";
 import { useProductFilterStore, getFilteredProducts, CATEGORIES } from "../stores/product-filter-store";
-import { catalog } from "../data/products";
+import { Product } from "../types";
 
 /**
  * Wires individual store selectors for category, search query, and sort order,
- * derives filteredProducts from the catalog, and returns everything a product grid needs.
+ * derives filteredProducts from the database, and returns everything a product grid needs.
  */
 export function useProducts() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const selectedCategory = useProductFilterStore((s) => s.selectedCategory);
   const setSelectedCategory = useProductFilterStore((s) => s.setSelectedCategory);
   const searchQuery = useProductFilterStore((s) => s.searchQuery);
@@ -20,8 +20,25 @@ export function useProducts() {
   const setSortBy = useProductFilterStore((s) => s.setSortBy);
   const clearFilters = useProductFilterStore((s) => s.clearFilters);
 
-  // Derive the filtered/sorted list from raw catalog and current filter state
-  const filteredProducts = getFilteredProducts(catalog, selectedCategory, searchQuery, sortBy);
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        if (data.success && data.products) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        console.error("Failed to fetch products catalog:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  // Derive the filtered/sorted list from dynamic products and current filter state
+  const filteredProducts = getFilteredProducts(products, selectedCategory, searchQuery, sortBy);
 
   return {
     selectedCategory,
@@ -33,5 +50,6 @@ export function useProducts() {
     clearFilters,
     filteredProducts,
     categories: CATEGORIES,
+    loading,
   };
 }
