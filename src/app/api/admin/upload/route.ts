@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
-import { users } from "@/db/schema";
 import { createClient } from "@/utils/supabase/server";
-import { eq } from "drizzle-orm";
 import crypto from "crypto";
+import { isAdmin } from "@/utils/admin";
 
 export async function POST(req: Request) {
   // 1. Auth Guard
@@ -15,14 +13,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    // 2. Admin role validation
-    const dbUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, user.id))
-      .limit(1);
-
-    if (!dbUser || dbUser.length === 0 || dbUser[0].role !== "admin") {
+    if (!isAdmin(user.email)) {
       return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 });
     }
 

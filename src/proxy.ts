@@ -1,15 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
-
-// Hardcoded allow-list of admin emails
-const ADMIN_EMAILS = [
-  "admin@stitchhub.com",
-  "superadmin@stitchhub.com",
-  "moshu@stitchhub.com",
-  "cheetayfastdl345@gmail.com",
-  "espotted8@gmail.com"
-];
+import { ADMIN_EMAILS } from "@/utils/admin";
 
 export async function proxy(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request);
