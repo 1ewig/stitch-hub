@@ -2,6 +2,7 @@ export const ADMIN_EMAILS = [
   "admin@stitchhub.com",
   "superadmin@stitchhub.com",
   "moshu@stitchhub.com",
+  "alimaria2000@gmail.com",
   "cheetayfastdl345@gmail.com",
   "espotted8@gmail.com"
 ];

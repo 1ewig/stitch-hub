@@ -1,7 +1,21 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  const getLinkClass = (href: string) => {
+    const isActive = pathname === href;
+    const base = "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 backdrop-blur-md border";
+    if (isActive) {
+      return `${base} bg-[#d4af37]/20 text-[#d4af37] border-[#d4af37]/30 shadow-[0_0_15px_rgba(212,175,55,0.15)]`;
+    }
+    return `${base} text-zinc-400 hover:text-white hover:bg-white/10 border-transparent`;
+  };
+
   return (
     // 🎯 The inline style guarantees the image loads from your public folder
     <div 
@@ -34,28 +48,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider px-4 mb-4">Core Systems</div>
           
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#d4af37]/20 text-[#d4af37] border border-[#d4af37]/30 shadow-[0_0_15px_rgba(212,175,55,0.15)] transition-colors backdrop-blur-md">
+          <Link href="/admin" className={getLinkClass("/admin")}>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
             <span className="text-sm font-medium">Dashboard</span>
           </Link>
 
-          <Link href="/admin/products" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors backdrop-blur-md">
+          <Link href="/admin/products" className={getLinkClass("/admin/products")}>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
             <span className="text-sm font-medium">Product Catalog</span>
           </Link>
 
-          <Link href="/admin/orders" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors backdrop-blur-md">
+          <Link href="/admin/orders" className={getLinkClass("/admin/orders")}>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
             <span className="text-sm font-medium">Active Orders</span>
           </Link>
 
-          <Link href="/admin/approvals" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors backdrop-blur-md">
+          <Link href="/admin/approvals" className={getLinkClass("/admin/approvals")}>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <span className="text-sm font-medium">Escalated Approvals</span>
             <span className="ml-auto bg-red-500/20 border border-red-500/30 text-red-400 py-0.5 px-2 rounded-full text-[10px] font-bold shadow-[0_0_8px_rgba(239,68,68,0.2)]">3</span>
           </Link>
 
-          <Link href="/admin/agent" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors backdrop-blur-md">
+          <Link href="/admin/agent" className={getLinkClass("/admin/agent")}>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             <span className="text-sm font-medium">Agent Operations</span>
           </Link>
