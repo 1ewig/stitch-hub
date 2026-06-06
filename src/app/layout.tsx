@@ -3,6 +3,7 @@
 // ──────────────────────────────────────────────────────
 import type { Metadata } from "next";
 import SupabaseProvider from "@/providers/SupabaseProvider";
+import QueryProvider from "@/providers/QueryProvider";
 import Navbar from "@/components/Navbar";
 import CartDrawerWrapper from "../components/CartDrawerWrapper";
 import "./globals.css";
@@ -23,14 +24,16 @@ export default function RootLayout({
       <body className="bg-black text-white antialiased">
         {/* Provider layer: Supabase auth context broadcast to entire tree */}
         <SupabaseProvider>
-          {/* Global dark-luxury navigation bar */}
-          <Navbar />
-          
-          {/* Page-specific content rendered by the router */}
-          <main>{children}</main>
-          
-          {/* Slide-out cart drawer accessible from any page */}
-          <CartDrawerWrapper />
+          <QueryProvider>
+            {/* Global dark-luxury navigation bar */}
+            <Navbar />
+            
+            {/* Page-specific content rendered by the router */}
+            <main>{children}</main>
+            
+            {/* Slide-out cart drawer accessible from any page */}
+            <CartDrawerWrapper />
+          </QueryProvider>
         </SupabaseProvider>
       </body>
     </html>
