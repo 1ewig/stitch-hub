@@ -11,7 +11,7 @@ import { useCheckoutFormStore, generateMessageFromCart } from "../stores/checkou
 
 /**
  * Returns cart data, form fields, a file-attachment array, and a handleSubmit that POSTs
- * to /api/agent. On success it displays the AI response for 5 s then redirects to "/".
+ * to /api/agent. On success, it displays the AI response inside the Active Sourcing Inbox.
  */
 export function useCheckoutForm() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export function useCheckoutForm() {
     setMessage(generateMessageFromCart(cart));
   }, [cart, setMessage]);
 
-  // POST cart + message to /api/agent, display AI response, then redirect after 5 s
+  // POST cart + message to /api/agent and transition to live Active Inbox view
   const handleSubmit = async () => {
     if (cart.length === 0) {
       alert("Your sourcing manifest is currently empty. Add catalog styles before requesting optimization.");
@@ -67,17 +67,14 @@ export function useCheckoutForm() {
         throw new Error(data.error || "An integration failure occurred during agent processing.");
       }
 
-      // Overwrite message with the AI-generated response returned from the agent
+      // Overwrite state context message parameter with the pure AI response payload
       setMessage(data.generatedMessage);
       setIsSuccess(true);
 
-      // Show success state for 5 s, then reset cart and redirect to home
-      setTimeout(() => {
-        setIsSuccess(false);
-        clearCart();
-        setAttachedFiles([]);
-        router.push("/");
-      }, 5000);
+      // 🎯 FIXED: Clear out item states and cache attachments so the workflow logs reset,
+      // but DO NOT push back to home ("/") or drop success visibility flags.
+      clearCart();
+      setAttachedFiles([]);
 
     } catch (err) {
       console.error("Agent communication failure:", err);

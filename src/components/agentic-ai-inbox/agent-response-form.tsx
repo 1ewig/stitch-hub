@@ -1,12 +1,7 @@
 "use client";
 
-// ──────────────────────────────────────────────
-// agent-response-form.tsx — Agent email response composition form with escalation support
-// ──────────────────────────────────────────────
+import React, { useRef } from "react";
 
-import React from "react";
-
-// Props for the agent response composition form
 interface CheckoutFormProps {
   toEmail: string;
   setToEmail: (val: string) => void;
@@ -19,7 +14,6 @@ interface CheckoutFormProps {
   setAttachedFiles: (files: File[]) => void;
 }
 
-// Agent response email form — composes To/Subject/message and handles file attachments
 export default function CheckoutForm({
   toEmail,
   setToEmail,
@@ -31,115 +25,147 @@ export default function CheckoutForm({
   attachedFiles,
   setAttachedFiles,
 }: CheckoutFormProps) {
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Append newly selected files to the existing attached files array
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       setAttachedFiles([...attachedFiles, ...filesArray]);
     }
   };
-  
-  // Detect escalation from AI response — checks for PAUSE tag or admin escalation keyword
+
+  // 🔍 Detect escalation from AI response
   const isEscalated = message.includes("<action>PAUSE</action>") || message.includes("escalate_to_admin");
 
-  // Render success confirmation when request is submitted, otherwise show the form
+  // ==========================================
+  // 📥 INBOX THREAD VIEW (Triggers after AI responds)
+  // ==========================================
   if (isSuccess) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-center px-4 py-16 animate-scaleIn">
-        {isEscalated ? (
-          // Escalated success presentation — warning styling with pulse animation for paused requests
-          <>
-            <div className="h-20 w-20 rounded-full bg-red-500/10 flex items-center justify-center mb-6 border border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.15)] animate-pulse">
-              <svg className="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      <div className="flex flex-col h-full animate-scaleIn space-y-6">
+        {/* Thread Header */}
+        <div className="border-b border-zinc-800 pb-4">
+          <h2 className="text-xl font-bold text-white font-display">Active Requisition Thread</h2>
+          <p className="text-xs text-zinc-500 mt-1">Ref: {subject}</p>
+        </div>
+
+        {/* AI Agent Message Card */}
+        <div className={`rounded-2xl border p-6 shadow-2xl relative overflow-hidden transition-all duration-500 ${
+          isEscalated ? "bg-[#1a0f14] border-red-900/50" : "bg-[#121316] border-zinc-800"
+        }`}>
+          {/* Ambient Card Glow */}
+          <div className={`absolute -top-20 -right-20 w-48 h-48 rounded-full blur-[90px] pointer-events-none ${
+            isEscalated ? "bg-red-600/10" : "bg-[#d4af37]/10"
+          }`} />
+
+          <div className="flex items-start gap-4 relative z-10">
+            {/* Agent Avatar */}
+            <div className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center border ${
+              isEscalated ? "bg-red-500/10 border-red-500/30 text-red-400" : "bg-[#d4af37]/10 border-[#d4af37]/30 text-[#d4af37]"
+            }`}>
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-white mb-3 font-display tracking-tight">
-              Sourcing Matrix Intercepted
-            </h3>
-            <p className="text-sm text-zinc-400 max-w-md leading-relaxed">
-              Your custom instructions or timeline parameters require direct human evaluation. The automation matrix has been **PAUSED** and routed straight to an enterprise tier admin log for priority calculation verification.
-            </p>
-          </>
-        ) : (
-          // Standard success presentation — gold checkmark and confirmation message
-          <>
-            <div className="h-20 w-20 rounded-full bg-[#d4af37]/10 flex items-center justify-center mb-6 border border-[#d4af37]/30">
-              <svg className="h-10 w-10 text-[#d4af37]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+
+            {/* Message Payload */}
+            <div className="flex-1 space-y-1 mt-0.5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-white tracking-wide">StitchHub Logic Agent</span>
+                <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider">Just Now</span>
+              </div>
+              
+              {isEscalated ? (
+                <div className="pt-3">
+                  <span className="inline-block bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-3 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+                    Admin Escalation Triggered
+                  </span>
+                  <p className="text-sm text-red-200/90 leading-relaxed font-mono whitespace-pre-wrap">
+                    {message.replace("<action>PAUSE</action>", "").trim()}
+                  </p>
+                </div>
+              ) : (
+                <div className="pt-3">
+                  <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap font-body">
+                    {message}
+                  </p>
+                </div>
+              )}
             </div>
-            <h3 className="text-2xl font-bold text-white mb-3 font-display">
-              Sourcing Request Deployed!
-            </h3>
-            <p className="text-sm text-zinc-400 max-w-md">
-              Our custom logic engine is parsing your request. A dedicated sales partner will follow up shortly with pricing worksheets and production schematics. Redirecting to home...
-            </p>
-          </>
-        )}
+          </div>
+        </div>
+
+        {/* Brevo Notification Status */}
+        <div className="flex items-center justify-center gap-2 pt-4 opacity-80">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+          <p className="text-xs text-zinc-400 font-medium tracking-wide">
+            A copy of this thread has been dispatched to your registered email via Brevo.
+          </p>
+        </div>
       </div>
     );
   }
 
+  // ==========================================
+  // 📝 COMPOSER VIEW (Default State)
+  // ==========================================
   return (
-    <div className="space-y-6 animate-scaleIn">
-      {/* Recipient email input */}
-      <div>
-        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
-          To: <span className="text-zinc-300 font-semibold">{toEmail}</span>
-        </label>
-        <input
-          type="email"
-          value={toEmail}
-          onChange={(e) => setToEmail(e.target.value)}
-          className="w-full bg-[#121316] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:border-[#d4af37] focus:outline-none"
-          placeholder="Enter sourcing email address"
-        />
+    <div className="space-y-6 animate-scaleIn h-full flex flex-col">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
+            Target Routing
+          </label>
+          <input
+            type="email"
+            value={toEmail}
+            onChange={(e) => setToEmail(e.target.value)}
+            className="w-full bg-[#121316] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] focus:outline-none transition-all"
+            placeholder="Enter sourcing email address"
+          />
+        </div>
+        <div>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
+            Subject Line
+          </label>
+          <input
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="w-full bg-[#121316] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] focus:outline-none transition-all"
+            placeholder="Enter quote request subject title"
+          />
+        </div>
       </div>
 
-      {/* Subject line input */}
-      <div>
-        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
-          Subject:
-        </label>
-        <input
-          type="text"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className="w-full bg-[#121316] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:border-[#d4af37] focus:outline-none"
-          placeholder="Enter quote request subject title"
-        />
-      </div>
-
-      {/* Rich text formatting toolbar — bold, italic, underline etc */}
+      {/* Editor Toolbar */}
       <div className="flex items-center gap-1.5 border-b border-zinc-800 pb-3">
         {["B", "I", "U", "U2", ">", "S", "⋮"].map((action, i) => (
           <button
             key={i}
             type="button"
-            className="h-8 w-8 flex items-center justify-center rounded bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-colors text-xs font-bold cursor-pointer"
+            className="h-8 w-8 flex items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 transition-colors text-xs font-bold cursor-pointer"
           >
             {action === "U2" ? <span className="underline decoration-double">U</span> : action}
           </button>
         ))}
       </div>
 
-      {/* Message body textarea — applies red styling when escalated, default gold focus otherwise */}
-      <div>
+      {/* Message Editor */}
+      <div className="flex-1 min-h-75">
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className={`w-full h-80 border rounded-xl p-5 text-sm leading-relaxed font-body focus:outline-none resize-none transition-colors duration-300 ${
+          className={`w-full h-full border rounded-xl p-5 text-sm leading-relaxed font-body focus:outline-none resize-none transition-all duration-300 ${
             isEscalated 
-              ? "bg-red-500/5 border-red-500/30 text-red-300 focus:border-red-500 font-mono" 
-              : "bg-[#121316]/50 border-zinc-800 text-zinc-300 focus:border-[#d4af37]"
+              ? "bg-red-500/5 border-red-500/30 text-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 font-mono" 
+              : "bg-[#121316]/50 border-zinc-800 text-zinc-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
           }`}
+          placeholder="Include any specific printing limitations, timelines, or custom logic..."
         />
       </div>
 
-      {/* File attachment drop zone — click triggers hidden file input for mockups/worksheets */}
+      {/* File Attachments Zone */}
       <div>
         <input
           type="file"
@@ -148,17 +174,18 @@ export default function CheckoutForm({
           multiple
           className="hidden"
         />
-        <div
+        <button
           onClick={() => fileInputRef.current?.click()}
-          className="border border-dashed border-zinc-800 rounded-xl p-4 flex items-center justify-center hover:border-zinc-700 transition-colors cursor-pointer bg-zinc-900/10"
+          type="button"
+          className="w-full border border-dashed border-zinc-800 rounded-xl p-4 flex items-center justify-center hover:border-[#d4af37]/50 hover:bg-[#d4af37]/5 transition-all cursor-pointer group"
         >
-          <span className="flex items-center gap-2.5 text-xs text-zinc-400 hover:text-white font-semibold">
+          <span className="flex items-center gap-2.5 text-xs text-zinc-400 group-hover:text-[#d4af37] font-medium transition-colors">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
             Attach Artwork Mockups or Sourcing Worksheets
           </span>
-        </div>
+        </button>
       </div>
     </div>
   );
