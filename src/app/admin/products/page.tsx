@@ -2,13 +2,20 @@
 
 import React, { useState, useEffect } from "react";
 import { Product } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AdminProductsPage() {
+  const queryClient = useQueryClient();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Edit State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -51,8 +58,8 @@ export default function AdminProductsPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Generate slug from title automatically if ID is empty
-    if (name === "title" && !formData.id) {
+    // Generate slug from title automatically if ID is empty and NOT in edit mode
+    if (name === "title" && !formData.id && !isEditing) {
       const generatedSlug = value
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
@@ -69,12 +76,75 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleEditClick = (product: Product) => {
+    setError(null);
+    setSuccess(null);
+    setIsEditing(true);
+    setEditingId(product.id);
+    setExistingImageUrl(product.img);
+    setImagePreview(product.img);
+    setImageFile(null); // Reset file upload since we use existing by default
+    
+    setFormData({
+      id: product.id,
+      title: product.title,
+      cat: product.cat,
+      price: product.price.toString(),
+      priceRange: product.priceRange || "",
+      moq: product.moq.toString(),
+      customization: product.customization || "",
+      description: product.description,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingId(null);
+    setExistingImageUrl(null);
+    setImagePreview(null);
+    setImageFile(null);
+    setFormData({
+      id: "",
+      title: "",
+      cat: "Apparel",
+      price: "",
+      priceRange: "",
+      moq: "25",
+      customization: "",
+      description: "",
+    });
+  };
+
+  const handleDeleteClick = async (productId: string) => {
+    if (!confirm("Are you absolutely sure you want to delete this product from the catalog? This action is permanent.")) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete product.");
+      }
+      setSuccess("Product successfully deleted from catalog.");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      fetchProducts();
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Failed to delete product.");
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
 
-    if (!imageFile) {
+    if (!imageFile && !isEditing) {
       setError("Product image file is required.");
       return;
     }
@@ -82,23 +152,26 @@ export default function AdminProductsPage() {
     setSubmitting(true);
 
     try {
-      // 1. Upload Image to Supabase Storage
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", imageFile);
+      let imageUrl = existingImageUrl;
 
-      const uploadRes = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: uploadFormData,
-      });
+      // 1. Upload new image if one was selected
+      if (imageFile) {
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", imageFile);
 
-      const uploadData = await uploadRes.json();
-      if (!uploadRes.ok) {
-        throw new Error(uploadData.error || "Failed to upload product image.");
+        const uploadRes = await fetch("/api/admin/upload", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok) {
+          throw new Error(uploadData.error || "Failed to upload product image.");
+        }
+        imageUrl = uploadData.url;
       }
 
-      const imageUrl = uploadData.url;
-
-      // 2. Save Product to Database
+      // 2. Save/Update Product details in Database
       const productPayload = {
         ...formData,
         price: parseFloat(formData.price),
@@ -106,8 +179,11 @@ export default function AdminProductsPage() {
         img: imageUrl,
       };
 
-      const productRes = await fetch("/api/products", {
-        method: "POST",
+      const url = isEditing ? `/api/products/${editingId}` : "/api/products";
+      const method = isEditing ? "PUT" : "POST";
+
+      const productRes = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -119,21 +195,15 @@ export default function AdminProductsPage() {
         throw new Error(productData.error || "Failed to save product.");
       }
 
-      setSuccess("Product uploaded and catalog successfully synchronized!");
+      setSuccess(
+        isEditing 
+          ? "Product catalog entry successfully updated!" 
+          : "Product uploaded and catalog successfully synchronized!"
+      );
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       
-      // Reset Form
-      setFormData({
-        id: "",
-        title: "",
-        cat: "Apparel",
-        price: "",
-        priceRange: "",
-        moq: "25",
-        customization: "",
-        description: "",
-      });
-      setImageFile(null);
-      setImagePreview(null);
+      // Reset Form and State
+      handleCancelEdit();
       
       // Refresh list
       fetchProducts();
@@ -152,7 +222,7 @@ export default function AdminProductsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <div>
           <h2 className="text-2xl font-bold text-white font-display tracking-tight drop-shadow-md">Product Catalog</h2>
-          <p className="text-xs text-zinc-400 mt-1">Add baseline materials and synchronize the global inventory directory.</p>
+          <p className="text-xs text-zinc-400 mt-1">Manage baseline materials, update configurations, or prune global inventory.</p>
         </div>
       </div>
 
@@ -181,13 +251,31 @@ export default function AdminProductsPage() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {products.map((product) => (
-                      <div key={product.id} className="p-4 bg-black/40 border border-white/5 rounded-xl hover:border-white/10 transition-all flex gap-4">
+                      <div key={product.id} className="p-4 bg-black/40 border border-white/5 rounded-xl hover:border-white/10 transition-all flex gap-4 relative group">
+                        {/* Hover Edit/Delete Action HUD Overlay */}
+                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleEditClick(product)}
+                            title="Edit Product"
+                            className="p-1.5 bg-white/5 border border-white/10 hover:bg-[#d4af37]/20 hover:border-[#d4af37]/40 rounded-lg text-zinc-300 hover:text-[#d4af37] transition-all cursor-pointer"
+                          >
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(product.id)}
+                            title="Delete Product"
+                            className="p-1.5 bg-white/5 border border-white/10 hover:bg-red-500/20 hover:border-red-500/40 rounded-lg text-zinc-300 hover:text-red-400 transition-all cursor-pointer"
+                          >
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                        </div>
+
                         <div className="h-16 w-16 bg-zinc-900 border border-white/10 rounded-lg overflow-hidden shrink-0">
                           <img src={product.img} alt={product.title} className="h-full w-full object-cover" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <span className="text-[9px] font-mono text-[#d4af37] uppercase tracking-wider bg-[#d4af37]/10 px-2 py-0.5 rounded-full">{product.cat}</span>
-                          <h4 className="text-xs font-bold text-white mt-1.5 truncate">{product.title}</h4>
+                          <h4 className="text-xs font-bold text-white mt-1.5 truncate pr-14">{product.title}</h4>
                           <div className="flex justify-between items-center mt-2 text-[10px] font-mono text-zinc-400">
                             <span>MOQ: {product.moq}</span>
                             <span className="text-white font-bold">{product.priceRange}</span>
@@ -202,10 +290,12 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Add Product Form */}
+        {/* RIGHT COLUMN: Product Form */}
         <div className="space-y-6">
           <div className={`${glassCardClass} p-6`}>
-            <h3 className="text-sm font-bold text-zinc-300 mb-6">Create Baseline Item</h3>
+            <h3 className="text-sm font-bold text-zinc-300 mb-6">
+              {isEditing ? "Edit Catalog Item" : "Create Baseline Item"}
+            </h3>
             
             {error && (
               <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono">
@@ -240,10 +330,11 @@ export default function AdminProductsPage() {
                     type="text"
                     name="id"
                     required
+                    disabled={isEditing} // Block slug edits to prevent broken links
                     value={formData.id}
                     onChange={handleInputChange}
                     placeholder="gildan-hoodie"
-                    className={inputClass}
+                    className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`}
                   />
                 </div>
                 <div>
@@ -355,13 +446,26 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full bg-[#d4af37] text-[#090a0f] py-3 rounded-xl text-xs font-bold hover:bg-[#bfa032] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-[0_0_20px_rgba(212,175,55,0.25)] font-mono uppercase tracking-wider"
-              >
-                {submitting ? "Uploading Product..." : "Deploy Product"}
-              </button>
+              <div className="flex gap-3">
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="flex-1 bg-white/5 border border-white/10 text-white py-3 rounded-xl text-xs font-bold hover:bg-white/10 transition-colors font-mono uppercase tracking-wider"
+                  >
+                    Cancel
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 bg-[#d4af37] text-[#090a0f] py-3 rounded-xl text-xs font-bold hover:bg-[#bfa032] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-[0_0_20px_rgba(212,175,55,0.25)] font-mono uppercase tracking-wider"
+                >
+                  {submitting 
+                    ? (isEditing ? "Updating..." : "Deploying...") 
+                    : (isEditing ? "Save Changes" : "Deploy Product")}
+                </button>
+              </div>
             </form>
           </div>
         </div>
