@@ -17,7 +17,7 @@ async function main() {
   try {
     await supabase.storage.createBucket("product-images", { public: true });
     console.log("Bucket 'product-images' verified/created.");
-  } catch (err) {
+  } catch {
     console.log("Bucket already exists or check failed, continuing...");
   }
 
@@ -37,7 +37,7 @@ async function main() {
         const fileName = path.basename(localFilePath);
         
         // Upload to storage
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from("product-images")
           .upload(fileName, fileBuffer, {
             contentType: "image/webp",

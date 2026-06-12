@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import GlassCard from "@/components/admin/GlassCard";
 import AdminPageHeader from "@/components/admin/AdminPageHeader";
 import LoadingSpinner from "@/components/admin/LoadingSpinner";
@@ -56,7 +57,7 @@ export default function AdminProductsPage() {
                         </button>
                       </div>
                       <div className="h-16 w-16 bg-zinc-900 border border-white/10 rounded-lg overflow-hidden shrink-0">
-                        <img src={product.img} alt={product.title} className="h-full w-full object-cover" />
+                        <Image src={product.img} alt={product.title} width={64} height={64} className="h-full w-full object-cover" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <span className="text-[9px] font-mono text-[#d4af37] uppercase tracking-wider bg-[#d4af37]/10 px-2 py-0.5 rounded-full">{product.cat}</span>
