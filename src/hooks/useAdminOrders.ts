@@ -12,10 +12,6 @@ export function useAdminOrders() {
   const [quoteValue, setQuoteValue] = useState("");
   const [isEditingQuote, setIsEditingQuote] = useState(false);
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   async function fetchOrders() {
     try {
       setLoading(true);
@@ -34,6 +30,10 @@ export function useAdminOrders() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const handleSelectOrder = (order: Order) => {
     setSelectedOrder(order);

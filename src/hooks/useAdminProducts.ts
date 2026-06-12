@@ -113,9 +113,10 @@ export function useAdminProducts() {
       setSuccess("Product successfully deleted from catalog.");
       queryClient.invalidateQueries({ queryKey: ["products"] });
       fetchProducts();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to delete product.";
       console.error(err);
-      setError(err.message || "Failed to delete product.");
+      setError(message);
       setLoading(false);
     }
   };
@@ -166,9 +167,10 @@ export function useAdminProducts() {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       handleCancelEdit();
       fetchProducts();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "An unexpected error occurred.";
       console.error(err);
-      setError(err.message || "An unexpected error occurred.");
+      setError(message);
     } finally {
       setSubmitting(false);
     }

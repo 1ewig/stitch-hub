@@ -69,10 +69,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="ml-auto bg-red-500/20 border border-red-500/30 text-red-400 py-0.5 px-2 rounded-full text-[10px] font-bold shadow-[0_0_8px_rgba(239,68,68,0.2)]">3</span>
           </Link>
 
-          <Link href="/admin/agent" className={getLinkClass("/admin/agent")}>
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            <span className="text-sm font-medium">Agent Operations</span>
-          </Link>
         </nav>
 
         {/* Admin Profile Footer */}
