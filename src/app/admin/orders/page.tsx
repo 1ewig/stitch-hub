@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import GlassCard from "@/components/ui/GlassCard";
-import AdminPageHeader from "@/components/ui/AdminPageHeader";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import EmptyState from "@/components/ui/EmptyState";
-import StatusBadge from "@/components/ui/StatusBadge";
+import GlassCard from "@/components/admin/GlassCard";
+import AdminPageHeader from "@/components/admin/AdminPageHeader";
+import LoadingSpinner from "@/components/admin/LoadingSpinner";
+import EmptyState from "@/components/admin/EmptyState";
+import StatusBadge from "@/components/admin/StatusBadge";
 import { useAdminOrders } from "@/hooks/useAdminOrders";
 
 export default function AdminOrdersPage() {
