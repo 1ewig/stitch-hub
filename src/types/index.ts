@@ -16,3 +16,37 @@ export interface CartItem {
   size: string;
   customNotes: string;
 }
+
+export interface OrderItem {
+  product: {
+    title: string;
+    img: string;
+    cat: string;
+  };
+  quantity: number;
+  size: string;
+  customNotes?: string;
+}
+
+export interface Order {
+  id: string;
+  invoiceNumber: string;
+  totalAmount: string;
+  status: string;
+  itemsSnapshot: OrderItem[];
+  createdAt: string;
+  user: {
+    name: string | null;
+    email: string;
+  } | null;
+}
+
+export interface EscalationLog {
+  id: string;
+  subject: string;
+  body: string;
+  status: string;
+  aiResponseDraft: string;
+  createdAt: string;
+  metadata?: { recipientEmail?: string; itemCount?: number };
+}
