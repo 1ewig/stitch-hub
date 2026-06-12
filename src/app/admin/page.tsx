@@ -11,7 +11,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12 w-full">
-      <AdminPageHeader title="Admin Dashboard" subtitle="Global platform overview and agentic operational metrics.">
+      <AdminPageHeader title="Admin Dashboard" subtitle="Overview of sales, orders, and system activity.">
         <button className="bg-white/5 backdrop-blur-md border border-white/10 text-white px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-white/10 transition-colors">
           Export Report
         </button>
@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
           </GlassCard>
 
           <GlassCard className="p-6">
-            <h3 className="text-sm font-bold text-zinc-300 mb-6">Agentic Quote Conversion</h3>
+            <h3 className="text-sm font-bold text-zinc-300 mb-6">Quote Conversion</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="relative h-40 flex items-center justify-center drop-shadow-[0_0_15px_rgba(212,175,55,0.15)]">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
 
         <div className="space-y-6">
           <GlassCard className="p-6">
-            <h3 className="text-sm font-bold text-zinc-300 mb-6">AI Task Resolution</h3>
+            <h3 className="text-sm font-bold text-zinc-300 mb-6">Task Breakdown</h3>
             <div className="h-40 flex items-end justify-between gap-3 border-b border-white/10 pb-3">
               <div className="w-1/4 bg-[#d4af37]/80 h-[60%] rounded-t-lg shadow-[0_0_15px_rgba(212,175,55,0.3)]" />
               <div className="w-1/4 bg-blue-500/80 h-[85%] rounded-t-lg shadow-[0_0_15px_rgba(59,130,246,0.3)]" />
@@ -109,9 +109,9 @@ export default function AdminDashboardPage() {
             </div>
             <div className="p-5 flex-1 overflow-y-auto space-y-3">
               {loading ? (
-                <LoadingSpinner message="Syncing Network Nodes..." />
+                <LoadingSpinner />
               ) : escalations.length === 0 ? (
-                <div className="text-xs text-zinc-500 font-mono text-center py-10">System Clear. No active escalations.</div>
+                <div className="text-xs text-zinc-500 font-mono text-center py-10">No active escalations.</div>
               ) : (
                 escalations.map((alert) => (
                   <div key={alert.id} className="p-4 bg-black/20 border border-white/5 rounded-xl hover:bg-white/4 hover:border-white/10 transition-all cursor-pointer group backdrop-blur-sm">

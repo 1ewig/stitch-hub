@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="h-8 w-8 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/40 flex items-center justify-center text-xs font-bold text-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.2)]">AD</div>
             <div>
               <p className="text-xs font-bold text-white">System Admin</p>
-              <p className="text-[10px] text-zinc-400">Superuser Node</p>
+              <p className="text-[10px] text-zinc-400">Administrator</p>
             </div>
           </div>
         </div>

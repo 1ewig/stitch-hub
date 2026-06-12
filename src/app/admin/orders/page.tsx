@@ -18,17 +18,17 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12 w-full">
-      <AdminPageHeader title="Active Orders" subtitle="Review active customer B2B procurement flows and dynamic pricing quotes." />
+      <AdminPageHeader title="Orders" subtitle="Review and manage customer orders and quotes." />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 space-y-6">
           <GlassCard className="p-6 h-[720px] flex flex-col" glow>
-            <h3 className="text-sm font-bold text-zinc-300 mb-6 relative z-10">B2B Requisitions</h3>
+            <h3 className="text-sm font-bold text-zinc-300 mb-6 relative z-10">Orders</h3>
             
             {loading ? (
               <LoadingSpinner />
             ) : orders.length === 0 ? (
-              <EmptyState message="No active B2B orders or quotes found." />
+              <EmptyState message="No orders found." />
             ) : (
               <div className="flex-1 overflow-y-auto pr-2 relative z-10">
                 <table className="w-full border-collapse">
@@ -91,7 +91,7 @@ export default function AdminOrdersPage() {
                   </div>
 
                   <div>
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Dynamic Quote Lock</h4>
+                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Quote</h4>
                     <div className="bg-black/20 border border-white/5 p-4 rounded-xl">
                       {isEditingQuote ? (
                         <form onSubmit={handleUpdateQuote} className="space-y-2">
@@ -119,7 +119,7 @@ export default function AdminOrdersPage() {
                   </div>
 
                   <div>
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Operational Dispatch Status</h4>
+                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Order Status</h4>
                     <div className="grid grid-cols-3 gap-2">
                       {["unpaid", "paid", "shipping"].map((status) => (
                         <button key={status} disabled={updatingId === selectedOrder.id}
@@ -134,7 +134,7 @@ export default function AdminOrdersPage() {
                   </div>
 
                   <div>
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Requisition items ({selectedOrder.itemsSnapshot.length})</h4>
+                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Items ({selectedOrder.itemsSnapshot.length})</h4>
                     <div className="space-y-3">
                       {selectedOrder.itemsSnapshot.map((item, idx) => (
                         <div key={idx} className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-3">

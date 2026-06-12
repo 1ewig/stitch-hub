@@ -25,17 +25,17 @@ export default function AdminProductsPage() {
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12 w-full">
-      <AdminPageHeader title="Product Catalog" subtitle="Manage baseline materials, update configurations, or prune global inventory." />
+      <AdminPageHeader title="Product Catalog" subtitle="Add, edit, or remove products from the catalog." />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 space-y-6">
           <GlassCard className="p-6 h-[720px] flex flex-col" glow>
-            <h3 className="text-sm font-bold text-zinc-300 mb-4 relative z-10">Active Sourcing Catalog</h3>
+            <h3 className="text-sm font-bold text-zinc-300 mb-4 relative z-10">Product Catalog</h3>
             
             {loading ? (
               <LoadingSpinner />
             ) : products.length === 0 ? (
-              <EmptyState message="No products found in the database. Use the panel on the right to add your first catalog item." />
+              <EmptyState message="No products found. Use the panel on the right to add your first product." />
             ) : (
               <div className="flex-1 overflow-y-auto pr-2 relative z-10 space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -62,7 +62,7 @@ export default function AdminProductsPage() {
                         <span className="text-[9px] font-mono text-[#d4af37] uppercase tracking-wider bg-[#d4af37]/10 px-2 py-0.5 rounded-full">{product.cat}</span>
                         <h4 className="text-xs font-bold text-white mt-1.5 truncate pr-14">{product.title}</h4>
                         <div className="flex justify-between items-center mt-2 text-[10px] font-mono text-zinc-400">
-                          <span>MOQ: {product.moq}</span>
+                          <span>Minimum: {product.moq} units</span>
                           <span className="text-white font-bold">{product.priceRange}</span>
                         </div>
                       </div>
@@ -76,7 +76,7 @@ export default function AdminProductsPage() {
 
         <div className="space-y-6">
           <GlassCard className="p-6">
-            <h3 className="text-sm font-bold text-zinc-300 mb-6">{isEditing ? "Edit Catalog Item" : "Create Baseline Item"}</h3>
+            <h3 className="text-sm font-bold text-zinc-300 mb-6">{isEditing ? "Edit Product" : "Create Product"}</h3>
 
             {error && (
               <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono">{error}</div>
@@ -95,12 +95,12 @@ export default function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <FormField label="Base Price ($)" name="price" type="number" required value={formData.price} onChange={handleInputChange} placeholder="39.99" step="0.01" />
-                <FormField label="MOQ" name="moq" type="number" required value={formData.moq} onChange={handleInputChange} placeholder="25" />
+                <FormField label="Min. Order" name="moq" type="number" required value={formData.moq} onChange={handleInputChange} placeholder="25" />
               </div>
 
               <FormField label="Volume Pricing Range" name="priceRange" required value={formData.priceRange} onChange={handleInputChange} placeholder="e.g. $14.20 - $22.50" />
               <FormField label="Customization Options" name="customization" required value={formData.customization} onChange={handleInputChange} placeholder="e.g. Screen Print | Embroidery" />
-              <FormField label="Description" name="description" type="textarea" required value={formData.description} onChange={handleInputChange} placeholder="Material specs, structure, durability characteristics..." />
+              <FormField label="Description" name="description" type="textarea" required value={formData.description} onChange={handleInputChange} placeholder="Product description and details..." />
 
               <FormField label="Product Image" name="image" type="file"
                 imagePreview={imagePreview} onFileChange={handleImageChange}
@@ -116,7 +116,7 @@ export default function AdminProductsPage() {
                 )}
                 <button type="submit" disabled={submitting}
                   className="flex-1 bg-[#d4af37] text-[#090a0f] py-3 rounded-xl text-xs font-bold hover:bg-[#bfa032] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-[0_0_20px_rgba(212,175,55,0.25)] font-mono uppercase tracking-wider">
-                  {submitting ? (isEditing ? "Updating..." : "Deploying...") : (isEditing ? "Save Changes" : "Deploy Product")}
+                  {submitting ? (isEditing ? "Updating..." : "Saving...") : (isEditing ? "Save Changes" : "Save Product")}
                 </button>
               </div>
             </form>
