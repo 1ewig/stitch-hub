@@ -71,7 +71,7 @@ export default function ResetPasswordPage() {
             STITCH<span className="text-[#d4af37]">HUB</span>
           </div>
           <h2 className="text-lg font-bold text-zinc-100">Set New Password</h2>
-          <p className="text-xs text-zinc-500">Provide your secure new credential below.</p>
+          <p className="text-xs text-zinc-500">Enter your new password below.</p>
         </div>
 
         {/* Alert banners */}

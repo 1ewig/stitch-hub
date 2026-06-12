@@ -6,7 +6,7 @@ export default function SourcingVolumeMatrix() {
   return (
     <div className="mb-8 bg-zinc-950/60 border border-zinc-900/80 rounded-2xl p-5">
       <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-        Sourcing Volume Matrix
+        Volume Pricing
       </h4>
       {/* ── Tiered pricing grid display ── */}
       <div className="grid grid-cols-3 gap-3 text-center text-xs">

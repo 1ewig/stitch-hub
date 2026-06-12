@@ -31,7 +31,7 @@ export default function ProductDetailPage({ params }: PageProps) {
     return (
       <main className="min-h-screen bg-zinc-950 text-white flex flex-col justify-center items-center font-sans">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#d4af37]"></div>
-        <p className="mt-4 text-xs text-zinc-400 font-mono uppercase tracking-wider">Synchronizing Sourcing Node...</p>
+        <p className="mt-4 text-xs text-zinc-400 font-mono uppercase tracking-wider">Loading product details...</p>
       </main>
     );
   }
@@ -57,7 +57,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           </svg>
           <h2 className="text-3xl font-bold font-display mb-4">Product Not Found</h2>
           <p className="text-zinc-500 mb-8">
-            The requested baseline item is either discontinued or does not exist in our sourcing directory.
+            This product is either discontinued or no longer available.
           </p>
           {/* Link back to the full directory */}
           <Link

@@ -19,7 +19,7 @@ export default function ProductInfo({ title, description, minQty }: ProductInfoP
           {title}
         </h1>
         <p className="text-[#d4af37] font-semibold text-sm uppercase tracking-wider">
-          Sourcing MOQ: {minQty} units
+          Minimum: {minQty} units
         </p>
       </div>
 

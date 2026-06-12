@@ -35,7 +35,7 @@ export default function AddToCartButton({ currentQty, onAdd }: AddToCartButtonPr
       </div>
 
       <GoldButton onClick={onAdd} className="w-full">
-        Add to Sourcing Cart
+        Add to Cart
       </GoldButton>
     </div>
   );

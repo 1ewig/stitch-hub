@@ -108,7 +108,7 @@ export default function CartDrawer({
           {/* ── Header — title + close button ── */}
           <div className="flex items-center justify-between border-b border-zinc-900 px-6 py-6">
             <h2 className="text-xl font-bold font-display text-white">
-              Sourcing Cart
+              Cart
             </h2>
             <button
               onClick={() => setIsOpen(false)}
@@ -148,7 +148,7 @@ export default function CartDrawer({
                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
                   />
                 </svg>
-                <p className="text-zinc-500 font-medium">Your sourcing cart is empty.</p>
+                <p className="text-zinc-500 font-medium">Your cart is empty.</p>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="mt-4 text-sm font-semibold text-[#d4af37] hover:underline cursor-pointer"
@@ -255,17 +255,17 @@ export default function CartDrawer({
           {cart.length > 0 && (
             <div className="border-t border-zinc-900 bg-zinc-950 p-6 space-y-4">
               <div className="flex justify-between items-center text-zinc-400">
-                <span className="text-sm font-medium">Sourcing Quote Status</span>
+                <span className="text-sm font-medium">Quote Status</span>
                 <span className="text-sm font-bold text-[#d4af37] uppercase tracking-wider">
-                  Pending Verification
+                  Pending
                 </span>
               </div>
               <p className="text-xs text-zinc-500">
-                Quote calculations are completed dynamically by our engine based on branding specs, material availability, and production timeline requirements.
+                Your final quote will be calculated based on product selection, quantities, and customization details.
               </p>
 
               <GoldButton href="/products/checkout" onClick={() => setIsOpen(false)} size="md">
-                Begin Sourcing Checkout
+                Request Quote
               </GoldButton>
             </div>
           )}

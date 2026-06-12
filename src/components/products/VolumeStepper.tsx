@@ -18,7 +18,7 @@ export default function VolumeStepper({ minQty, currentQty, onChange }: VolumeSt
     <div className="mb-8">
       <div className="flex justify-between items-center mb-2">
         <label className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-          Configure Volume Units
+          Quantity
         </label>
         <span className="text-xs font-medium text-zinc-500">
           Min. Order Quantity (MOQ): {minQty}

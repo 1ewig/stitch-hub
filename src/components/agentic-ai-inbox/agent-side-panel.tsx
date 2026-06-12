@@ -42,13 +42,13 @@ export default function CheckoutSidebar({
         loading={isSubmitting}
         className={isEscalated ? "shadow-[0_0_35px_rgba(239,68,68,0.2)]" : "shadow-[0_0_35px_rgba(212,175,55,0.4)]"}
       >
-        {isSubmitting ? "Analyzing Sourcing Specs..." : "Generate Agentic Sales Response"}
+        {isSubmitting ? "Analyzing..." : "Request Quote"}
       </GoldButton>
 
       {/* AI-suggested actions card — prepopulated follow-ups the agent can click */}
       <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-3.5">
         <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-          AI Sourcing Suggestions
+          Suggestions
         </h4>
         <ul className="space-y-2 text-sm">
           <li className="text-[#d4af37] font-medium hover:underline cursor-pointer flex items-center gap-2">
@@ -63,10 +63,10 @@ export default function CheckoutSidebar({
       {/* Sourcing specifications summary — cart items with scroll, client company, and status badge */}
       <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-4">
         <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-          Sourcing Specifications
+          Cart Items
         </h4>
         {cart.length === 0 ? (
-          <p className="text-sm text-zinc-500 italic">No products added in sourcing list.</p>
+          <p className="text-sm text-zinc-500 italic">No products added yet.</p>
         ) : (
           <div className="space-y-3 max-h-55 overflow-y-auto pr-1">
             {/* Scrollable cart item list — each row shows product, size, and quantity */}
@@ -100,7 +100,7 @@ export default function CheckoutSidebar({
           ) : (
             <span className="font-bold text-emerald-400 flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-              Draft Sourcing
+              Draft
             </span>
           )}
         </div>
@@ -110,7 +110,7 @@ export default function CheckoutSidebar({
       {attachedFiles.length > 0 && (
         <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-3">
           <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-            Attached Sourcing Assets (AI-Parsed)
+            Attached Files
           </h4>
           <div className="space-y-2.5">
             {attachedFiles.map((file, i) => {

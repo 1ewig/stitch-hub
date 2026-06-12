@@ -45,7 +45,7 @@ export default function CheckoutForm({
       <div className="flex flex-col h-full animate-scaleIn space-y-6">
         {/* Thread Header */}
         <div className="border-b border-zinc-800 pb-4">
-          <h2 className="text-xl font-bold text-white font-display">Active Requisition Thread</h2>
+          <h2 className="text-xl font-bold text-white font-display">Active Request</h2>
           <p className="text-xs text-zinc-500 mt-1">Ref: {subject}</p>
         </div>
 
@@ -71,7 +71,7 @@ export default function CheckoutForm({
             {/* Message Payload */}
             <div className="flex-1 space-y-1 mt-0.5">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-white tracking-wide">StitchHub Logic Agent</span>
+                <span className="text-sm font-bold text-white tracking-wide">StitchHub Assistant</span>
                 <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider">Just Now</span>
               </div>
               
@@ -99,7 +99,7 @@ export default function CheckoutForm({
         <div className="flex items-center justify-center gap-2 pt-4 opacity-80">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
           <p className="text-xs text-zinc-400 font-medium tracking-wide">
-            A copy of this thread has been dispatched to your registered email via Brevo.
+            A copy has been sent to your email.
           </p>
         </div>
       </div>
@@ -114,14 +114,14 @@ export default function CheckoutForm({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
-            Target Routing
+            To
           </label>
           <input
             type="email"
             value={toEmail}
             onChange={(e) => setToEmail(e.target.value)}
             className="w-full bg-[#121316] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] focus:outline-none transition-all"
-            placeholder="Enter sourcing email address"
+            placeholder="Enter email address"
           />
         </div>
         <div>
@@ -133,7 +133,7 @@ export default function CheckoutForm({
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             className="w-full bg-[#121316] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] focus:outline-none transition-all"
-            placeholder="Enter quote request subject title"
+            placeholder="Enter subject"
           />
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function CheckoutForm({
               ? "bg-red-500/5 border-red-500/30 text-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 font-mono" 
               : "bg-[#121316]/50 border-zinc-800 text-zinc-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
           }`}
-          placeholder="Include any specific printing limitations, timelines, or custom logic..."
+          placeholder="Include any specific requirements, timelines, or details..."
         />
       </div>
 
@@ -183,7 +183,7 @@ export default function CheckoutForm({
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
             </svg>
-            Attach Artwork Mockups or Sourcing Worksheets
+            Attach artwork or reference files
           </span>
         </button>
       </div>

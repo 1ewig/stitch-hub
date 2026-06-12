@@ -36,7 +36,7 @@ export default function ProductsPage() {
             B2B Sourcing <span className="text-[#d4af37]">Directory</span>
           </h1>
           <p className="text-zinc-400 mt-2 text-sm md:text-base max-w-xl">
-            Choose high-end customizable baseline materials. Optimize pricing via direct volume discount brackets computed in real-time.
+            Browse customizable products with volume pricing calculated in real time.
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export default function ProductsPage() {
         {loading ? (
           <div className="py-24 flex flex-col justify-center items-center">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#d4af37] mb-3"></div>
-            <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Querying Sourcing Registry...</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-zinc-500">Loading products...</span>
           </div>
         ) : filteredProducts.length === 0 ? (
           /* ── No results — search-icon placeholder with clear-filters action ── */
@@ -73,7 +73,7 @@ export default function ProductsPage() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <p className="text-zinc-500 font-medium">No sourcing matches found.</p>
+            <p className="text-zinc-500 font-medium">No products match your search.</p>
             <button
               onClick={clearFilters}
               className="mt-2 text-sm text-[#d4af37] hover:underline font-semibold cursor-pointer"

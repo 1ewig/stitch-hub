@@ -42,7 +42,7 @@ export default function CheckoutPage() {
             Products
           </Link>
           <span>/</span>
-          <span className="text-[#d4af37]">Sourcing Quote checkout</span>
+          <span className="text-[#d4af37]">Quote Request</span>
         </div>
 
         {/* ── Split-panel layout: email form (left) + AI sidebar (right) ── */}
