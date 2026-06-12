@@ -10,21 +10,21 @@ export default function LandingTestimonials() {
       name: "Marcus Vance",
       role: "VP of Brand Strategy",
       company: "Linear Technologies",
-      quote: "Stitch Hub transformed our entire corporate merch lifecycle. The AI color validation matched our exact hex codes perfectly across cotton hoodies and polyester polos. Absolute game changer.",
+       quote: "Stitch Hub made our entire merch program simple. The color matching was spot-on across cotton hoodies and polyester polos. Best vendor we&apos;ve worked with.",
       rating: 5
     },
     {
       name: "Elena Rostova",
       role: "Head of Operations",
       company: "Vercel Labs",
-      quote: "We needed 1,200 branded water-resistant organizers for our global team with custom stitching. Stitch Hub balanced inventory and cleared customs in record time. Phenomenal operational transparency.",
+       quote: "We needed 1,200 branded organizers for our global team with custom stitching. Stitch Hub handled inventory and customs faster than anyone else we&apos;ve tried.",
       rating: 5
     },
     {
       name: "Darnell Sterling",
       role: "Creative Director",
       company: "Stripe Design",
-      quote: "The fabric physics simulation is no joke. Seeing exactly how our embroidery layouts sit on high-tension performance wear before manufacturing saved us weeks of prototype iterations.",
+       quote: "Seeing exactly how our embroidery layouts would look on performance fabrics before manufacturing saved us weeks of back-and-forth with samples.",
       rating: 5
     }
   ];
@@ -38,7 +38,7 @@ export default function LandingTestimonials() {
         <div className="text-center max-w-2xl mx-auto mb-20">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Trusted by Brand Leaders</h2>
           <p className="text-zinc-400 text-lg leading-relaxed">
-            Discover why modern design departments and logistics operations scale their bulk sourcing runs using Stitch Hub.
+            See why brands trust Stitch Hub for their bulk sourcing and custom merchandise.
           </p>
         </div>
 

@@ -15,30 +15,30 @@ export default function LandingProcess({ activeStep, setActiveStep }: LandingPro
   const steps = [
     {
       num: "01",
-      title: "Design Physics Modeling",
+      title: "Design & Material Review",
       subtitle: "Material & Pattern Validation",
-      desc: "Our agentic physics engine evaluates fabric weights, seam tensions, and sublimation properties. This mitigates shrink and stretch discrepancies before the physical prototype is ever initiated.",
+      desc: "We evaluate fabric weight, tension, and print properties to catch issues before sampling.",
       features: ["Fabric Physics Mapping", "Sublimation Shrink Safety", "Tension Load Checks"]
     },
     {
       num: "02",
-      title: "AI Pantone Alignment",
+      title: "Color Matching",
       subtitle: "Color Accuracy Guarantee",
-      desc: "Color integrity is managed via strict AI spectrophotometer bridging. The platform calculates exact color conversions across varying material dye-lots, ensuring uniform branding.",
+      desc: "We match your brand colors across different fabric types so your logo looks consistent on every material.",
       features: ["Multi-fabric Dye Lot Alignment", "Hex to Pantone Verification", "RGB Ambient Calibration"]
     },
     {
       num: "03",
-      title: "Automated Procurement",
-      subtitle: "Direct API Supplier Bridging",
-      desc: "Order schedules trigger automated supplier matches based on live factory capacities, material indices, and transit metrics. This completely eliminates delivery bottlenecks.",
+      title: "Supplier Matching",
+      subtitle: "Automated Supplier Matching",
+      desc: "Orders are matched to suppliers based on capacity, material availability, and delivery timelines.",
       features: ["Live Capacity Balancing", "Direct API Inventory Lock", "Tier-1 Pricing Interception"]
     },
     {
       num: "04",
-      title: "Legacy Delivery",
-      subtitle: "Continuous QA & Shipment",
-      desc: "A final operational review scans tracking data and quality checkpoints continuously. Products undergo three-tier QA checks before secure B2B custom courier dispatch.",
+      title: "QC & Delivery",
+      subtitle: "Quality Check & Dispatch",
+      desc: "Every shipment passes a three-stage quality check before dispatch with full tracking.",
       features: ["Three-tier Visual Pass", "B2B Courier Integration", "End-to-End Auditable Logs"]
     }
   ];
@@ -52,7 +52,7 @@ export default function LandingProcess({ activeStep, setActiveStep }: LandingPro
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Our B2B Sourcing Flow</h2>
           <p className="text-zinc-400 text-lg leading-relaxed">
-            Four structural layers combined into one intelligent system. Streamlined operational management engineered for corporate quality at scale.
+            Four steps from design to delivery. We handle the complexity so your team doesn&apos;t have to.
           </p>
         </div>
 
@@ -111,9 +111,9 @@ export default function LandingProcess({ activeStep, setActiveStep }: LandingPro
             </div>
             
             <div className="relative z-10 space-y-2">
-              <h4 className="font-bold text-white text-lg">Active Engine Simulation</h4>
+              <h4 className="font-bold text-white text-lg">Step {steps[activeStep].num} Overview</h4>
               <p className="text-zinc-500 text-sm max-w-xs">
-                Real-time operational tracking is active for step {steps[activeStep].num}. Sourcing metrics locked.
+                Real-time tracking is active for this stage of the process.
               </p>
             </div>
           </div>

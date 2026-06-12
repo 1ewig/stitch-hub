@@ -18,16 +18,16 @@ export default function LandingFaq({ openIdx, onToggle }: LandingFaqProps) {
       a: "Our bulk garment runs typically start at 100 units per style to balance raw material sourcing and setup costs. For high-volume projects or continuous fulfillment plans, we offer custom volume tiers."
     },
     {
-      q: "How does the AI Pantone matching actually operate?",
-      a: "Our model maps spectral data across fabric dye lots. By evaluating the material composition (e.g. 100% cotton vs. poly-blends) and sublimation heat metrics, it converts custom hex-codes to exact factory dye matches, keeping brand alignment flawless."
+      q: "How does your color matching work?",
+      a: "We use spectral analysis to match your brand colors across different fabric types — whether it&apos;s 100% cotton or poly-blends. Your hex codes get converted to factory dye formulas so your branding stays consistent."
     },
     {
       q: "What are your production and shipping timelines?",
-      a: "Standard B2B design physics validation takes 48 hours. Production generally takes 10 to 14 business days depending on volume, followed by fast, auditable customs routing and secure door-to-door courier delivery."
+      a: "Standard design review takes 48 hours. Production generally takes 10 to 14 business days depending on volume, followed by fast customs clearance and door-to-door delivery."
     },
     {
-      q: "Can we review structural samples before committing to production?",
-      a: "Absolutely. We build detailed digital physics mockups first. Once approved, you can request structural physical samples showing exact stitch and logo embroidery density prior to the bulk production lock."
+      q: "Can we review samples before committing to production?",
+      a: "Absolutely. We build detailed digital mockups first. Once approved, you can request physical samples showing the actual stitch and embroidery quality before the bulk run."
     }
   ];
 
@@ -35,7 +35,7 @@ export default function LandingFaq({ openIdx, onToggle }: LandingFaqProps) {
     <section className="bg-[#f5f2eb] py-24 px-6 md:px-12 text-zinc-900 border-t border-zinc-200">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">Frequently Answered Queries</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">Frequently Asked Questions</h2>
           <p className="text-zinc-600 text-lg leading-relaxed max-w-2xl mx-auto">
             Clear, transparent operational answers regarding our custom apparel logistics and tech integrations.
           </p>

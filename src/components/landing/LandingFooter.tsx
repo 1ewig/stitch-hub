@@ -12,7 +12,7 @@ export default function LandingFooter() {
         <div className="text-2xl font-black tracking-widest text-white">STITCH<span className="text-[#d4af37]"> HUB</span></div>
         <div className="flex gap-8 text-sm font-medium text-zinc-400">
           <Link href="/products" className="hover:text-white transition-colors">Products</Link>
-          <a href="#" className="hover:text-white transition-colors">AI Logistics</a>
+          <a href="#" className="hover:text-white transition-colors">Logistics</a>
           <a href="#" className="hover:text-white transition-colors">Capabilities</a>
           <a href="#" className="hover:text-white transition-colors">Admin Login</a>
         </div>

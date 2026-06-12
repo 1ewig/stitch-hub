@@ -28,14 +28,14 @@ export default function LandingProductFeatures() {
             <div className="w-full md:w-1/2 space-y-6">
               <h3 className="text-3xl font-bold">Minimalist Performance Polo</h3>
               <p className="text-zinc-600 text-lg leading-relaxed">
-                Engineered with premium moisture-wicking fabrics. The subtle styling ensures your corporate identity remains the focal point, while delivering breathable comfort for all-day wear. 
+                Premium moisture-wicking fabrics keep your team comfortable and on-brand all day. 
               </p>
               <ul className="space-y-3 font-medium text-zinc-800">
                 <li className="flex items-center gap-3">
                   <span className="text-[#b38e20] font-bold">✓</span> Exact Hex-Code Sublimation
                 </li>
                 <li className="flex items-center gap-3">
-                  <span className="text-[#b38e20] font-bold">✓</span> Wrinkle-Resistant Architecture
+                  <span className="text-[#b38e20] font-bold">✓</span> Wrinkle-Resistant Fabric
                 </li>
               </ul>
             </div>
@@ -55,14 +55,14 @@ export default function LandingProductFeatures() {
             <div className="w-full md:w-1/2 space-y-6">
               <h3 className="text-3xl font-bold">EOC Tech Organizer Pouch</h3>
               <p className="text-zinc-600 text-lg leading-relaxed">
-                Protect and organize the tools that build your legacy. Featuring water-resistant zips, padded compartments, and an understated profile perfect for modern professionals.
+                Keep your gear organized and protected on the go. Water-resistant zips, padded compartments, and a sleek profile.
               </p>
               <ul className="space-y-3 font-medium text-zinc-800">
                 <li className="flex items-center gap-3">
                   <span className="text-[#b38e20] font-bold">✓</span> Ballistic Nylon Construction
                 </li>
                 <li className="flex items-center gap-3">
-                  <span className="text-[#b38e20] font-bold">✓</span> High-Fidelity Logo Embroidery
+                  <span className="text-[#b38e20] font-bold">✓</span> Precision Logo Embroidery
                 </li>
               </ul>
             </div>
