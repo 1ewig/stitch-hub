@@ -49,6 +49,17 @@
   }
 }
 
+@keyframes dance {
+  0%, 80%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(0.5);
+    opacity: 0.4;
+  }
+}
+
 /* Helper Animation Utility Classes */
 .animate-shimmer {
   background: linear-gradient(

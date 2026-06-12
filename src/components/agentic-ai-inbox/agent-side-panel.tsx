@@ -7,6 +7,7 @@
 import React from "react";
 import type { CartItem } from "../../types";
 import GoldButton from "../ui/GoldButton";
+import DancingDots from "../ui/DancingDots";
 
 // Props for the side panel — cart, submission state, escalation context, and attachments
 interface CheckoutSidebarProps {
@@ -35,16 +36,6 @@ export default function CheckoutSidebar({
 
   return (
     <div className="space-y-6">
-      {/* Submit button — red glow when escalated, gold glow otherwise. Disabled while submitting or cart empty */}
-      <GoldButton
-        disabled={isSubmitting || isSuccess || cart.length === 0}
-        onClick={handleSubmit}
-        loading={isSubmitting}
-        className={isEscalated ? "shadow-[0_0_35px_rgba(239,68,68,0.2)]" : "shadow-[0_0_35px_rgba(212,175,55,0.4)]"}
-      >
-        {isSubmitting ? "Analyzing..." : "Request Quote"}
-      </GoldButton>
-
       {/* AI-suggested actions card — prepopulated follow-ups the agent can click */}
       <div className="bg-[#121418] border border-zinc-900 rounded-xl p-5 space-y-3.5">
         <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
@@ -94,17 +85,27 @@ export default function CheckoutSidebar({
           {/* Dynamic status badge — shows "Escalated to Admin" (red/pulse) or "Draft Sourcing" (green/ping) */}
           {isEscalated ? (
             <span className="font-bold text-red-400 flex items-center gap-1.5 uppercase text-[10px] tracking-wider bg-red-950/30 border border-red-900/40 px-2 py-0.5 rounded">
-              <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              <DancingDots color="red" />
               Escalated to Admin
             </span>
           ) : (
             <span className="font-bold text-emerald-400 flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-              Draft
+              <DancingDots color="emerald" />
+              Pending
             </span>
           )}
         </div>
       </div>
+
+      {/* Submit button — red glow when escalated, gold glow otherwise. Disabled while submitting or cart empty */}
+      <GoldButton
+        disabled={isSubmitting || isSuccess || cart.length === 0}
+        onClick={handleSubmit}
+        loading={isSubmitting}
+        className={`w-full ${isEscalated ? "shadow-[0_0_35px_rgba(239,68,68,0.2)]" : "shadow-[0_0_35px_rgba(212,175,55,0.4)]"}`}
+      >
+        {isSubmitting ? "Analyzing..." : "Request Quote"}
+      </GoldButton>
 
       {/* Attached files section — type detection for image/sheet/PDF, with remove button per file */}
       {attachedFiles.length > 0 && (

@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className="bg-black text-white antialiased">
         {/* Provider layer: Supabase auth context broadcast to entire tree */}
         <SupabaseProvider>
