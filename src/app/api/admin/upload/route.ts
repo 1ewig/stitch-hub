@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const buffer = Buffer.from(bytes);
 
     // 5. Upload to Supabase Storage bucket
-    let { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("product-images")
       .upload(fileName, buffer, {
         contentType: file.type,
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
             contentType: file.type,
           });
         if (retry.error) throw retry.error;
-      } catch (createErr: any) {
+      } catch (createErr) {
         console.error("Failed to upload image to bucket:", createErr);
         return NextResponse.json({ 
           error: "Failed to upload image to storage. Make sure a public 'product-images' bucket is created in your Supabase Storage dashboard." 

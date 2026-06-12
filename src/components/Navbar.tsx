@@ -44,7 +44,6 @@ export default function Navbar() {
           <Link href="/" className="hover:text-white transition-colors">Home</Link>
           <Link href="/products" className="hover:text-white transition-colors">Products</Link>
           <Link href="/products/checkout" className="hover:text-white transition-colors">Quote</Link>
-          <Link href="/chat" className="hover:text-white transition-colors">Operations Chat</Link>
         </div>
 
         {/* ── Right Side: Cart Icon + Authentication ── */}

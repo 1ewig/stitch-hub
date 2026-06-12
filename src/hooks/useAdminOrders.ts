@@ -12,27 +12,26 @@ export function useAdminOrders() {
   const [quoteValue, setQuoteValue] = useState("");
   const [isEditingQuote, setIsEditingQuote] = useState(false);
 
-  async function fetchOrders() {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/admin/orders");
-      const data = await res.json();
-      if (data.success) {
-        setOrders(data.orders);
-        if (data.orders.length > 0 && !selectedOrder) {
-          setSelectedOrder(data.orders[0]);
-          setQuoteValue(data.orders[0].totalAmount);
-        }
-      }
-    } catch (err) {
-      console.error("Failed to load orders:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    fetchOrders();
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/orders");
+        const data = await res.json();
+        if (!cancelled && data.success) {
+          setOrders(data.orders);
+          if (data.orders.length > 0) {
+            setSelectedOrder(data.orders[0]);
+            setQuoteValue(data.orders[0].totalAmount);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load orders:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const handleSelectOrder = (order: Order) => {

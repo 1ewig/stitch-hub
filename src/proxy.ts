@@ -12,7 +12,6 @@ export async function proxy(request: NextRequest) {
   // Define our protected dashboard boundaries
   const isSecureRoute = 
     pathname.startsWith("/products/checkout") || 
-    pathname.startsWith("/chat") || 
     pathname.startsWith("/admin") ||
     pathname.startsWith("/api/admin") ||
     (pathname === "/api/products" && method === "POST");
@@ -49,7 +48,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/products/checkout/:path*",
-    "/chat/:path*",
     "/admin/:path*",
     "/api/admin/:path*",
     "/api/products"

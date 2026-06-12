@@ -5,7 +5,6 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useCartStore } from "../stores/cart-store";
 import { useCheckoutFormStore, generateMessageFromCart } from "../stores/checkout-form-store";
 
@@ -14,7 +13,6 @@ import { useCheckoutFormStore, generateMessageFromCart } from "../stores/checkou
  * to /api/agent. On success, it displays the AI response inside the Active Sourcing Inbox.
  */
 export function useCheckoutForm() {
-  const router = useRouter();
   const cart = useCartStore((s) => s.cart);
   const clearCart = useCartStore((s) => s.clearCart);
   

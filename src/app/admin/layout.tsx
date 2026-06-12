@@ -63,11 +63,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="text-sm font-medium">Active Orders</span>
           </Link>
 
-          <Link href="/admin/approvals" className={getLinkClass("/admin/approvals")}>
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span className="text-sm font-medium">Escalated Approvals</span>
-            <span className="ml-auto bg-red-500/20 border border-red-500/30 text-red-400 py-0.5 px-2 rounded-full text-[10px] font-bold shadow-[0_0_8px_rgba(239,68,68,0.2)]">3</span>
-          </Link>
+
 
         </nav>
 

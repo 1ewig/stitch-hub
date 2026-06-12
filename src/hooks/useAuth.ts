@@ -4,7 +4,7 @@
 // useAuth — Login / signup / forgot-password form state machine
 // ─────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createClient } from "../utils/supabase/client";
 
 /**
@@ -17,22 +17,13 @@ export function useAuth() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    try { return localStorage.getItem("remembered_email") || ""; } catch { return ""; }
+  });
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-
-  // Hydrate remembered email from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedEmail = localStorage.getItem("remembered_email");
-      if (savedEmail) {
-        setEmail(savedEmail);
-        setRememberMe(true);
-      }
-    } catch (e) {
-      console.warn("Failed to read from localStorage:", e);
-    }
-  }, []);
+  const [rememberMe, setRememberMe] = useState(() => {
+    try { return !!localStorage.getItem("remembered_email"); } catch { return false; }
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -62,10 +62,13 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, message: "Product created successfully." });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to create product:", error);
-    if (error.code === "23505") {
-      return NextResponse.json({ error: "A product with this unique ID already exists." }, { status: 409 });
+    if (error && typeof error === "object" && "code" in error) {
+      const pgError = error as { code: string };
+      if (pgError.code === "23505") {
+        return NextResponse.json({ error: "A product with this unique ID already exists." }, { status: 409 });
+      }
     }
     return NextResponse.json({ error: "Failed to save product to catalog." }, { status: 500 });
   }
