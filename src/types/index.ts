@@ -50,3 +50,13 @@ export interface EscalationLog {
   createdAt: string;
   metadata?: { recipientEmail?: string; itemCount?: number };
 }
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  totalAmount: string;
+  status: string;
+  createdAt: string;
+}
+
+export type ProfileTab = "inbox" | "account" | "security" | "ledger";
