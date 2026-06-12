@@ -11,7 +11,7 @@ export default function SourcingVolumeMatrix() {
       {/* ── Tiered pricing grid display ── */}
       <div className="grid grid-cols-3 gap-3 text-center text-xs">
         <div className="p-2.5 bg-zinc-900/40 border border-zinc-900 rounded-xl">
-          <p className="text-zinc-500 mb-1">MOQ - 99</p>
+          <p className="text-zinc-500 mb-1">25 - 99</p>
           <p className="font-semibold text-zinc-300">Standard Tier</p>
         </div>
         <div className="p-2.5 bg-zinc-900/40 border border-zinc-900 rounded-xl">
