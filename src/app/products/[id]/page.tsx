@@ -111,6 +111,7 @@ export default function ProductDetailPage({ params }: PageProps) {
               currentQty={detail.currentQty}
               onAdd={detail.handleAddToCart}
               onCheckout={detail.handleCheckout}
+              isInCart={detail.isInCart}
             />
           </div>
         </div>

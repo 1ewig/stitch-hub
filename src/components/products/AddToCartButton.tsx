@@ -13,9 +13,11 @@ interface AddToCartButtonProps {
   onAdd: () => void;
   /** Callback when user clicks "Checkout Now" */
   onCheckout: () => void;
+  /** Whether this product+size is already in the cart */
+  isInCart?: boolean;
 }
 
-export default function AddToCartButton({ currentQty, onAdd, onCheckout }: AddToCartButtonProps) {
+export default function AddToCartButton({ currentQty, onAdd, onCheckout, isInCart = false }: AddToCartButtonProps) {
   return (
     <div className="border-t border-zinc-900 pt-6">
       {/* Quantity + Estimated Quote row */}
@@ -41,9 +43,10 @@ export default function AddToCartButton({ currentQty, onAdd, onCheckout }: AddTo
         <button
           type="button"
           onClick={onAdd}
-          className="flex-1 rounded-full border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-800/60 font-bold text-zinc-300 hover:text-white py-3.5 px-6 text-sm transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.2)] cursor-pointer text-center"
+          disabled={isInCart}
+          className="flex-1 rounded-full border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-800/60 font-bold text-zinc-300 hover:text-white py-3.5 px-6 text-sm transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.2)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-900/40 disabled:hover:border-zinc-800 disabled:text-zinc-500 cursor-pointer text-center"
         >
-          Add to Cart
+          {isInCart ? "Already in Cart" : "Add to Cart"}
         </button>
 
         {/* Checkout Now - Primary Gold Button */}

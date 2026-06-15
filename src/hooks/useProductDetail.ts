@@ -15,10 +15,16 @@ import { useRouter } from "next/navigation";
  */
 export function useProductDetail(product: Product | null, onClose: () => void) {
   const addToCart = useCartStore((s) => s.addToCart);
+  const cart = useCartStore((s) => s.cart);
   const router = useRouter();
   const [quantity, setQuantity] = useState(50);
   const [size, setSize] = useState("M");
   const [customNotes, setCustomNotes] = useState("");
+
+  // Check if current product and size combination is already in the cart
+  const isInCart = product
+    ? cart.some((item) => item.product.title === product.title && item.size === size)
+    : false;
 
   // Clamp input quantity to at least the product's MOQ (default 25)
   const minQty = product?.moq ?? 25;
@@ -34,7 +40,7 @@ export function useProductDetail(product: Product | null, onClose: () => void) {
   const currentPrice = product ? getDiscountedPrice(currentQty) : 0;
 
   const handleAddToCart = () => {
-    if (!product) return;
+    if (!product || isInCart) return;
     const finalProduct = { ...product, price: currentPrice };
     addToCart(finalProduct, currentQty, size, customNotes);
     onClose();
@@ -58,6 +64,7 @@ export function useProductDetail(product: Product | null, onClose: () => void) {
     currentQty,
     currentPrice,
     isApparel,
+    isInCart,
     setQuantity,
     setSize,
     setCustomNotes,
