@@ -9,6 +9,8 @@ interface CheckoutFormProps {
   setSubject: (val: string) => void;
   message: string;
   setMessage: (val: string) => void;
+  sourcingNotes: string;
+  setSourcingNotes: (val: string) => void;
   isSuccess: boolean;
   attachedFiles: File[];
   setAttachedFiles: (files: File[]) => void;
@@ -21,6 +23,8 @@ export default function CheckoutForm({
   setSubject,
   message,
   setMessage,
+  sourcingNotes,
+  setSourcingNotes,
   isSuccess,
   attachedFiles,
   setAttachedFiles,
@@ -139,16 +143,32 @@ export default function CheckoutForm({
       </div>
 
       {/* Message Editor */}
-      <div className="flex-1 min-h-75">
+      <div className="h-52">
+        <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">
+          Email Message
+        </label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className={`w-full h-full border rounded-xl p-5 text-sm leading-relaxed font-body focus:outline-none resize-none transition-all duration-300 ${
+          className={`w-full h-full border rounded-xl p-4 text-sm leading-relaxed font-body focus:outline-none resize-none transition-all duration-300 ${
             isEscalated 
               ? "bg-red-500/5 border-red-500/30 text-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 font-mono" 
               : "bg-[#121316]/50 border-zinc-800 text-zinc-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
           }`}
           placeholder="Include any specific requirements, timelines, or details..."
+        />
+      </div>
+
+      {/* Additional Specifications / Suggestions */}
+      <div className="h-32">
+        <label className="block text-[10px] font-bold uppercase tracking-wider text-[#d4af37] mb-1.5 flex items-center gap-1.5">
+          <span>✦ Additional Specifications / Suggestions</span>
+        </label>
+        <textarea
+          value={sourcingNotes}
+          onChange={(e) => setSourcingNotes(e.target.value)}
+          className="w-full h-full bg-[#121316]/50 border border-zinc-800 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] text-zinc-300 rounded-xl p-4 text-sm leading-relaxed font-body focus:outline-none resize-none transition-all duration-300"
+          placeholder="AI suggestions clicked from the sidebar will appear here. You can also write your own custom specifications..."
         />
       </div>
 
@@ -164,7 +184,7 @@ export default function CheckoutForm({
         <button
           onClick={() => fileInputRef.current?.click()}
           type="button"
-          className="w-full border border-dashed border-zinc-800 rounded-xl p-4 flex items-center justify-center hover:border-[#d4af37]/50 hover:bg-[#d4af37]/5 transition-all cursor-pointer group"
+          className="w-full border border-dashed border-zinc-800 rounded-xl p-3.5 flex items-center justify-center hover:border-[#d4af37]/50 hover:bg-[#d4af37]/5 transition-all cursor-pointer group"
         >
           <span className="flex items-center gap-2.5 text-xs text-zinc-400 group-hover:text-[#d4af37] font-medium transition-colors">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

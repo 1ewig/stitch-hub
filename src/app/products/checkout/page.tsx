@@ -22,6 +22,8 @@ export default function CheckoutPage() {
     isSuccess,
     message,
     setMessage,
+    sourcingNotes,
+    setSourcingNotes,
     handleSubmit,
     attachedFiles,
     setAttachedFiles,
@@ -32,7 +34,7 @@ export default function CheckoutPage() {
   } = useCheckoutForm();
 
   const handleAddSuggestion = (text: string) => {
-    setMessage(message + (message.endsWith("\n") ? "" : "\n") + text);
+    setSourcingNotes(sourcingNotes + (sourcingNotes ? (sourcingNotes.endsWith("\n") ? "" : "\n") : "") + text);
   };
 
   return (
@@ -65,6 +67,8 @@ export default function CheckoutPage() {
               setSubject={setSubject}
               message={message}
               setMessage={setMessage}
+              sourcingNotes={sourcingNotes}
+              setSourcingNotes={setSourcingNotes}
               isSuccess={isSuccess}
               attachedFiles={attachedFiles}
               setAttachedFiles={setAttachedFiles}
