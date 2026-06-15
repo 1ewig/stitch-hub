@@ -43,7 +43,7 @@ export function useProductDetail(product: Product | null, onClose: () => void) {
   const handleCheckout = () => {
     if (!product) return;
     const finalProduct = { ...product, price: currentPrice };
-    addToCart(finalProduct, currentQty, size, customNotes);
+    addToCart(finalProduct, currentQty, size, customNotes, true);
     router.push("/products/checkout");
   };
 
