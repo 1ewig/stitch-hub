@@ -31,6 +31,7 @@ export function useCheckoutForm() {
     setMessage,
     setIsSubmitting,
     setIsSuccess,
+    reset: resetCheckoutForm,
   } = useCheckoutFormStore();
 
   // Sync the message text area with a cart-derived template whenever the cart changes
@@ -75,6 +76,7 @@ export function useCheckoutForm() {
       // but DO NOT push back to home ("/") or drop success visibility flags.
       clearCart();
       setAttachedFiles([]);
+      resetCheckoutForm();
 
       // Route immediately to profile page inbox section
       router.push("/profile");

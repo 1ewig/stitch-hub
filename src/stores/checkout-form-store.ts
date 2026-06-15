@@ -20,6 +20,7 @@ interface CheckoutFormState {
   setMessage: (val: string) => void;
   setIsSubmitting: (val: boolean) => void;
   setIsSuccess: (val: boolean) => void;
+  reset: () => void;
 }
 
 /**
@@ -44,6 +45,19 @@ Best regards,
   setMessage: (message) => set({ message }),
   setIsSubmitting: (isSubmitting) => set({ isSubmitting }),
   setIsSuccess: (isSuccess) => set({ isSuccess }),
+  reset: () => set({
+    toEmail: "stitchhub@sourcing.com",
+    subject: "Custom Corporate Merchandise Sourcing Request",
+    message: `Hi Stitch Hub Team,
+
+I would like to initiate a premium sourcing quote for custom merchandise. Please help us evaluate custom garment options, insulated drinkware, and tech organizing pouches.
+
+Best regards,
+[Enter Your Name]
+[Enter Company Name]`,
+    isSubmitting: false,
+    isSuccess: false,
+  }),
 }));
 
 /**
