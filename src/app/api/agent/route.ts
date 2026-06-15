@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   try {
     /* ── Parse & validate request body ── */
     const body = await req.json();
-    const { cart, message, toEmail, subject, sourcingNotes } = body;
+    const { cart, message, toEmail, subject } = body;
 
     /* ── Empty cart guard: require at least one line item ── */
     if (!cart || cart.length === 0) {
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     const currentUserId = user.id;
     const userName = user.user_metadata?.name || user.email?.split("@")[0] || "User";
 
-    /* ── Context prompt: inject user identity, cart manifest, constraints, and suggestions/notes ── */
+    /* ── Context prompt: inject user identity, cart manifest, and constraints ── */
     const userContextPrompt = `
       Customer Identity: ${userName}
       Sourcing Email Context Target: ${toEmail}
@@ -50,9 +50,6 @@ export async function POST(req: Request) {
       
       CUSTOMER ARTWORK/TIMELINE CONSTRAINTS:
       "${message || "No specific instructions declared."}"
-      
-      ADDITIONAL SPECIFICATIONS & SUGGESTIONS:
-      "${sourcingNotes || "None provided."}"
     `;
 
     /* ── Ollama inference call: query local stitchhub_v5 model (with Gemini fallback) ── */
@@ -155,7 +152,7 @@ export async function POST(req: Request) {
       body: message || "",
       status: logStatus,
       aiResponseDraft: generatedAiResponse,
-      metadata: { recipientEmail: toEmail, itemCount: cart.length, invoiceNumber: generatedInvoiceNumber, sourcingNotes: sourcingNotes || "" },
+      metadata: { recipientEmail: toEmail, itemCount: cart.length, invoiceNumber: generatedInvoiceNumber },
     });
 
     // Insert corresponding invoice snapshot with pending quote lock

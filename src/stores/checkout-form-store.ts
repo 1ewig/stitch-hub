@@ -13,13 +13,11 @@ interface CheckoutFormState {
   toEmail: string;
   subject: string;
   message: string;
-  sourcingNotes: string;
   isSubmitting: boolean;
   isSuccess: boolean;
   setToEmail: (val: string) => void;
   setSubject: (val: string) => void;
   setMessage: (val: string) => void;
-  setSourcingNotes: (val: string) => void;
   setIsSubmitting: (val: boolean) => void;
   setIsSuccess: (val: boolean) => void;
   reset: () => void;
@@ -39,14 +37,12 @@ I would like to initiate a premium sourcing quote for custom merchandise. Please
 Best regards,
 [Enter Your Name]
 [Enter Company Name]`,
-  sourcingNotes: "",
   isSubmitting: false,
   isSuccess: false,
 
   setToEmail: (toEmail) => set({ toEmail }),
   setSubject: (subject) => set({ subject }),
   setMessage: (message) => set({ message }),
-  setSourcingNotes: (sourcingNotes) => set({ sourcingNotes }),
   setIsSubmitting: (isSubmitting) => set({ isSubmitting }),
   setIsSuccess: (isSuccess) => set({ isSuccess }),
   reset: () => set({
@@ -59,7 +55,6 @@ I would like to initiate a premium sourcing quote for custom merchandise. Please
 Best regards,
 [Enter Your Name]
 [Enter Company Name]`,
-    sourcingNotes: "",
     isSubmitting: false,
     isSuccess: false,
   }),
