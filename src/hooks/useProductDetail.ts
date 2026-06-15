@@ -7,6 +7,7 @@
 import { useState } from "react";
 import type { Product } from "../types";
 import { useCartStore } from "../stores/cart-store";
+import { useRouter } from "next/navigation";
 
 /**
  * Returns quantity, size, notes, computed price (with volume discounts), MOQ clamping,
@@ -14,6 +15,7 @@ import { useCartStore } from "../stores/cart-store";
  */
 export function useProductDetail(product: Product | null, onClose: () => void) {
   const addToCart = useCartStore((s) => s.addToCart);
+  const router = useRouter();
   const [quantity, setQuantity] = useState(50);
   const [size, setSize] = useState("M");
   const [customNotes, setCustomNotes] = useState("");
@@ -38,6 +40,13 @@ export function useProductDetail(product: Product | null, onClose: () => void) {
     onClose();
   };
 
+  const handleCheckout = () => {
+    if (!product) return;
+    const finalProduct = { ...product, price: currentPrice };
+    addToCart(finalProduct, currentQty, size, customNotes);
+    router.push("/products/checkout");
+  };
+
   const isApparel =
     product?.cat === "Apparel" || product?.cat === "Performance";
 
@@ -53,5 +62,6 @@ export function useProductDetail(product: Product | null, onClose: () => void) {
     setSize,
     setCustomNotes,
     handleAddToCart,
+    handleCheckout,
   };
 }
