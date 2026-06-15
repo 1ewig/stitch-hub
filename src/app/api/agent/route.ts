@@ -51,23 +51,50 @@ export async function POST(req: Request) {
       "${message || "No specific instructions declared."}"
     `;
 
-    /* ── Ollama inference call: query local stitchhub_v5 model ── */
-    const ollamaResponse = await fetch("http://localhost:11434/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "stitchhub_v5",
-        prompt: userContextPrompt,
-        stream: false,
-      }),
-    });
+    /* ── Ollama inference call: query local stitchhub_v5 model (with Gemini fallback) ── */
+    let generatedAiResponse = "";
+    try {
+      const ollamaResponse = await fetch("http://localhost:11434/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "stitchhub_v5",
+          prompt: userContextPrompt,
+          stream: false,
+        }),
+        signal: AbortSignal.timeout(3000), // Timeout fast to fall back to Gemini
+      });
 
-    if (!ollamaResponse.ok) {
-      throw new Error("Local custom Ollama inference agent failed to respond.");
+      if (!ollamaResponse.ok) {
+        throw new Error("Local custom Ollama inference agent failed to respond.");
+      }
+
+      const ollamaData = await ollamaResponse.json();
+      generatedAiResponse = ollamaData.response;
+    } catch (ollamaError) {
+      console.warn("Ollama failed, attempting Gemini fallback...", ollamaError);
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error("Ollama inference failed and no GEMINI_API_KEY is configured.");
+      }
+
+      const geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: userContextPrompt }] }],
+          }),
+        }
+      );
+
+      if (!geminiResponse.ok) {
+        throw new Error(`Gemini fallback also failed: ${geminiResponse.statusText}`);
+      }
+
+      const geminiData = await geminiResponse.json();
+      generatedAiResponse = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
     }
-
-    const ollamaData = await ollamaResponse.json();
-    let generatedAiResponse = ollamaData.response;
 
     /* ── Escalation detection: check for PAUSE tag or admin escalation keyword ── */
     let logStatus = "draft_sourcing";

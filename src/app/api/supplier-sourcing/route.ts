@@ -51,23 +51,50 @@ export async function POST(req: Request) {
       Please output a formalized wholesale purchase order (PO) detailing distributor supply-chain assignments, item sizes/quantities allocations, warehouse packaging tags, and factory production queuing commands.
     `;
 
-    // 5. Query local Ollama model stitchhub_v5
-    const ollamaResponse = await fetch("http://localhost:11434/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "stitchhub_v5",
-        prompt: supplierPrompt,
-        stream: false,
-      }),
-    });
+    // 5. Query local Ollama model stitchhub_v5 (with Gemini fallback)
+    let vendorPoOutput = "";
+    try {
+      const ollamaResponse = await fetch("http://localhost:11434/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "stitchhub_v5",
+          prompt: supplierPrompt,
+          stream: false,
+        }),
+        signal: AbortSignal.timeout(3000), // Timeout fast to fall back to Gemini
+      });
 
-    if (!ollamaResponse.ok) {
-      throw new Error("Ollama procurement agent reasoning cycle failed.");
+      if (!ollamaResponse.ok) {
+        throw new Error("Ollama procurement agent reasoning cycle failed.");
+      }
+
+      const ollamaData = await ollamaResponse.json();
+      vendorPoOutput = ollamaData.response;
+    } catch (ollamaError) {
+      console.warn("Ollama failed, attempting Gemini fallback...", ollamaError);
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error("Ollama inference failed and no GEMINI_API_KEY is configured.");
+      }
+
+      const geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: supplierPrompt }] }],
+          }),
+        }
+      );
+
+      if (!geminiResponse.ok) {
+        throw new Error(`Gemini fallback also failed: ${geminiResponse.statusText}`);
+      }
+
+      const geminiData = await geminiResponse.json();
+      vendorPoOutput = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
     }
-
-    const ollamaData = await ollamaResponse.json();
-    const vendorPoOutput = ollamaData.response;
 
     const mockTrackingId = `TRK-PO-${Math.floor(100000 + Math.random() * 900000)}`;
 
