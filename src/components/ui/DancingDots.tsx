@@ -1,12 +1,13 @@
 "use client";
 
 interface DancingDotsProps {
-  color?: "emerald" | "red";
+  color?: "emerald" | "red" | "gold";
 }
 
 const colorMap = {
   emerald: "bg-emerald-400",
   red: "bg-red-500",
+  gold: "bg-[#d4af37]",
 };
 
 export default function DancingDots({ color = "emerald" }: DancingDotsProps) {

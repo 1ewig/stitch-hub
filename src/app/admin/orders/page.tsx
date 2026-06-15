@@ -13,9 +13,13 @@ export default function AdminOrdersPage() {
   const {
     orders, loading, selectedOrder, updatingId,
     quoteValue, isEditingQuote,
-    setQuoteValue, setIsEditingQuote,
+    messages, threadId, agentOverride, chatLoading, adminMessage,
+    setQuoteValue, setIsEditingQuote, setAdminMessage,
     handleSelectOrder, handleUpdateStatus, handleUpdateQuote,
+    toggleTakeover, sendAdminMessage,
   } = useAdminOrders();
+
+  const [isLogExpanded, setIsLogExpanded] = React.useState(true);
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12 w-full">
@@ -76,9 +80,22 @@ export default function AdminOrdersPage() {
           <GlassCard className="p-6 flex flex-col h-[720px]">
             {selectedOrder ? (
               <div className="flex-1 flex flex-col overflow-hidden h-full">
-                <div className="border-b border-white/10 pb-4 mb-6">
-                  <span className="text-[10px] font-mono font-bold text-[#d4af37] tracking-wider uppercase">Order Specifications</span>
-                  <h3 className="text-lg font-bold text-white mt-1 font-display tracking-tight">{selectedOrder.invoiceNumber}</h3>
+                <div className="border-b border-white/10 pb-4 mb-6 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-[#d4af37] tracking-wider uppercase">Order Specifications</span>
+                    <h3 className="text-lg font-bold text-white mt-1 font-display tracking-tight">{selectedOrder.invoiceNumber}</h3>
+                  </div>
+                  <button
+                    onClick={toggleTakeover}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-mono font-bold transition-all border ${
+                      agentOverride
+                        ? "bg-red-500/10 border-red-500 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.2)] hover:bg-red-500/20 animate-pulse"
+                        : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    <span>🚨</span>
+                    <span>{agentOverride ? "Takeover ON" : "Takeover Chat"}</span>
+                  </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto space-y-6 pr-2 mb-6">
@@ -161,6 +178,86 @@ export default function AdminOrdersPage() {
                         </div>
                       ))}
                     </div>
+                  </div>
+
+                  {/* AI Operations Correspondence Log */}
+                  <div className="border-t border-white/10 pt-6">
+                    <div 
+                      className="flex items-center justify-between mb-4 cursor-pointer hover:opacity-85 select-none"
+                      onClick={() => setIsLogExpanded(!isLogExpanded)}
+                    >
+                      <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest font-mono flex items-center gap-1.5">
+                        <span className="text-[8px] transition-transform duration-200 inline-block" style={{ transform: isLogExpanded ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
+                        <span>AI Operations Correspondence Log</span>
+                      </h4>
+                      <span className="text-[8px] bg-white/5 border border-white/10 text-zinc-400 px-2 py-0.5 rounded font-mono">
+                        {isLogExpanded ? "Collapse" : "Expand"}
+                      </span>
+                    </div>
+
+                    {isLogExpanded && (
+                      <div className="space-y-4">
+                        {chatLoading ? (
+                          <div className="flex justify-center py-8">
+                            <span className="h-4 w-4 rounded-full border-2 border-[#d4af37] border-t-transparent animate-spin" />
+                          </div>
+                        ) : messages.length === 0 ? (
+                          <div className="text-[10px] text-zinc-500 italic py-4 text-center bg-black/20 rounded-xl border border-white/5 font-mono">
+                            No correspondence logs found.
+                          </div>
+                        ) : (
+                          <div className="space-y-3 max-h-72 overflow-y-auto pr-1 flex flex-col scrollbar-thin">
+                            {messages.map((msg: any, idx: number) => {
+                              const isUser = msg.role === "user";
+                              return (
+                                <div
+                                  key={idx}
+                                  className={`flex flex-col max-w-[85%] rounded-xl p-3 text-[11px] ${
+                                    isUser
+                                      ? "bg-[#16171d] text-zinc-100 self-start mr-auto border border-zinc-800"
+                                      : "bg-[#d4af37]/10 text-[#fef08a] self-end ml-auto border border-[#d4af37]/20"
+                                  }`}
+                                >
+                                  <span className="text-[8px] font-mono font-bold text-zinc-500 mb-1">
+                                    {isUser ? "👤 CLIENT" : "🤖 STITCHHUB AGENT / ADMIN"}
+                                  </span>
+                                  <p className="whitespace-pre-wrap leading-relaxed font-sans">{msg.content}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Admin Message Input (Takeover Mode) */}
+                        {agentOverride && (
+                          <div className="mt-4 bg-red-950/5 border border-red-500/10 p-3.5 rounded-xl space-y-2.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
+                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500 animate-ping" />
+                                Human Takeover Active
+                              </span>
+                              <span className="text-[8px] text-zinc-500 font-mono">Ollama pipeline bypassed</span>
+                            </div>
+                            <textarea
+                              rows={2}
+                              value={adminMessage}
+                              onChange={(e) => setAdminMessage(e.target.value)}
+                              placeholder="Compose manual reply to client..."
+                              className="w-full bg-black/40 border border-white/5 rounded-lg p-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/30 font-sans"
+                            />
+                            <div className="flex justify-end">
+                              <button
+                                onClick={sendAdminMessage}
+                                disabled={!adminMessage.trim()}
+                                className="bg-red-600 hover:bg-red-500 disabled:opacity-30 disabled:hover:bg-red-600 text-white font-mono font-bold text-[9px] uppercase tracking-wider px-3.5 py-1.5 rounded-md transition-all"
+                              >
+                                Send Reply
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

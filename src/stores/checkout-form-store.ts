@@ -20,6 +20,7 @@ interface CheckoutFormState {
   setMessage: (val: string) => void;
   setIsSubmitting: (val: boolean) => void;
   setIsSuccess: (val: boolean) => void;
+  reset: () => void;
 }
 
 /**
@@ -44,6 +45,19 @@ Best regards,
   setMessage: (message) => set({ message }),
   setIsSubmitting: (isSubmitting) => set({ isSubmitting }),
   setIsSuccess: (isSuccess) => set({ isSuccess }),
+  reset: () => set({
+    toEmail: "stitchhub@sourcing.com",
+    subject: "Custom Corporate Merchandise Sourcing Request",
+    message: `Hi Stitch Hub Team,
+
+I would like to initiate a premium sourcing quote for custom merchandise. Please help us evaluate custom garment options, insulated drinkware, and tech organizing pouches.
+
+Best regards,
+[Enter Your Name]
+[Enter Company Name]`,
+    isSubmitting: false,
+    isSuccess: false,
+  }),
 }));
 
 /**
@@ -88,4 +102,25 @@ I would like to initiate a premium sourcing quote for custom merchandise. Please
 Best regards,
 [Enter Your Name]
 [Enter Company Name]`;
+}
+
+/**
+ * Build a dynamic subject line based on the cart contents.
+ */
+export function generateSubjectFromCart(cart: CartItem[]): string {
+  if (cart.length === 0) {
+    return "Custom Corporate Merchandise Sourcing Request";
+  }
+
+  const titles = cart.map((item) => item.product.title);
+  
+  if (titles.length === 1) {
+    return `Custom Sourcing Request: ${titles[0]}`;
+  }
+  
+  if (titles.length === 2) {
+    return `Custom Sourcing Request: ${titles[0]} & ${titles[1]}`;
+  }
+  
+  return `Custom Sourcing Request: ${titles[0]}, ${titles[1]} & ${titles.length - 2} other ${titles.length - 2 === 1 ? "item" : "items"}`;
 }

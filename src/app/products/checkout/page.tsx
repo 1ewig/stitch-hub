@@ -25,10 +25,18 @@ export default function CheckoutPage() {
     handleSubmit,
     attachedFiles,
     setAttachedFiles,
+    suggestions,
+    isFetchingSuggestions,
+    fetchAiSuggestions,
+    hasFetchedSuggestions,
   } = useCheckoutForm();
 
+  const handleAddSuggestion = (text: string) => {
+    setMessage(message + (message.endsWith("\n") ? "" : "\n") + text);
+  };
+
   return (
-    <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black pt-12">
+    <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
 
       <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto">
 
@@ -73,6 +81,11 @@ export default function CheckoutPage() {
               message={message}
               attachedFiles={attachedFiles}
               setAttachedFiles={setAttachedFiles}
+              onAddSuggestion={handleAddSuggestion}
+              suggestions={suggestions}
+              isFetchingSuggestions={isFetchingSuggestions}
+              fetchAiSuggestions={fetchAiSuggestions}
+              hasFetchedSuggestions={hasFetchedSuggestions}
             />
           </div>
 

@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, jsonb, integer, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, jsonb, integer, doublePrecision, numeric, boolean } from "drizzle-orm/pg-core";
 
 // ==========================================
 // 1. SUPABASE AUTH SYNCHRONIZED USER TABLE
@@ -22,9 +22,12 @@ export const emailLogs = pgTable("email_logs", {
   userId: text("user_id").references(() => users.id, { onDelete: "cascade" }), 
   subject: text("subject").notNull(),
   body: text("body").notNull(),
-  status: text("status").default("pending").notNull(), // pending, drafted, escalated
+  status: text("status").default("draft_sourcing").notNull(), // draft_sourcing, review_required, approved, sourcing_active, processing
   aiResponseDraft: text("ai_response_draft"),
   metadata: jsonb("metadata"), 
+  finalQuoteAmount: numeric("final_quote_amount", { precision: 10, scale: 2 }),
+  supplierPayload: jsonb("supplier_payload"),
+  agentOverride: boolean("agent_override").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
