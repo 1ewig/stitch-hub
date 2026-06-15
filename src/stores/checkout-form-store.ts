@@ -103,3 +103,24 @@ Best regards,
 [Enter Your Name]
 [Enter Company Name]`;
 }
+
+/**
+ * Build a dynamic subject line based on the cart contents.
+ */
+export function generateSubjectFromCart(cart: CartItem[]): string {
+  if (cart.length === 0) {
+    return "Custom Corporate Merchandise Sourcing Request";
+  }
+
+  const titles = cart.map((item) => item.product.title);
+  
+  if (titles.length === 1) {
+    return `Custom Sourcing Request: ${titles[0]}`;
+  }
+  
+  if (titles.length === 2) {
+    return `Custom Sourcing Request: ${titles[0]} & ${titles[1]}`;
+  }
+  
+  return `Custom Sourcing Request: ${titles[0]}, ${titles[1]} & ${titles.length - 2} other ${titles.length - 2 === 1 ? "item" : "items"}`;
+}

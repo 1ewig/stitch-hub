@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
     // Context instructions detailing how to suggest upsales or adjustments
     const suggestionsPrompt = `
-You are the StitchHub Sourcing AI. Based on the client's current cart items and message draft, generate 3 highly contextual, brief follow-up suggestions (e.g. specific customization methods, relevant product upsells, packaging/labeling options) that would help the user optimize their wholesale order.
+You are the StitchHub Sourcing AI. Based on the client's current cart items and message draft, generate 4 to 6 highly contextual, brief follow-up suggestions (e.g. specific customization methods, relevant product upsells, packaging/labeling options) that would help the user optimize their wholesale order.
 
 CART REQUISITION MANIFEST:
 ${JSON.stringify(cart, null, 2)}
@@ -37,7 +37,7 @@ CUSTOMER SPECIFICATIONS & CONSTRAINTS:
 "${message || "No specific instructions declared."}"
 
 INSTRUCTIONS:
-- Generate exactly 3 suggestions.
+- Generate between 4 and 6 suggestions.
 - Keep each suggestion short and action-oriented (1 sentence max).
 - Return ONLY a JSON array of strings. Do not include markdown code block wraps, explanations, or conversation.
 
@@ -45,7 +45,9 @@ EXAMPLE OUTPUT:
 [
   "Request matching custom embroidered tech pouches for accessory bundling",
   "Inquire about custom color dye-to-match drawcords for hoodies",
-  "Ask for premium wooden gift boxes for the insulated tumblers"
+  "Ask for premium wooden gift boxes for the insulated tumblers",
+  "Inquire about bulk discount tiers for larger volume orders",
+  "Request physical pre-production sample mockups before running the batch"
 ]
 `;
 
@@ -121,7 +123,7 @@ EXAMPLE OUTPUT:
         .map(l => l.replace(/^[-*+\d.]\s*/, "").trim())
         .filter(l => l.length > 5);
       
-      suggestionsList = lines.slice(0, 3);
+      suggestionsList = lines.slice(0, 6);
     }
 
     // Fail-safe default suggestions if we still have nothing
@@ -129,13 +131,15 @@ EXAMPLE OUTPUT:
       suggestionsList = [
         "Inquire about bulk discount tiers for larger volume orders",
         "Request physical pre-production sample mockups before running the batch",
-        "Ask for custom woven labels or branded tags for standard products"
+        "Ask for custom woven labels or branded tags for standard products",
+        "Inquire about expedited shipping options and production lead times",
+        "Request custom packaging box design options for retail display"
       ];
     }
 
     return NextResponse.json({
       success: true,
-      suggestions: suggestionsList.slice(0, 3)
+      suggestions: suggestionsList.slice(0, 6)
     });
 
   } catch (error) {

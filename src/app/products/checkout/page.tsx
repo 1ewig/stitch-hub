@@ -28,6 +28,7 @@ export default function CheckoutPage() {
     suggestions,
     isFetchingSuggestions,
     fetchAiSuggestions,
+    hasFetchedSuggestions,
   } = useCheckoutForm();
 
   const handleAddSuggestion = (text: string) => {
@@ -84,6 +85,7 @@ export default function CheckoutPage() {
               suggestions={suggestions}
               isFetchingSuggestions={isFetchingSuggestions}
               fetchAiSuggestions={fetchAiSuggestions}
+              hasFetchedSuggestions={hasFetchedSuggestions}
             />
           </div>
 

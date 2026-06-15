@@ -22,6 +22,7 @@ interface CheckoutSidebarProps {
   suggestions: string[];
   isFetchingSuggestions: boolean;
   fetchAiSuggestions: () => void;
+  hasFetchedSuggestions: boolean;
 }
 
 // Side panel — handles form submission, displays sourcing cart, attached files, and AI suggestions
@@ -37,6 +38,7 @@ export default function CheckoutSidebar({
   suggestions,
   isFetchingSuggestions,
   fetchAiSuggestions,
+  hasFetchedSuggestions,
 }: CheckoutSidebarProps) {
   
   // Detect escalation from AI response — checks for PAUSE action tag or admin escalation keyword
@@ -54,7 +56,7 @@ export default function CheckoutSidebar({
             <button
               type="button"
               onClick={fetchAiSuggestions}
-              disabled={isFetchingSuggestions}
+              disabled={isFetchingSuggestions || hasFetchedSuggestions}
               className="text-[10px] text-[#d4af37] hover:underline font-bold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5"
             >
               {isFetchingSuggestions ? (
@@ -62,6 +64,8 @@ export default function CheckoutSidebar({
                   <span className="inline-block animate-spin h-2.5 w-2.5 border border-[#d4af37] border-t-transparent rounded-full shrink-0" />
                   Analyzing...
                 </>
+              ) : hasFetchedSuggestions ? (
+                "✦ Suggestions Loaded"
               ) : (
                 "✦ Get AI Suggestions"
               )}

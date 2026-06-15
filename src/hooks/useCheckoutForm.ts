@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "../stores/cart-store";
-import { useCheckoutFormStore, generateMessageFromCart } from "../stores/checkout-form-store";
+import { useCheckoutFormStore, generateMessageFromCart, generateSubjectFromCart } from "../stores/checkout-form-store";
 
 /**
  * Returns cart data, form fields, a file-attachment array, and a handleSubmit that POSTs
@@ -34,10 +34,11 @@ export function useCheckoutForm() {
     reset: resetCheckoutForm,
   } = useCheckoutFormStore();
 
-  // Sync the message text area with a cart-derived template whenever the cart changes
+  // Sync the message text area and subject line with a cart-derived template whenever the cart changes
   useEffect(() => {
     setMessage(generateMessageFromCart(cart));
-  }, [cart, setMessage]);
+    setSubject(generateSubjectFromCart(cart));
+  }, [cart, setMessage, setSubject]);
 
   // POST cart + message to /api/agent and transition to live Active Inbox view
   const handleSubmit = async () => {
@@ -92,33 +93,16 @@ export function useCheckoutForm() {
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
+  const [hasFetchedSuggestions, setHasFetchedSuggestions] = useState(false);
 
-  // Sync initial suggestions based on cart categories
+  // Reset suggestions when the cart changes (e.g. on new checkout session or cart updates)
   useEffect(() => {
-    const list: string[] = [];
-    const hasApparel = cart.some(item => item.product.cat === "Apparel" || item.product.cat === "Performance");
-    const hasDrinkware = cart.some(item => item.product.cat === "Drinkware");
-    const hasAccessories = cart.some(item => item.product.cat === "Accessories");
-    
-    if (hasApparel) {
-      list.push("Add custom woven neck labels");
-      list.push("Request individual polybag packaging");
-    }
-    if (hasDrinkware) {
-      list.push("Request custom branded packaging boxes");
-    }
-    if (hasAccessories) {
-      list.push("Inquire about custom tags & labels");
-    }
-    if (list.length === 0) {
-      list.push("Inquire about bulk discount tiers");
-      list.push("Request physical pre-production sample");
-    }
-    setSuggestions(list.slice(0, 3));
+    setSuggestions([]);
+    setHasFetchedSuggestions(false);
   }, [cart]);
 
   const fetchAiSuggestions = async () => {
-    if (cart.length === 0) return;
+    if (cart.length === 0 || hasFetchedSuggestions) return;
     setIsFetchingSuggestions(true);
     try {
       const response = await fetch("/api/agent/suggestions", {
@@ -129,6 +113,7 @@ export function useCheckoutForm() {
       const data = await response.json();
       if (response.ok && data.success && Array.isArray(data.suggestions)) {
         setSuggestions(data.suggestions);
+        setHasFetchedSuggestions(true);
       } else {
         alert(data.error || "Failed to fetch AI suggestions.");
       }
@@ -156,5 +141,6 @@ export function useCheckoutForm() {
     suggestions,
     isFetchingSuggestions,
     fetchAiSuggestions,
+    hasFetchedSuggestions,
   };
 }
