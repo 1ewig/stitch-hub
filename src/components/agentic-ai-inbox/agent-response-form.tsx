@@ -26,64 +26,12 @@ export default function CheckoutForm({
   setAttachedFiles,
 }: CheckoutFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       setAttachedFiles([...attachedFiles, ...filesArray]);
     }
-  };
-
-  const handleToolbarAction = (action: string) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-
-    const selectedText = text.substring(start, end);
-    let replacement = "";
-
-    switch (action) {
-      case "B":
-        replacement = `**${selectedText}**`;
-        break;
-      case "I":
-        replacement = `*${selectedText}*`;
-        break;
-      case "U":
-        replacement = `<u>${selectedText}</u>`;
-        break;
-      case "U2":
-        replacement = `<ins style="text-decoration: underline double;">${selectedText}</ins>`;
-        break;
-      case ">":
-        replacement = `\n> ${selectedText}`;
-        break;
-      case "S":
-        replacement = `~~${selectedText}~~`;
-        break;
-      case "⋮":
-        replacement = selectedText
-          .split("\n")
-          .map((line) => `- ${line}`)
-          .join("\n");
-        break;
-      default:
-        return;
-    }
-
-    const newValue = text.substring(0, start) + replacement + text.substring(end);
-    setMessage(newValue);
-
-    // Refocus and position cursor after state update
-    setTimeout(() => {
-      textarea.focus();
-      const newCursorPos = start + replacement.length;
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
   };
 
   // 🔍 Detect escalation from AI response
@@ -190,24 +138,9 @@ export default function CheckoutForm({
         </div>
       </div>
 
-      {/* Editor Toolbar */}
-      <div className="flex items-center gap-1.5 border-b border-zinc-800 pb-3">
-        {["B", "I", "U", "U2", ">", "S", "⋮"].map((action, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => handleToolbarAction(action)}
-            className="h-8 w-8 flex items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 transition-colors text-xs font-bold cursor-pointer"
-          >
-            {action === "U2" ? <span className="underline decoration-double">U</span> : action}
-          </button>
-        ))}
-      </div>
-
       {/* Message Editor */}
       <div className="flex-1 min-h-75">
         <textarea
-          ref={textareaRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className={`w-full h-full border rounded-xl p-5 text-sm leading-relaxed font-body focus:outline-none resize-none transition-all duration-300 ${
