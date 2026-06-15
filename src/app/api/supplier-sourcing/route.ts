@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { emailLogs, invoices } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { generateSupplierPrompt } from "@/utils/prompts";
 
 export async function POST(req: Request) {
   try {
@@ -39,17 +40,7 @@ export async function POST(req: Request) {
     const cartManifest = userInvoices[0]?.itemsSnapshot || [];
 
     // 4. Construct system prompt for the Supplier Agent
-    const supplierPrompt = `
-      System Prompt: You are the StitchHub B2B Head of Procurement. Your objective is to translate customer accessory/apparel manifests into a formal, highly professional wholesale inventory procurement request.
-
-      CUSTOMER REQUISITION MANIFEST:
-      ${JSON.stringify(cartManifest, null, 2)}
-
-      CUSTOMER SPECIFICATIONS & CONSTRAINTS:
-      "${log.body || "No specific instructions declared."}"
-
-      Please output a formalized wholesale purchase order (PO) detailing distributor supply-chain assignments, item sizes/quantities allocations, warehouse packaging tags, and factory production queuing commands.
-    `;
+    const supplierPrompt = generateSupplierPrompt(cartManifest as any[], log.body || "");
 
     // 5. Query local Ollama model stitchhub_v5 (with Gemini fallback)
     let vendorPoOutput = "";

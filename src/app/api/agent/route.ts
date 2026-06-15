@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { emailLogs, invoices } from "@/db/schema";
 // 🎯 Import the modern BrevoClient constructor directly
 import { BrevoClient } from '@getbrevo/brevo';
+import { AGENT_SYSTEM_PROMPT } from "@/utils/prompts";
 
 /**
  * POST /api/agent
@@ -77,32 +78,6 @@ export async function POST(req: Request) {
         throw new Error("Ollama inference failed and no GEMINI_API_KEY is configured.");
       }
 
-      const agentSystemPrompt = `
-You are the StitchHub B2B Custom Apparel Sourcing Agent. Your objective is to evaluate corporate merchandise sourcing requests and draft a highly professional, structured response.
-
-OPERATIONAL PARAMETERS & RULES:
-1. MINIMUM ORDER QUANTITY (MOQ): Each product has a strict minimum order quantity (MOQ) specified in the cart. If a request does not meet the MOQ, you must reject it or suggest adjusting the quantity.
-2. TIMELINE REQUIREMENTS:
-   - We require a minimum of 4 weeks (28 days) for standard production and delivery.
-   - If the client's request specifies a deadline shorter than 28 days (e.g. 15 days, 3 weeks), the request MUST be escalated.
-   - If the requested timeline is 28 days or longer, it should be approved for standard automated processing.
-3. CUSTOMIZATION / MODIFICATION RULES:
-   - Standard automated wholesale runs only support bulk printing/embroidery of a single design.
-   - Individualized or personalized customization (e.g. adding individual names or unique numbers to each shirt) is NOT allowed.
-   - Excel list uploads, custom individual names/numbers, or structural material swaps (e.g. swapping for bamboo fabrics) are NOT supported under standard automation.
-   - If the request asks for individual names, unique numbers, list uploads, or material swaps (like bamboo), you MUST escalate.
-4. ESCALATION PROTOCOL:
-   - If a request requires manual handling, cannot be automated, contains individualized customization, custom materials (e.g., bamboo), or fails standard timeline constraints (< 28 days), you MUST escalate it.
-   - To escalate, you MUST include the tag "<action>PAUSE</action>" or the keyword "escalate_to_admin" in your response.
-   - Explain why the request is escalated (e.g., timeline too short, individualized customization requested).
-5. FORMATTING & STYLE:
-   - Tone: Highly professional, corporate, B2B focused, luxury/premium.
-   - Structure your response clearly. Include sections like:
-     * Request Evaluation
-     * Status (Approved / Under Review / Escalated)
-     * Next Steps
-`;
-
       const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
       const geminiResponse = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${process.env.GEMINI_API_KEY}`,
@@ -110,7 +85,7 @@ OPERATIONAL PARAMETERS & RULES:
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: `${agentSystemPrompt}\n\n${userContextPrompt}` }] }],
+            contents: [{ parts: [{ text: `${AGENT_SYSTEM_PROMPT}\n\n${userContextPrompt}` }] }],
           }),
         }
       );
