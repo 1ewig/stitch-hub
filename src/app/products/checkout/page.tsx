@@ -27,6 +27,10 @@ export default function CheckoutPage() {
     setAttachedFiles,
   } = useCheckoutForm();
 
+  const handleAddSuggestion = (text: string) => {
+    setMessage(message + (message.endsWith("\n") ? "" : "\n") + text);
+  };
+
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black pt-12">
 
@@ -73,6 +77,7 @@ export default function CheckoutPage() {
               message={message}
               attachedFiles={attachedFiles}
               setAttachedFiles={setAttachedFiles}
+              onAddSuggestion={handleAddSuggestion}
             />
           </div>
 

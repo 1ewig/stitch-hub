@@ -18,6 +18,7 @@ interface CheckoutSidebarProps {
   message: string; // Message text used to detect escalation patterns
   attachedFiles: File[];
   setAttachedFiles: (files: File[]) => void;
+  onAddSuggestion: (text: string) => void;
 }
 
 // Side panel — handles form submission, displays sourcing cart, attached files, and AI suggestions
@@ -29,10 +30,59 @@ export default function CheckoutSidebar({
   message,
   attachedFiles,
   setAttachedFiles,
+  onAddSuggestion,
 }: CheckoutSidebarProps) {
   
   // Detect escalation from AI response — checks for PAUSE action tag or admin escalation keyword
   const isEscalated = message.includes("<action>PAUSE</action>") || message.includes("escalate_to_admin");
+
+  // Determine dynamic suggestions based on cart contents
+  const suggestions = React.useMemo(() => {
+    const list: { text: string; insertText: string }[] = [];
+    
+    const hasApparel = cart.some(item => item.product.cat === "Apparel" || item.product.cat === "Performance");
+    const hasDrinkware = cart.some(item => item.product.cat === "Drinkware");
+    const hasAccessories = cart.some(item => item.product.cat === "Accessories");
+    
+    if (hasApparel) {
+      list.push({
+        text: "Add custom woven neck labels",
+        insertText: "Please include pricing for custom woven neck labels on all apparel items."
+      });
+      list.push({
+        text: "Request individual polybag packaging",
+        insertText: "We would like to request individual retail-ready polybag packaging for our garments."
+      });
+    }
+    
+    if (hasDrinkware) {
+      list.push({
+        text: "Request custom branded packaging boxes",
+        insertText: "Please provide a quote for custom-printed gift boxes for the drinkware items."
+      });
+    }
+    
+    if (hasAccessories) {
+      list.push({
+        text: "Inquire about custom tags & labels",
+        insertText: "We need custom hang tags and brand labels attached to the accessories."
+      });
+    }
+    
+    // Fallback/generic suggestions if cart is empty or has nothing specific
+    if (list.length === 0) {
+      list.push({
+        text: "Inquire about bulk discount tiers",
+        insertText: "Could you please detail the price breaks for volume orders larger than our current cart?"
+      });
+      list.push({
+        text: "Request physical pre-production sample",
+        insertText: "We would like to request a physical pre-production sample of our items before full run approval."
+      });
+    }
+    
+    return list;
+  }, [cart]);
 
   return (
     <div className="space-y-6">
@@ -42,12 +92,15 @@ export default function CheckoutSidebar({
           Suggestions
         </h4>
         <ul className="space-y-2 text-sm">
-          <li className="text-[#d4af37] font-medium hover:underline cursor-pointer flex items-center gap-2">
-            <span>✦</span> Draft custom follow-up worksheet
-          </li>
-          <li className="text-[#d4af37] font-medium hover:underline cursor-pointer flex items-center gap-2">
-            <span>✦</span> Upsell suggestions (insulated flasks, minimal wallets)
-          </li>
+          {suggestions.map((sug, i) => (
+            <li
+              key={i}
+              onClick={() => onAddSuggestion(sug.insertText)}
+              className="text-[#d4af37] font-medium hover:underline cursor-pointer flex items-center gap-2 group transition-all"
+            >
+              <span className="group-hover:scale-125 transition-transform">✦</span> {sug.text}
+            </li>
+          ))}
         </ul>
       </div>
 
