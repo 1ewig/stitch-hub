@@ -42,15 +42,7 @@ export const useCartStore = create<CartState>()(
 
         let newCart: CartItem[];
         if (existingIndex > -1) {
-          newCart = cart.map((item, i) =>
-            i === existingIndex
-              ? {
-                  ...item,
-                  quantity: item.quantity + quantity,
-                  customNotes: customNotes || item.customNotes,
-                }
-              : item
-          );
+          newCart = cart;
         } else {
           newCart = [...cart, { product, quantity, size, customNotes }];
         }
