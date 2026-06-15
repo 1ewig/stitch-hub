@@ -90,6 +90,56 @@ export function useCheckoutForm() {
     }
   };
 
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
+
+  // Sync initial suggestions based on cart categories
+  useEffect(() => {
+    const list: string[] = [];
+    const hasApparel = cart.some(item => item.product.cat === "Apparel" || item.product.cat === "Performance");
+    const hasDrinkware = cart.some(item => item.product.cat === "Drinkware");
+    const hasAccessories = cart.some(item => item.product.cat === "Accessories");
+    
+    if (hasApparel) {
+      list.push("Add custom woven neck labels");
+      list.push("Request individual polybag packaging");
+    }
+    if (hasDrinkware) {
+      list.push("Request custom branded packaging boxes");
+    }
+    if (hasAccessories) {
+      list.push("Inquire about custom tags & labels");
+    }
+    if (list.length === 0) {
+      list.push("Inquire about bulk discount tiers");
+      list.push("Request physical pre-production sample");
+    }
+    setSuggestions(list.slice(0, 3));
+  }, [cart]);
+
+  const fetchAiSuggestions = async () => {
+    if (cart.length === 0) return;
+    setIsFetchingSuggestions(true);
+    try {
+      const response = await fetch("/api/agent/suggestions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart, message }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success && Array.isArray(data.suggestions)) {
+        setSuggestions(data.suggestions);
+      } else {
+        alert(data.error || "Failed to fetch AI suggestions.");
+      }
+    } catch (err) {
+      console.error("AI suggestions request failed:", err);
+      alert("Failed to communicate with AI suggestions generator.");
+    } finally {
+      setIsFetchingSuggestions(false);
+    }
+  };
+
   return {
     cart,
     toEmail,
@@ -103,5 +153,8 @@ export function useCheckoutForm() {
     handleSubmit,
     attachedFiles,
     setAttachedFiles,
+    suggestions,
+    isFetchingSuggestions,
+    fetchAiSuggestions,
   };
 }

@@ -25,6 +25,9 @@ export default function CheckoutPage() {
     handleSubmit,
     attachedFiles,
     setAttachedFiles,
+    suggestions,
+    isFetchingSuggestions,
+    fetchAiSuggestions,
   } = useCheckoutForm();
 
   const handleAddSuggestion = (text: string) => {
@@ -78,6 +81,9 @@ export default function CheckoutPage() {
               attachedFiles={attachedFiles}
               setAttachedFiles={setAttachedFiles}
               onAddSuggestion={handleAddSuggestion}
+              suggestions={suggestions}
+              isFetchingSuggestions={isFetchingSuggestions}
+              fetchAiSuggestions={fetchAiSuggestions}
             />
           </div>
 
