@@ -7,6 +7,7 @@ export default function MessagesTab() {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [loadingThreads, setLoadingThreads] = useState(true);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   // 1. Fetch unique active threads from supplier_bids and email_logs
   useEffect(() => {
@@ -26,11 +27,11 @@ export default function MessagesTab() {
           .eq("supplier_name", user.email);
         const bidOrderIds = bids ? bids.map((b) => b.order_id) : [];
 
-        // Fetch unique order IDs from email_logs with status 'draft_sourcing' (active RFQs)
+        // Fetch unique order IDs from email_logs with status 'draft_sourcing' or 'review_required' (active RFQs)
         const { data: logs } = await supabase
           .from("email_logs")
           .select("metadata")
-          .eq("status", "draft_sourcing");
+          .in("status", ["draft_sourcing", "review_required"]);
         const logOrderIds = logs ? logs.map((l) => (l.metadata as any)?.invoiceNumber).filter(Boolean) : [];
 
         // Combine and get unique IDs
@@ -147,13 +148,23 @@ export default function MessagesTab() {
 
     try {
       const supabase = createClient();
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("supplier_messages")
         .insert({
           order_id: activeThread,
           sender: "supplier",
           message_text: textToSend,
+        })
+        .select();
+
+      if (!error && data && data.length > 0) {
+        setChatMessages((prev) => {
+          if (prev.some((m) => m.id === data[0].id)) return prev;
+          return [...prev, data[0]];
         });
+        setStatusMessage("Message sent to Admin!");
+        setTimeout(() => setStatusMessage(null), 3000);
+      }
 
       if (error) {
         console.error("Error inserting message:", error);
@@ -269,6 +280,11 @@ export default function MessagesTab() {
 
         {/* Chat Input */}
         <div className="p-4 border-t border-zinc-800 bg-zinc-950/50">
+          {statusMessage && (
+            <div className="text-[10px] text-emerald-400 font-bold mb-2 animate-pulse font-mono uppercase tracking-wider">
+              ✓ {statusMessage}
+            </div>
+          )}
           <form onSubmit={handleSendMessage} className="relative">
             <input
               type="text"

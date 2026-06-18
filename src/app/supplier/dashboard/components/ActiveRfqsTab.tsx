@@ -15,11 +15,11 @@ export default function ActiveRfqsTab() {
       try {
         const supabase = createClient();
         
-        // Fetch email_logs with status 'draft_sourcing'
+        // Fetch email_logs with status 'draft_sourcing' or 'review_required'
         const { data: logs, error: logsError } = await supabase
           .from("email_logs")
           .select("*")
-          .eq("status", "draft_sourcing");
+          .in("status", ["draft_sourcing", "review_required"]);
 
         if (logsError) {
           console.error("Error fetching logs:", logsError);
@@ -117,9 +117,30 @@ export default function ActiveRfqsTab() {
           text: error.message || "Failed to submit quote to database.",
         });
       } else {
+        // 🛠️ Update materials_inventory stock back to StitchHub
+        for (const item of selectedRfq.items || []) {
+          const title = item.product?.title;
+          const qty = item.quantity || 0;
+          if (title) {
+            const { data: invData } = await supabase
+              .from("materials_inventory")
+              .select("stock_quantity")
+              .eq("product_name", title)
+              .maybeSingle();
+
+            const currentStock = invData?.stock_quantity ?? 0;
+            const newStock = currentStock + qty;
+
+            await supabase
+              .from("materials_inventory")
+              .update({ stock_quantity: newStock })
+              .eq("product_name", title);
+          }
+        }
+
         setMessage({
           type: "success",
-          text: `Quote submitted successfully for ${selectedRfq.invoiceNumber}!`,
+          text: `Quote submitted and stock successfully updated back to StitchHub for ${selectedRfq.invoiceNumber}!`,
         });
         setPrice("");
         setDays("");

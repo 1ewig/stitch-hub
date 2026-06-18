@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { db } from "@/db";
-import { emailLogs, invoices, supplierBids } from "@/db/schema";
+import { emailLogs, invoices, supplierBids, materialsInventory, supplierMessages } from "@/db/schema";
+import { eq } from "drizzle-orm";
 // 🎯 Import the modern BrevoClient constructor directly
 import { BrevoClient } from '@getbrevo/brevo';
 import { AGENT_SYSTEM_PROMPT } from "@/utils/prompts";
@@ -141,6 +142,48 @@ export async function POST(req: Request) {
       logStatus = 'draft_sourcing'; // Keep it in standard workflow instead of locking it!
     }
 
+    // 4. PRE-APPROVAL INVENTORY CHECK
+    let isInventoryDepleted = false;
+    let depletedProductName = "";
+    let requestedQuantity = 0;
+    let availableStock = 0;
+
+    for (const item of cart) {
+      const productName = item.product?.title;
+      const requestedQty = item.quantity || 0;
+      if (productName) {
+        const inv = await db
+          .select({
+            stockQuantity: materialsInventory.stockQuantity,
+          })
+          .from(materialsInventory)
+          .where(eq(materialsInventory.productName, productName))
+          .limit(1);
+
+        if (inv.length > 0) {
+          if (inv[0].stockQuantity < requestedQty) {
+            isInventoryDepleted = true;
+            depletedProductName = productName;
+            requestedQuantity = requestedQty;
+            availableStock = inv[0].stockQuantity;
+            break;
+          }
+        } else {
+          // Product not found in inventory -> treat as depleted
+          isInventoryDepleted = true;
+          depletedProductName = productName;
+          requestedQuantity = requestedQty;
+          availableStock = 0;
+          break;
+        }
+      }
+    }
+
+    if (isInventoryDepleted) {
+      generatedAiResponse = `Reviewing request parameters: Our physical inventory for this blank style (${depletedProductName}) is currently depleted (requested: ${requestedQuantity}, available stock: ${availableStock}).\n\nStatus: Order locked for manual material allocation / Review Required.\n\nNext Step: This thread has been escalated to a human Admin to review supplier stock and place a mill pre-order. We will work with our supplier to secure the necessary stock to fulfill your order.`;
+      logStatus = "review_required";
+    }
+
     /* ── Atomic DB persistence: write email_log + invoice records ── */
     const randomSerial = Math.floor(1000 + Math.random() * 9000);
     const generatedInvoiceNumber = `INV-2026-${randomSerial}`;
@@ -169,7 +212,7 @@ export async function POST(req: Request) {
       for (const item of cart) {
         const basePrice = item.product?.price || 15.00;
         const quotedCost = basePrice * 0.9; // 10% discount for bulk
-        
+
         await db.insert(supplierBids).values({
           orderId: generatedInvoiceNumber,
           supplierName: "Test Supplier Alpha",
@@ -178,17 +221,51 @@ export async function POST(req: Request) {
           status: "pending",
         });
       }
+
+      // 🤖 BACKGROUND AGENT PROMPT: Proactively message wholesale suppliers via Gemini
+      if (process.env.GEMINI_API_KEY) {
+        try {
+          const geminiModel = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
+          const systemInstruction = "You are the StitchHub Procurement AI Agent. Your job is to automatically message our wholesale manufacturing suppliers the moment an RFQ is opened. Write a concise, professional message asking them to confirm availability and submit a bulk quote for the requested items.";
+          const promptText = `${systemInstruction}\n\nInvoice/Order ID: ${generatedInvoiceNumber}\nItems list:\n${JSON.stringify(cart.map((item: any) => ({ title: item.product?.title, qty: item.quantity })), null, 2)}`;
+
+          const geminiResponse = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: promptText }] }],
+              }),
+            }
+          );
+
+          if (geminiResponse.ok) {
+            const geminiData = await geminiResponse.json();
+            const outreachText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            if (outreachText.trim()) {
+              await db.insert(supplierMessages).values({
+                orderId: generatedInvoiceNumber,
+                sender: "admin",
+                messageText: outreachText,
+              });
+            }
+          }
+        } catch (agentErr) {
+          console.error("Autonomous supplier outreach generation failed:", agentErr);
+        }
+      }
     }
 
-    /* ── 📨 Modern Brevo SDK Dispatch Layer ── */
+
     if (user.email) {
       try {
-        // 🎯 FIX: Instantiate with the configuration options object directly inside the constructor
+
         const brevo = new BrevoClient({
           apiKey: process.env.BREVO_API_KEY as string
         });
 
-        // Fire the transmission directly through the transactionalEmails namespace module
+
         await brevo.transactionalEmails.sendTransacEmail({
           subject: logStatus === "review_required"
             ? `[Action Required] Sourcing Matrix Intercepted`
@@ -259,7 +336,7 @@ export async function POST(req: Request) {
       }
     }
 
-    /* ── Success response: return AI draft and final status ── */
+
     return NextResponse.json({
       success: true,
       generatedMessage: generatedAiResponse,
@@ -267,7 +344,7 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-    /* ── Global error handler: log and return 500 ── */
+
     console.error("Critical core failure:", error);
     return NextResponse.json({ error: "Internal agent reasoning breakdown." }, { status: 500 });
   }

@@ -26,6 +26,8 @@ export default function AdminOrdersPage() {
   const [supplierMessages, setSupplierMessages] = React.useState<any[]>([]);
   const [supplierChatText, setSupplierChatText] = React.useState("");
   const [supplierChatLoading, setSupplierChatLoading] = React.useState(false);
+  const [activeDetailTab, setActiveDetailTab] = React.useState<"details" | "supplier">("details");
+  const [supplierStatusMessage, setSupplierStatusMessage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (!selectedOrder) {
@@ -84,13 +86,23 @@ export default function AdminOrdersPage() {
 
     try {
       const supabase = createClient();
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("supplier_messages")
         .insert({
           order_id: selectedOrder.invoiceNumber,
           sender: "admin",
           message_text: textToSend,
+        })
+        .select();
+
+      if (!error && data && data.length > 0) {
+        setSupplierMessages((prev) => {
+          if (prev.some((m) => m.id === data[0].id)) return prev;
+          return [...prev, data[0]];
         });
+        setSupplierStatusMessage("Message sent to Supplier!");
+        setTimeout(() => setSupplierStatusMessage(null), 3000);
+      }
 
       if (error) {
         console.error("Error sending supplier message:", error);
@@ -177,184 +189,209 @@ export default function AdminOrdersPage() {
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-6 pr-2 mb-6">
-                  <div>
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Client Details</h4>
-                    <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1">
-                      <p className="text-xs font-bold text-white">{selectedOrder.user?.name || "Unregistered User"}</p>
-                      <p className="text-[10px] text-zinc-400 font-mono">{selectedOrder.user?.email}</p>
-                      <p className="text-[9px] text-zinc-600 font-mono mt-1">Submitted: {new Date(selectedOrder.createdAt).toLocaleString()}</p>
-                    </div>
-                  </div>
+                {/* Tabs Header */}
+                <div className="flex border-b border-white/10 mb-6 shrink-0">
+                  <button
+                    onClick={() => setActiveDetailTab("details")}
+                    className={`flex-1 pb-3 text-[10px] font-bold font-mono uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
+                      activeDetailTab === "details"
+                        ? "border-[#d4af37] text-white"
+                        : "border-transparent text-zinc-500 hover:text-zinc-300"
+                    }`}
+                  >
+                    Details & Client Chat
+                  </button>
+                  <button
+                    onClick={() => setActiveDetailTab("supplier")}
+                    className={`flex-1 pb-3 text-[10px] font-bold font-mono uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
+                      activeDetailTab === "supplier"
+                        ? "border-[#d4af37] text-white"
+                        : "border-transparent text-zinc-500 hover:text-zinc-300"
+                    }`}
+                  >
+                    Supplier Negotiation Channel
+                  </button>
+                </div>
 
-                  <div>
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Quote</h4>
-                    <div className="bg-black/20 border border-white/5 p-4 rounded-xl">
-                      {isEditingQuote ? (
-                        <form onSubmit={handleUpdateQuote} className="space-y-2">
-                          <input
-                            type="text" value={quoteValue}
-                            onChange={(e) => setQuoteValue(e.target.value)}
-                            className="w-full bg-black/60 border border-[#d4af37]/30 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none"
-                            placeholder="e.g. $1,420.00"
-                          />
-                          <div className="flex gap-2 justify-end">
-                            <button type="button" onClick={() => setIsEditingQuote(false)}
-                              className="px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md text-[10px] font-bold hover:bg-white/10">Cancel</button>
-                            <button type="submit"
-                              className="px-2.5 py-1.5 bg-[#d4af37] text-[#090a0f] rounded-md text-[10px] font-bold hover:bg-[#bfa032]">Save</button>
+                {activeDetailTab === "details" ? (
+                  <div className="flex-1 overflow-y-auto space-y-6 pr-2 mb-6">
+                    <div>
+                      <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Client Details</h4>
+                      <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1">
+                        <p className="text-xs font-bold text-white">{selectedOrder.user?.name || "Unregistered User"}</p>
+                        <p className="text-[10px] text-zinc-400 font-mono">{selectedOrder.user?.email}</p>
+                        <p className="text-[9px] text-zinc-600 font-mono mt-1">Submitted: {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Quote</h4>
+                      <div className="bg-black/20 border border-white/5 p-4 rounded-xl">
+                        {isEditingQuote ? (
+                          <form onSubmit={handleUpdateQuote} className="space-y-2">
+                            <input
+                              type="text" value={quoteValue}
+                              onChange={(e) => setQuoteValue(e.target.value)}
+                              className="w-full bg-black/60 border border-[#d4af37]/30 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none"
+                              placeholder="e.g. $1,420.00"
+                            />
+                            <div className="flex gap-2 justify-end">
+                              <button type="button" onClick={() => setIsEditingQuote(false)}
+                                className="px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-md text-[10px] font-bold hover:bg-white/10">Cancel</button>
+                              <button type="submit"
+                                className="px-2.5 py-1.5 bg-[#d4af37] text-[#090a0f] rounded-md text-[10px] font-bold hover:bg-[#bfa032]">Save</button>
+                            </div>
+                          </form>
+                        ) : (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-mono font-bold text-white">{selectedOrder.totalAmount}</span>
+                            <button onClick={() => setIsEditingQuote(true)}
+                              className="text-[10px] text-[#d4af37] hover:underline font-mono">Update Quote</button>
                           </div>
-                        </form>
-                      ) : (
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-mono font-bold text-white">{selectedOrder.totalAmount}</span>
-                          <button onClick={() => setIsEditingQuote(true)}
-                            className="text-[10px] text-[#d4af37] hover:underline font-mono">Update Quote</button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Order Status</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {["unpaid", "paid", "shipping"].map((status) => (
+                          <button key={status} disabled={updatingId === selectedOrder.id}
+                            onClick={() => handleUpdateStatus(selectedOrder.id, status)}
+                            className={`py-2 rounded-lg text-[10px] font-bold font-mono uppercase tracking-wider border transition-all ${
+                              selectedOrder.status === status
+                                ? "bg-[#d4af37]/10 border-[#d4af37] text-[#d4af37]"
+                                : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
+                            }`}>{status}</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Items ({selectedOrder.itemsSnapshot.length})</h4>
+                      <div className="space-y-3">
+                        {selectedOrder.itemsSnapshot.map((item, idx) => (
+                          <div key={idx} className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-3">
+                            <div className="flex gap-3">
+                              <div className="h-10 w-10 bg-zinc-900 border border-white/10 rounded-md overflow-hidden shrink-0">
+                                <Image src={item.product.img} alt={item.product.title} width={40} height={40} className="h-full w-full object-cover" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-wider">{item.product.cat}</span>
+                                <h5 className="text-xs font-bold text-white truncate">{item.product.title}</h5>
+                                <div className="flex justify-between mt-1 text-[10px] font-mono text-zinc-400">
+                                  <span>Qty: {item.quantity}</span>
+                                  <span>Size: {item.size || "Standard"}</span>
+                                </div>
+                              </div>
+                            </div>
+                            {item.customNotes && (
+                              <div className="bg-black/30 border border-white/5 p-2.5 rounded-lg">
+                                <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest font-mono">Custom Notes</span>
+                                <p className="text-[10px] text-zinc-300 italic mt-0.5 leading-relaxed">&quot;{item.customNotes}&quot;</p>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* AI Operations Correspondence Log */}
+                    <div className="border-t border-white/10 pt-6">
+                      <div 
+                        className="flex items-center justify-between mb-4 cursor-pointer hover:opacity-85 select-none"
+                        onClick={() => setIsLogExpanded(!isLogExpanded)}
+                      >
+                        <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest font-mono flex items-center gap-1.5">
+                          <span className="text-[8px] transition-transform duration-200 inline-block" style={{ transform: isLogExpanded ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
+                          <span>AI Operations Correspondence Log</span>
+                        </h4>
+                        <span className="text-[8px] bg-white/5 border border-white/10 text-zinc-400 px-2 py-0.5 rounded font-mono">
+                          {isLogExpanded ? "Collapse" : "Expand"}
+                        </span>
+                      </div>
+
+                      {isLogExpanded && (
+                        <div className="space-y-4">
+                          {chatLoading ? (
+                            <div className="flex justify-center py-8">
+                              <span className="h-4 w-4 rounded-full border-2 border-[#d4af37] border-t-transparent animate-spin" />
+                            </div>
+                          ) : messages.length === 0 ? (
+                            <div className="text-[10px] text-zinc-500 italic py-4 text-center bg-black/20 rounded-xl border border-white/5 font-mono">
+                              No correspondence logs found.
+                            </div>
+                          ) : (
+                            <div className="space-y-3 max-h-72 overflow-y-auto pr-1 flex flex-col scrollbar-thin">
+                              {messages.map((msg: any, idx: number) => {
+                                const isUser = msg.role === "user";
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={`flex flex-col max-w-[85%] rounded-xl p-3 text-[11px] ${
+                                      isUser
+                                        ? "bg-[#16171d] text-zinc-100 self-start mr-auto border border-zinc-800"
+                                        : "bg-[#d4af37]/10 text-[#fef08a] self-end ml-auto border border-[#d4af37]/20"
+                                    }`}
+                                  >
+                                    <span className="text-[8px] font-mono font-bold text-zinc-500 mb-1">
+                                      {isUser ? "👤 CLIENT" : "🤖 STITCHHUB AGENT / ADMIN"}
+                                    </span>
+                                    <p className="whitespace-pre-wrap leading-relaxed font-sans">{msg.content}</p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+
+                          {/* Admin Message Input (Takeover Mode) */}
+                          {agentOverride && (
+                            <div className="mt-4 bg-red-950/5 border border-red-500/10 p-3.5 rounded-xl space-y-2.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
+                                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500 animate-ping" />
+                                  Human Takeover Active
+                                </span>
+                                <span className="text-[8px] text-zinc-500 font-mono">Ollama pipeline bypassed</span>
+                              </div>
+                              <textarea
+                                rows={2}
+                                value={adminMessage}
+                                onChange={(e) => setAdminMessage(e.target.value)}
+                                placeholder="Compose manual reply to client..."
+                                className="w-full bg-black/40 border border-white/5 rounded-lg p-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/30 font-sans"
+                              />
+                              <div className="flex justify-end">
+                                <button
+                                  onClick={sendAdminMessage}
+                                  disabled={!adminMessage.trim()}
+                                  className="bg-red-600 hover:bg-red-500 disabled:opacity-30 disabled:hover:bg-red-600 text-white font-mono font-bold text-[9px] uppercase tracking-wider px-3.5 py-1.5 rounded-md transition-all"
+                                >
+                                  Send Reply
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
-
-                  <div>
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Order Status</h4>
-                    <div className="grid grid-cols-3 gap-2">
-                      {["unpaid", "paid", "shipping"].map((status) => (
-                        <button key={status} disabled={updatingId === selectedOrder.id}
-                          onClick={() => handleUpdateStatus(selectedOrder.id, status)}
-                          className={`py-2 rounded-lg text-[10px] font-bold font-mono uppercase tracking-wider border transition-all ${
-                            selectedOrder.status === status
-                              ? "bg-[#d4af37]/10 border-[#d4af37] text-[#d4af37]"
-                              : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
-                          }`}>{status}</button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Items ({selectedOrder.itemsSnapshot.length})</h4>
-                    <div className="space-y-3">
-                      {selectedOrder.itemsSnapshot.map((item, idx) => (
-                        <div key={idx} className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-3">
-                          <div className="flex gap-3">
-                            <div className="h-10 w-10 bg-zinc-900 border border-white/10 rounded-md overflow-hidden shrink-0">
-                              <Image src={item.product.img} alt={item.product.title} width={40} height={40} className="h-full w-full object-cover" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-wider">{item.product.cat}</span>
-                              <h5 className="text-xs font-bold text-white truncate">{item.product.title}</h5>
-                              <div className="flex justify-between mt-1 text-[10px] font-mono text-zinc-400">
-                                <span>Qty: {item.quantity}</span>
-                                <span>Size: {item.size || "Standard"}</span>
-                              </div>
-                            </div>
-                          </div>
-                          {item.customNotes && (
-                            <div className="bg-black/30 border border-white/5 p-2.5 rounded-lg">
-                              <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest font-mono">Custom Notes</span>
-                              <p className="text-[10px] text-zinc-300 italic mt-0.5 leading-relaxed">&quot;{item.customNotes}&quot;</p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* AI Operations Correspondence Log */}
-                  <div className="border-t border-white/10 pt-6">
-                    <div 
-                      className="flex items-center justify-between mb-4 cursor-pointer hover:opacity-85 select-none"
-                      onClick={() => setIsLogExpanded(!isLogExpanded)}
-                    >
-                      <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest font-mono flex items-center gap-1.5">
-                        <span className="text-[8px] transition-transform duration-200 inline-block" style={{ transform: isLogExpanded ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
-                        <span>AI Operations Correspondence Log</span>
-                      </h4>
-                      <span className="text-[8px] bg-white/5 border border-white/10 text-zinc-400 px-2 py-0.5 rounded font-mono">
-                        {isLogExpanded ? "Collapse" : "Expand"}
-                      </span>
-                    </div>
-
-                    {isLogExpanded && (
-                      <div className="space-y-4">
-                        {chatLoading ? (
-                          <div className="flex justify-center py-8">
-                            <span className="h-4 w-4 rounded-full border-2 border-[#d4af37] border-t-transparent animate-spin" />
-                          </div>
-                        ) : messages.length === 0 ? (
-                          <div className="text-[10px] text-zinc-500 italic py-4 text-center bg-black/20 rounded-xl border border-white/5 font-mono">
-                            No correspondence logs found.
-                          </div>
-                        ) : (
-                          <div className="space-y-3 max-h-72 overflow-y-auto pr-1 flex flex-col scrollbar-thin">
-                            {messages.map((msg: any, idx: number) => {
-                              const isUser = msg.role === "user";
-                              return (
-                                <div
-                                  key={idx}
-                                  className={`flex flex-col max-w-[85%] rounded-xl p-3 text-[11px] ${
-                                    isUser
-                                      ? "bg-[#16171d] text-zinc-100 self-start mr-auto border border-zinc-800"
-                                      : "bg-[#d4af37]/10 text-[#fef08a] self-end ml-auto border border-[#d4af37]/20"
-                                  }`}
-                                >
-                                  <span className="text-[8px] font-mono font-bold text-zinc-500 mb-1">
-                                    {isUser ? "👤 CLIENT" : "🤖 STITCHHUB AGENT / ADMIN"}
-                                  </span>
-                                  <p className="whitespace-pre-wrap leading-relaxed font-sans">{msg.content}</p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-
-                        {/* Admin Message Input (Takeover Mode) */}
-                        {agentOverride && (
-                          <div className="mt-4 bg-red-950/5 border border-red-500/10 p-3.5 rounded-xl space-y-2.5">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
-                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500 animate-ping" />
-                                Human Takeover Active
-                              </span>
-                              <span className="text-[8px] text-zinc-500 font-mono">Ollama pipeline bypassed</span>
-                            </div>
-                            <textarea
-                              rows={2}
-                              value={adminMessage}
-                              onChange={(e) => setAdminMessage(e.target.value)}
-                              placeholder="Compose manual reply to client..."
-                              className="w-full bg-black/40 border border-white/5 rounded-lg p-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/30 font-sans"
-                            />
-                            <div className="flex justify-end">
-                              <button
-                                onClick={sendAdminMessage}
-                                disabled={!adminMessage.trim()}
-                                className="bg-red-600 hover:bg-red-500 disabled:opacity-30 disabled:hover:bg-red-600 text-white font-mono font-bold text-[9px] uppercase tracking-wider px-3.5 py-1.5 rounded-md transition-all"
-                              >
-                                Send Reply
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Supplier Sourcing Chat Log */}
-                  <div className="border-t border-white/10 pt-6">
-                    <h4 className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-4 font-mono">
-                      Supplier Portal Messages
+                ) : (
+                  <div className="flex-1 flex flex-col min-h-0 bg-zinc-950/20 border border-zinc-800 rounded-xl p-4 overflow-hidden">
+                    <h4 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3 font-mono">
+                      Supplier Negotiation Channel
                     </h4>
 
                     {supplierChatLoading ? (
-                      <div className="flex justify-center py-4">
-                        <span className="h-4 w-4 rounded-full border-2 border-[#d4af37] border-t-transparent animate-spin" />
+                      <div className="flex justify-center items-center flex-1 py-8">
+                        <span className="h-6 w-6 rounded-full border-2 border-[#d4af37] border-t-transparent animate-spin" />
                       </div>
                     ) : supplierMessages.length === 0 ? (
-                      <div className="text-[10px] text-zinc-500 italic py-4 text-center bg-black/20 rounded-xl border border-white/5 font-mono">
+                      <div className="text-[10px] text-zinc-500 italic py-8 text-center bg-black/20 rounded-xl border border-white/5 font-mono flex-1 flex items-center justify-center">
                         No supplier correspondence recorded.
                       </div>
                     ) : (
-                      <div className="space-y-3 max-h-72 overflow-y-auto pr-1 flex flex-col scrollbar-thin">
+                      <div className="flex-1 overflow-y-auto pr-1 flex flex-col space-y-3 mb-4 scrollbar-thin">
                         {supplierMessages.map((msg: any) => {
                           const isAdmin = msg.sender === "admin";
                           return (
@@ -362,7 +399,7 @@ export default function AdminOrdersPage() {
                               key={msg.id}
                               className={`flex flex-col max-w-[85%] rounded-xl p-3 text-[11px] ${
                                 isAdmin
-                                  ? "bg-zinc-800/80 text-zinc-100 self-end ml-auto border border-zinc-700/50"
+                                  ? "bg-zinc-800 text-zinc-100 self-end ml-auto border border-zinc-700/50"
                                   : "bg-[#d4af37]/10 text-[#fef08a] self-start mr-auto border border-[#d4af37]/20"
                               }`}
                             >
@@ -380,15 +417,20 @@ export default function AdminOrdersPage() {
                     )}
 
                     {/* Send Message to Supplier */}
-                    <div className="mt-4 bg-black/20 border border-white/5 p-3.5 rounded-xl space-y-2">
+                    <div className="mt-auto pt-4 border-t border-white/5">
+                      {supplierStatusMessage && (
+                        <div className="text-[10px] text-emerald-400 font-bold mb-2 animate-pulse font-mono uppercase tracking-wider">
+                          ✓ {supplierStatusMessage}
+                        </div>
+                      )}
                       <textarea
-                        rows={2}
+                        rows={3}
                         value={supplierChatText}
                         onChange={(e) => setSupplierChatText(e.target.value)}
                         placeholder="Compose message to Supplier..."
-                        className="w-full bg-black/40 border border-white/5 rounded-lg p-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#d4af37]/30 font-sans"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-[#d4af37]/30 font-sans resize-none"
                       />
-                      <div className="flex justify-end">
+                      <div className="flex justify-end mt-2">
                         <button
                           onClick={sendSupplierMessage}
                           disabled={!supplierChatText.trim()}
@@ -399,7 +441,7 @@ export default function AdminOrdersPage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="flex-grow flex flex-col justify-center items-center text-zinc-500 text-xs">
