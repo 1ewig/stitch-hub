@@ -62,13 +62,19 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, message: "Product created successfully." });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to create product:", error);
-    if (error && typeof error === "object" && "code" in error) {
-      const pgError = error as { code: string };
-      if (pgError.code === "23505") {
-        return NextResponse.json({ error: "A product with this unique ID already exists." }, { status: 409 });
-      }
+    const isUniqueConstraint = 
+      error?.code === "23505" || 
+      error?.cause?.code === "23505" || 
+      error?.message?.includes("23505") ||
+      error?.message?.includes("unique constraint");
+
+    if (isUniqueConstraint) {
+      return NextResponse.json(
+        { error: "A product with this unique ID already exists. Please verify the ID or choose a different title." },
+        { status: 409 }
+      );
     }
     return NextResponse.json({ error: "Failed to save product to catalog." }, { status: 500 });
   }

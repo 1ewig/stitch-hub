@@ -36,6 +36,7 @@ export function useAdminProducts() {
   const [formData, setFormData] = useState<ProductFormData>(emptyForm);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isIdManuallyEdited, setIsIdManuallyEdited] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -56,14 +57,22 @@ export function useAdminProducts() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === "title" && !formData.id && !isEditing) {
-      const generatedSlug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)+/g, "");
-      setFormData((prev) => ({ ...prev, id: generatedSlug }));
+    
+    if (name === "id") {
+      setIsIdManuallyEdited(value !== "");
     }
+
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      if (name === "title" && !isIdManuallyEdited && !isEditing) {
+        const generatedSlug = value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)+/g, "");
+        updated.id = generatedSlug;
+      }
+      return updated;
+    });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +110,7 @@ export function useAdminProducts() {
     setImagePreview(null);
     setImageFile(null);
     setFormData(emptyForm);
+    setIsIdManuallyEdited(false);
   };
 
   const handleDeleteClick = async (productId: string) => {

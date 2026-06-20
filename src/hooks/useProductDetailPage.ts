@@ -37,5 +37,6 @@ export function useProductDetailPage(id: string) {
     product,
     detail,
     loading: isLoading,
+    allProducts: products,
   };
 }

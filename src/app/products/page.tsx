@@ -8,6 +8,7 @@ import LandingFooter from "../../components/landing/LandingFooter";
 import ProductFilters from "../../components/products/ProductFilters";
 import ProductCard from "../../components/products/ProductCard";
 import { useProducts } from "../../hooks/useProducts";
+import { getBaseTitle, getProductColor, getColorOrder } from "../../utils/colors";
 
 /** Products listing page — renders filtered grid or empty-state fallback */
 export default function ProductsPage() {
@@ -23,6 +24,75 @@ export default function ProductsPage() {
     categories,
     loading,
   } = useProducts();
+
+  // Group products by base title
+  const groupsMap: Record<string, typeof filteredProducts> = {};
+  for (const product of filteredProducts) {
+    const base = getBaseTitle(product.title);
+    if (!groupsMap[base]) {
+      groupsMap[base] = [];
+    }
+    groupsMap[base].push(product);
+  }
+
+  const baseTitlePriority: Record<string, number> = {
+    "Gildan 18500 Hoodie": 1,
+    "Minimalist Corporate Polo": 2,
+    "Insulated Matte Tumbler": 3,
+    "EDC Tech Organizer Pouch": 4,
+    "Framed Acoustic Art Panel": 5,
+  };
+
+  const allBaseTitlesInFiltered = Object.keys(groupsMap);
+  const activeBaseTitles = allBaseTitlesInFiltered.sort((a, b) => {
+    const prioA = baseTitlePriority[a] ?? 999;
+    const prioB = baseTitlePriority[b] ?? 999;
+    if (prioA !== prioB) return prioA - prioB;
+    return a.localeCompare(b);
+  });
+
+  const columnsData = activeBaseTitles.map((base) => {
+    return groupsMap[base].sort((a, b) => {
+      return getColorOrder(getProductColor(a)) - getColorOrder(getProductColor(b));
+    });
+  });
+
+  // Pad the columnsData with empty columns on the right to keep card sizes uniform (1/5 of grid)
+  while (columnsData.length < 5) {
+    columnsData.push([]);
+  }
+
+  const maxRows = columnsData.reduce((max, col) => Math.max(max, col.length), 0);
+
+  // Build the flat array in column-major order to align vertically in the CSS grid
+  const gridItems: (typeof filteredProducts[0] | null)[] = [];
+  for (let r = 0; r < maxRows; r++) {
+    for (let c = 0; c < columnsData.length; c++) {
+      const col = columnsData[c];
+      if (r < col.length) {
+        gridItems.push(col[r]);
+      } else {
+        gridItems.push(null);
+      }
+    }
+  }
+
+  const isAllTab = selectedCategory.toLowerCase() === "all";
+
+  // Build the flat array to render depending on the current selected tab
+  let displayItems: (typeof filteredProducts[0] | null)[] = [];
+  if (isAllTab) {
+    displayItems = gridItems;
+  } else {
+    displayItems = [...filteredProducts].sort((a, b) => {
+      const prioA = baseTitlePriority[getBaseTitle(a.title)] ?? 999;
+      const prioB = baseTitlePriority[getBaseTitle(b.title)] ?? 999;
+      if (prioA !== prioB) return prioA - prioB;
+      return getColorOrder(getProductColor(a)) - getColorOrder(getProductColor(b));
+    });
+  }
+
+  const gridClass = "lg:grid-cols-5";
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-[#d4af37] selection:text-black">
@@ -82,14 +152,20 @@ export default function ProductsPage() {
             </button>
           </div>
         ) : (
-          /* ── Product grid — 1/2/4 column responsive layout ── */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {filteredProducts.map((product, i) => (
-              <ProductCard
-                key={i}
-                product={product}
-              />
-            ))}
+          /* ── Product grid ── */
+          <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${gridClass} gap-8`}>
+            {displayItems.map((item, idx) => {
+              if (item === null) {
+                // Invisible placeholder to keep columns aligned on desktop, hidden on collapsed mobile/tablet grid
+                return <div key={`placeholder-${idx}`} className="hidden lg:block aspect-4/5" />;
+              }
+              return (
+                <ProductCard
+                  key={item.id}
+                  product={item}
+                />
+              );
+            })}
           </div>
         )}
       </section>

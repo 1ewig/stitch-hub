@@ -33,8 +33,8 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
-        <div className="flex justify-between items-start">
-          <h4 className="text-lg font-bold group-hover:text-[#d4af37] transition-colors leading-snug">
+        <div className="flex justify-between items-start w-full">
+          <h4 className="text-lg font-bold group-hover:text-[#d4af37] transition-colors leading-snug truncate w-full" title={product.title}>
             {product.title}
           </h4>
         </div>

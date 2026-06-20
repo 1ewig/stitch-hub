@@ -5,6 +5,7 @@
 
 import React, { use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import LandingFooter from "../../../components/landing/LandingFooter";
 import ProductBreadcrumb from "../../../components/products/ProductBreadcrumb";
 import ProductImage from "../../../components/products/ProductImage";
@@ -14,7 +15,9 @@ import SizeSelector from "../../../components/products/SizeSelector";
 import SourcingVolumeMatrix from "../../../components/products/SourcingVolumeMatrix";
 import VolumeStepper from "../../../components/products/VolumeStepper";
 import AddToCartButton from "../../../components/products/AddToCartButton";
+import ColorSelector from "../../../components/products/ColorSelector";
 import { useProductDetailPage } from "../../../hooks/useProductDetailPage";
+import { getBaseTitle, getProductColor, getColorOrder } from "../../../utils/colors";
 
 interface PageProps {
   params: Promise<{
@@ -25,7 +28,19 @@ interface PageProps {
 /** Product detail — shows not-found fallback or full product content with customization, sizing, volume, and add-to-cart */
 export default function ProductDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { product, detail, loading } = useProductDetailPage(id);
+  const router = useRouter();
+  const { product, detail, loading, allProducts } = useProductDetailPage(id);
+
+  const baseTitle = product ? getBaseTitle(product.title) : "";
+  const colorVariants = allProducts
+    ? allProducts
+        .filter((p) => getBaseTitle(p.title) === baseTitle)
+        .sort((a, b) => getColorOrder(getProductColor(a)) - getColorOrder(getProductColor(b)))
+    : [];
+
+  const handleColorSelect = (productId: string) => {
+    router.push(`/products/${productId}`);
+  };
 
   if (loading) {
     return (
@@ -95,6 +110,15 @@ export default function ProductDetailPage({ params }: PageProps) {
             {/* Available customization methods (embroidery, screen-print, etc.) — conditionally rendered */}
             {product.customization && (
               <CustomizationMethods methods={product.customization} />
+            )}
+
+            {/* Color selector circle options */}
+            {product && colorVariants.length > 1 && (
+              <ColorSelector
+                variants={colorVariants}
+                currentProductId={product.id}
+                onSelect={handleColorSelect}
+              />
             )}
 
             {/* Size selector — only visible for apparel-type products */}
