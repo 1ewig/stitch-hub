@@ -40,6 +40,43 @@ function getStatusBadge(item: InventoryItem) {
   };
 }
 
+function StepperInput({
+  value,
+  onChange,
+  onStep,
+  className,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onStep: (delta: number) => void;
+  className?: string;
+}) {
+  return (
+    <div className="flex items-center bg-black/40 border border-white/10 rounded overflow-hidden">
+      <button
+        type="button"
+        onClick={() => onStep(-1)}
+        className="px-1.5 py-1 text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-xs font-bold cursor-pointer"
+      >
+        −
+      </button>
+      <input
+        type="text"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        className={`w-14 text-center font-mono font-bold bg-transparent border-x border-white/10 py-1 text-xs focus:outline-none ${className || "text-white"}`}
+      />
+      <button
+        type="button"
+        onClick={() => onStep(1)}
+        className="px-1.5 py-1 text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-xs font-bold cursor-pointer"
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
 export default function InventoryTable({
   inventory,
   submittingId,
@@ -47,6 +84,12 @@ export default function InventoryTable({
   onInputChange,
   onUpdate,
 }: InventoryTableProps) {
+  const handleStep = (id: number, field: "stock" | "reorder", delta: number) => {
+    const current = parseInt(adjustments[id]?.[field] || "0", 10);
+    const next = Math.max(0, current + delta);
+    onInputChange(id, field, String(next));
+  };
+
   return (
     <GlassCard className="p-6">
       <div className="overflow-x-auto w-full">
@@ -80,22 +123,20 @@ export default function InventoryTable({
                     <div className="flex items-center justify-end gap-3">
                       <div className="flex items-center gap-1">
                         <span className="text-[8px] font-mono text-zinc-500 uppercase">Stock:</span>
-                        <input
-                          type="number"
-                          min="0"
-                          value={adjustments[item.id]?.stock ?? ""}
-                          onChange={e => onInputChange(item.id, "stock", e.target.value)}
-                          className="w-16 bg-black/40 border border-white/10 rounded px-2 py-1 text-center font-mono font-bold text-white focus:outline-none focus:border-[#d4af37]/50"
+                        <StepperInput
+                          value={adjustments[item.id]?.stock ?? "0"}
+                          onChange={v => onInputChange(item.id, "stock", v)}
+                          onStep={d => handleStep(item.id, "stock", d)}
+                          className="text-white"
                         />
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="text-[8px] font-mono text-zinc-500 uppercase">Alert At:</span>
-                        <input
-                          type="number"
-                          min="0"
-                          value={adjustments[item.id]?.reorder ?? ""}
-                          onChange={e => onInputChange(item.id, "reorder", e.target.value)}
-                          className="w-16 bg-black/40 border border-white/10 rounded px-2 py-1 text-center font-mono text-zinc-400 focus:outline-none focus:border-[#d4af37]/50"
+                        <StepperInput
+                          value={adjustments[item.id]?.reorder ?? "0"}
+                          onChange={v => onInputChange(item.id, "reorder", v)}
+                          onStep={d => handleStep(item.id, "reorder", d)}
+                          className="text-zinc-400"
                         />
                       </div>
                       <button
