@@ -409,48 +409,48 @@ export default function AdminOrdersPage() {
               </span>
             </div>
 
-            {/* Search Bar */}
-            <div className="relative mb-4 shrink-0">
-              <input
-                type="text"
-                placeholder="Search client or invoice..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-black/40 border border-white/5 focus:border-[#d4af37]/45 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:outline-none placeholder-zinc-500 transition-all font-sans"
-              />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-500 hover:text-white"
-                >
-                  <span className="text-xs">✕</span>
-                </button>
-              )}
-            </div>
-
-            {/* Status Filter Chips */}
-            <div className="flex gap-2 overflow-x-auto pb-3.5 scrollbar-thin shrink-0 mb-2">
-              {statusFilters.map((filter) => {
-                const isActive = statusFilter === filter.value;
-                return (
+            {/* Search Bar & Dropdown Filter */}
+            <div className="flex gap-2 mb-4 shrink-0">
+              <div className="relative flex-grow">
+                <input
+                  type="text"
+                  placeholder="Search client or invoice..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-black/40 border border-white/5 focus:border-[#d4af37]/45 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:outline-none placeholder-zinc-500 transition-all font-sans"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                {searchTerm && (
                   <button
-                    key={filter.value}
-                    onClick={() => setStatusFilter(filter.value)}
-                    className={`px-3 py-1.5 rounded-full border text-[10px] font-mono whitespace-nowrap transition-all cursor-pointer ${
-                      isActive
-                        ? "bg-[#d4af37]/20 text-[#d4af37] border-[#d4af37]/35 shadow-[0_0_10px_rgba(212,175,55,0.15)] font-bold"
-                        : "bg-white/5 border-transparent text-zinc-400 hover:text-white hover:bg-white/10"
-                    }`}
+                    onClick={() => setSearchTerm("")}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-500 hover:text-white"
                   >
-                    {filter.label}
+                    <span className="text-xs">✕</span>
                   </button>
-                );
-              })}
+                )}
+              </div>
+
+              {/* Native Dropdown Filter */}
+              <div className="relative w-40 shrink-0">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full bg-black/40 border border-white/5 focus:border-[#d4af37]/45 rounded-xl px-3 py-2.5 pr-8 text-xs text-zinc-200 focus:outline-none transition-all font-mono uppercase cursor-pointer appearance-none"
+                >
+                  {statusFilters.map((filter) => (
+                    <option key={filter.value} value={filter.value} className="bg-[#090a0f] text-zinc-300">
+                      {filter.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-zinc-500">
+                  <span className="text-[9px]">▼</span>
+                </div>
+              </div>
             </div>
 
             {/* Scrollable Order List Feed */}
@@ -467,37 +467,14 @@ export default function AdminOrdersPage() {
                 {filteredOrders.map((order) => {
                   const isSelected = selectedOrder?.id === order.id;
 
-                  // Left-border status strip colors
-                  let statusBorderColor = "border-l-zinc-600";
-                  let statusBgHover = "hover:shadow-[0_0_12px_rgba(113,113,122,0.1)]";
-                  if (order.status === "review required" || order.status === "review_required") {
-                    statusBorderColor = "border-l-red-500";
-                    statusBgHover = "hover:shadow-[0_0_12px_rgba(239,68,68,0.12)]";
-                  } else if (order.status === "draft sourcing") {
-                    statusBorderColor = "border-l-blue-500";
-                    statusBgHover = "hover:shadow-[0_0_12px_rgba(59,130,246,0.12)]";
-                  } else if (order.status === "approved") {
-                    statusBorderColor = "border-l-[#d4af37]";
-                    statusBgHover = "hover:shadow-[0_0_12px_rgba(212,175,55,0.12)]";
-                  } else if (order.status === "processing") {
-                    statusBorderColor = "border-l-purple-500";
-                    statusBgHover = "hover:shadow-[0_0_12px_rgba(168,85,247,0.12)]";
-                  } else if (order.status === "shipping") {
-                    statusBorderColor = "border-l-orange-500";
-                    statusBgHover = "hover:shadow-[0_0_12px_rgba(249,115,22,0.12)]";
-                  } else if (order.status === "delivered") {
-                    statusBorderColor = "border-l-emerald-500";
-                    statusBgHover = "hover:shadow-[0_0_12px_rgba(16,185,129,0.12)]";
-                  }
-
                   return (
                     <div
                       key={order.id}
                       onClick={() => handleSelectOrder(order)}
-                      className={`p-4 bg-black/40 border border-white/5 rounded-xl cursor-pointer border-l-4 ${statusBorderColor} transition-all flex flex-col gap-2 ${
+                      className={`p-4 bg-black/40 border border-white/5 rounded-xl cursor-pointer transition-all flex flex-col gap-2 ${
                         isSelected
                           ? "bg-white/[0.08] border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-                          : `hover:bg-white/5 ${statusBgHover}`
+                          : "hover:bg-white/5"
                       }`}
                     >
                       <div className="flex justify-between items-center">
