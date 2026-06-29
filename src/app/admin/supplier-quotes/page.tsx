@@ -7,6 +7,13 @@ import { useAdminSupplierQuotes } from "@/hooks/useAdminSupplierQuotes";
 import QuotesQueue from "@/components/admin/supplier-quote/QuotesQueue";
 import QuotesConsole from "@/components/admin/supplier-quote/QuotesConsole";
 
+const statusFilters = [
+  { label: "All Quotes", value: "all" },
+  { label: "Under Review", value: "under review" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" },
+];
+
 export default function SupplierQuotesPage() {
   const {
     quotes,
@@ -17,6 +24,22 @@ export default function SupplierQuotesPage() {
     handleDecision,
     calculateMargin,
   } = useAdminSupplierQuotes();
+
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState("all");
+
+  const filteredQuotes = React.useMemo(() => {
+    return quotes.filter((q) => {
+      const qry = searchTerm.toLowerCase();
+      const matchesSearch =
+        q.orderId.toLowerCase().includes(qry) ||
+        q.supplierName.toLowerCase().includes(qry) ||
+        (q.clientSubject || "").toLowerCase().includes(qry);
+      const matchesStatus =
+        statusFilter === "all" || q.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [quotes, searchTerm, statusFilter]);
 
   return (
     <div className="space-y-6 animate-fadeIn pb-12 w-full">
@@ -44,9 +67,15 @@ export default function SupplierQuotesPage() {
           <div className="lg:col-span-4 flex flex-col h-[calc(100vh-175px)] min-h-[580px]">
             <QuotesQueue
               quotes={quotes}
+              filteredQuotes={filteredQuotes}
               selectedQuote={selectedQuote}
               setSelectedQuote={setSelectedQuote}
               calculateMargin={calculateMargin}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              statusFilters={statusFilters}
             />
           </div>
           

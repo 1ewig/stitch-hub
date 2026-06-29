@@ -5,6 +5,13 @@ import { useAdminApprovals } from "@/hooks/useAdminApprovals";
 import ApprovalsQueue from "@/components/admin/approval/ApprovalsQueue";
 import ApprovalsConsole from "@/components/admin/approval/ApprovalsConsole";
 
+const statusFilters = [
+  { label: "All Tickets", value: "all" },
+  { label: "Review Required", value: "review required" },
+  { label: "Escalated", value: "escalated" },
+  { label: "Resolved", value: "resolved" },
+];
+
 export default function AdminApprovalsPage() {
   const {
     tickets,
@@ -22,6 +29,24 @@ export default function AdminApprovalsPage() {
     handleProcessDecision,
     chatHistory,
   } = useAdminApprovals();
+
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState("all");
+
+  const filteredTickets = React.useMemo(() => {
+    return tickets.filter((t) => {
+      const qry = searchTerm.toLowerCase();
+      const matchesSearch =
+        t.subject.toLowerCase().includes(qry) ||
+        (t.body || "").toLowerCase().includes(qry);
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "escalated" && (t.status === "escalated" || t.status === "review_required")) ||
+        (statusFilter === "review required" && t.status === "review required") ||
+        t.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [tickets, searchTerm, statusFilter]);
 
   if (loading) {
     return (
@@ -58,13 +83,19 @@ export default function AdminApprovalsPage() {
         </div>
 
         {/* Approvals Right Queue (1/3 width) */}
-        <div className="lg:col-span-4 flex flex-col h-[780px]">
-          <ApprovalsQueue
-            tickets={tickets}
-            selectedTicket={selectedTicket}
-            setSelectedTicket={setSelectedTicket}
-          />
-        </div>
+          <div className="lg:col-span-4 flex flex-col h-[780px]">
+            <ApprovalsQueue
+              tickets={tickets}
+              filteredTickets={filteredTickets}
+              selectedTicket={selectedTicket}
+              setSelectedTicket={setSelectedTicket}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              statusFilters={statusFilters}
+            />
+          </div>
         
       </div>
     </div>
