@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { Order } from "@/types";
+import { createClient } from "@/utils/supabase/client";
 
 export function useAdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -18,6 +19,12 @@ export function useAdminOrders() {
   const [agentOverride, setAgentOverride] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
   const [adminMessage, setAdminMessage] = useState("");
+
+  // Supplier chat integration
+  const [supplierMessages, setSupplierMessages] = useState<any[]>([]);
+  const [supplierChatText, setSupplierChatText] = useState("");
+  const [supplierChatLoading, setSupplierChatLoading] = useState(false);
+  const [supplierStatusMessage, setSupplierStatusMessage] = useState<string | null>(null);
 
   const refreshChatLog = async (invoiceId: string) => {
     setChatLoading(true);
@@ -187,6 +194,90 @@ export function useAdminOrders() {
     }
   };
 
+  // Supplier messages fetching and realtime subscription logic
+  useEffect(() => {
+    if (!selectedOrder) {
+      setSupplierMessages([]);
+      return;
+    }
+
+    const supabase = createClient();
+    const activeInvoice = selectedOrder.invoiceNumber;
+
+    const fetchSupplierMessages = async () => {
+      setSupplierChatLoading(true);
+      const { data, error } = await supabase
+        .from("supplier_messages")
+        .select("*")
+        .eq("order_id", activeInvoice)
+        .order("created_at", { ascending: true });
+
+      if (!error && data) {
+        setSupplierMessages(data);
+      }
+      setSupplierChatLoading(false);
+    };
+
+    fetchSupplierMessages();
+
+    // Subscribe to new supplier_messages
+    const channel = supabase
+      .channel(`admin_supplier_messages:${activeInvoice}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "supplier_messages",
+          filter: `order_id=eq.${activeInvoice}`,
+        },
+        (payload) => {
+          setSupplierMessages((prev) => {
+            if (prev.some(m => m.id === payload.new.id)) return prev;
+            return [...prev, payload.new];
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [selectedOrder]);
+
+  const sendSupplierMessage = async () => {
+    if (!selectedOrder || !supplierChatText.trim()) return;
+    const textToSend = supplierChatText.trim();
+    setSupplierChatText("");
+
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("supplier_messages")
+        .insert({
+          order_id: selectedOrder.invoiceNumber,
+          sender: "admin",
+          message_text: textToSend,
+        })
+        .select();
+
+      if (!error && data && data.length > 0) {
+        setSupplierMessages((prev) => {
+          if (prev.some((m) => m.id === data[0].id)) return prev;
+          return [...prev, data[0]];
+        });
+        setSupplierStatusMessage("Message sent to Supplier!");
+        setTimeout(() => setSupplierStatusMessage(null), 3000);
+      }
+
+      if (error) {
+        console.error("Error sending supplier message:", error);
+      }
+    } catch (err) {
+      console.error("Unexpected supplier messaging error:", err);
+    }
+  };
+
   return {
     orders, loading, selectedOrder, updatingId,
     quoteValue, isEditingQuote,
@@ -194,5 +285,9 @@ export function useAdminOrders() {
     setQuoteValue, setIsEditingQuote, setAdminMessage,
     handleSelectOrder, handleUpdateStatus, handleUpdateQuote,
     toggleTakeover, sendAdminMessage, refreshChatLog,
+    
+    // Supplier values
+    supplierMessages, supplierChatText, supplierChatLoading, supplierStatusMessage,
+    setSupplierChatText, sendSupplierMessage,
   };
 }
