@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import GlassCard from "@/components/admin/GlassCard";
 import type { SupplierQuote } from "@/hooks/useAdminSupplierQuotes";
 
 interface QuotesConsoleProps {
@@ -17,20 +18,24 @@ export default function QuotesConsole({
   processing,
 }: QuotesConsoleProps) {
   return (
-    <div className="lg:col-span-8 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-6 h-full flex flex-col overflow-hidden">
+    <GlassCard className="h-full flex overflow-hidden p-0" glow>
       {selectedQuote ? (
-        <div className="space-y-6 flex flex-col h-full overflow-y-auto">
-          <div className="border-b border-white/10 pb-4 flex justify-between items-start gap-4 shrink-0">
+        <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+          
+          {/* Header */}
+          <div className="p-4 border-b border-white/10 flex justify-between items-center bg-black/20 shrink-0">
             <div>
               <span className="text-[9px] font-mono text-[#d4af37] uppercase tracking-wider block font-bold">Supplier Quote Details</span>
-              <h2 className="text-base font-bold text-white mt-1">{selectedQuote.orderId}</h2>
+              <h4 className="text-xs font-bold text-white mt-0.5">{selectedQuote.orderId}</h4>
             </div>
-            <div className="text-right font-mono text-[10px] text-zinc-500">
+            <div className="text-right font-mono text-[9px] text-zinc-500">
               <p>Submitted: {new Date(selectedQuote.createdAt).toLocaleDateString()}</p>
             </div>
           </div>
 
-          <div className="flex-1 space-y-6 overflow-y-auto pr-1">
+          {/* Details Scroll Section */}
+          <div className="flex-grow overflow-y-auto p-5 space-y-5 min-h-0 bg-black/10 scrollbar-thin">
+            
             {/* Profit Margin Analysis Section */}
             <div>
               <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 font-mono">Profit Margin Analysis</h3>
@@ -40,13 +45,13 @@ export default function QuotesConsole({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1">
                       <span className="text-[9px] text-zinc-500 uppercase font-mono tracking-wider">AI Client Price</span>
-                      <p className="text-xl font-bold text-white font-mono">${parseFloat(selectedQuote.clientTotalPrice || "0").toFixed(2)}</p>
+                      <p className="text-sm font-bold text-white font-mono">${parseFloat(selectedQuote.clientTotalPrice || "0").toFixed(2)}</p>
                       <span className="text-[9px] text-zinc-400 font-mono">@ ${parseFloat(selectedQuote.clientUnitPrice || "0").toFixed(2)}/unit</span>
                     </div>
 
                     <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1">
                       <span className="text-[9px] text-zinc-500 uppercase font-mono tracking-wider">Supplier Cost</span>
-                      <p className="text-xl font-bold text-white font-mono">${supplierTotal.toFixed(2)}</p>
+                      <p className="text-sm font-bold text-white font-mono">${supplierTotal.toFixed(2)}</p>
                       <span className="text-[9px] text-zinc-400 font-mono">@ ${parseFloat(selectedQuote.quotedCostPerUnit).toFixed(2)}/unit</span>
                     </div>
 
@@ -58,7 +63,7 @@ export default function QuotesConsole({
                           : "bg-red-500/5 border-red-500/20 text-red-400"
                     }`}>
                       <span className="text-[9px] uppercase font-mono tracking-wider">Projected Profit</span>
-                      <p className="text-xl font-bold font-mono">${profit.toFixed(2)}</p>
+                      <p className="text-sm font-bold font-mono">${profit.toFixed(2)}</p>
                       <span className="text-[9px] font-mono">({marginPercent.toFixed(1)}% margin)</span>
                     </div>
                   </div>
@@ -67,12 +72,12 @@ export default function QuotesConsole({
             </div>
 
             {/* Supplier & Delivery Specifications */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Supplier Profile</h3>
                 <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1 text-xs">
                   <p className="text-white font-bold">{selectedQuote.supplierName}</p>
-                  <p className="text-zinc-400 font-mono">Matches client requisition specifications</p>
+                  <p className="text-zinc-400 font-mono">Matches client specifications</p>
                 </div>
               </div>
 
@@ -88,7 +93,7 @@ export default function QuotesConsole({
             {/* Sourcing Order Items Spec */}
             <div>
               <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 font-mono">Requisition Specifications</h3>
-              <div className="space-y-2 bg-black/20 border border-white/5 p-4 rounded-xl max-h-[160px] overflow-y-auto">
+              <div className="space-y-2 bg-black/20 border border-white/5 p-4 rounded-xl max-h-[160px] overflow-y-auto font-sans">
                 {selectedQuote.clientItems && Array.isArray(selectedQuote.clientItems) && selectedQuote.clientItems.length > 0 ? (
                   selectedQuote.clientItems.map((item: any, idx: number) => (
                     <div key={idx} className="flex justify-between items-center text-xs border-b border-white/5 pb-2 last:border-0 last:pb-0">
@@ -104,10 +109,11 @@ export default function QuotesConsole({
                 )}
               </div>
             </div>
+
           </div>
 
           {/* Footer Controls */}
-          <div className="flex gap-3 pt-4 border-t border-white/10 mt-auto bg-transparent shrink-0">
+          <div className="p-4 border-t border-white/10 bg-black/20 flex gap-3 shrink-0">
             <button
               onClick={() => handleDecision("reject")}
               disabled={processing}
@@ -118,17 +124,18 @@ export default function QuotesConsole({
             <button
               onClick={() => handleDecision("approve")}
               disabled={processing}
-              className="flex-1 bg-[#d4af37] text-[#090a0f] hover:bg-[#bfa032] px-4 py-2.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)] text-center disabled:opacity-40"
+              className="flex-1 bg-[#d4af37] text-[#090a0f] hover:bg-[#bfa032] px-4 py-2.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)] text-center disabled:opacity-40 cursor-pointer"
             >
-              {processing ? "Authorizing Supplier Allocation..." : "Approve Supplier Price"}
+              {processing ? "Authorizing supplier..." : "Approve Supplier Price"}
             </button>
           </div>
+
         </div>
       ) : (
-        <div className="h-full flex flex-col items-center justify-center text-xs text-zinc-600 font-mono">
+        <div className="flex-grow flex flex-col items-center justify-center text-xs text-zinc-500 font-mono">
           Select a supplier quote from the left list to review margins.
         </div>
       )}
-    </div>
+    </GlassCard>
   );
 }

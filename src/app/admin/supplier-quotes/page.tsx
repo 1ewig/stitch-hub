@@ -19,7 +19,7 @@ export default function SupplierQuotesPage() {
   } = useAdminSupplierQuotes();
 
   return (
-    <div className="space-y-6 animate-fadeIn w-full">
+    <div className="space-y-6 animate-fadeIn pb-12 w-full">
       <AdminPageHeader 
         title="Supplier Quote Reviews" 
         subtitle="Evaluate bulk wholesale bids, check margins, and sync client order queues." 
@@ -28,23 +28,27 @@ export default function SupplierQuotesPage() {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start h-[65vh]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
-          {/* Supplier Quotes Left Queue List */}
-          <QuotesQueue
-            quotes={quotes}
-            selectedQuote={selectedQuote}
-            setSelectedQuote={setSelectedQuote}
-            calculateMargin={calculateMargin}
-          />
+          {/* Supplier Quotes Left Details Console (2/3 width) */}
+          <div className="lg:col-span-8 flex flex-col h-[calc(100vh-175px)] min-h-[580px]">
+            <QuotesConsole
+              selectedQuote={selectedQuote}
+              calculateMargin={calculateMargin}
+              handleDecision={handleDecision}
+              processing={processing}
+            />
+          </div>
 
-          {/* Supplier Quotes Right Details Console */}
-          <QuotesConsole
-            selectedQuote={selectedQuote}
-            calculateMargin={calculateMargin}
-            handleDecision={handleDecision}
-            processing={processing}
-          />
+          {/* Supplier Quotes Right Queue List (1/3 width) */}
+          <div className="lg:col-span-4 flex flex-col h-[calc(100vh-175px)] min-h-[580px]">
+            <QuotesQueue
+              quotes={quotes}
+              selectedQuote={selectedQuote}
+              setSelectedQuote={setSelectedQuote}
+              calculateMargin={calculateMargin}
+            />
+          </div>
           
         </div>
       )}
