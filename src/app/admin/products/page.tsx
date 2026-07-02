@@ -57,7 +57,7 @@ export default function AdminProductsPage() {
           />
         </div>
 
-        <div className="xl:col-span-1 flex flex-col h-[calc(100vh-175px)] min-h-[580px] sticky top-6">
+        <div className="xl:col-span-1 flex flex-col h-[580px] xl:h-full">
           <ProductCatalog
             products={products}
             filteredProducts={filteredProducts}
