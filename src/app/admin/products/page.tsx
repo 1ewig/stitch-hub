@@ -57,19 +57,21 @@ export default function AdminProductsPage() {
           />
         </div>
 
-        <div className="xl:col-span-1 flex flex-col h-[580px] xl:h-full">
-          <ProductCatalog
-            products={products}
-            filteredProducts={filteredProducts}
-            loading={loading}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            categoryFilter={categoryFilter}
-            setCategoryFilter={setCategoryFilter}
-            categoryFilters={categoryFilters}
-            handleEditClick={handleEditClick}
-            handleDeleteClick={handleDeleteClick}
-          />
+        <div className="xl:col-span-1 relative h-[580px] xl:h-full">
+          <div className="h-full xl:absolute xl:inset-0 xl:flex xl:flex-col">
+            <ProductCatalog
+              products={products}
+              filteredProducts={filteredProducts}
+              loading={loading}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
+              categoryFilters={categoryFilters}
+              handleEditClick={handleEditClick}
+              handleDeleteClick={handleDeleteClick}
+            />
+          </div>
         </div>
       </div>
     </div>
