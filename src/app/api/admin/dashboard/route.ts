@@ -100,34 +100,39 @@ export async function GET(req: Request) {
     const now = new Date();
 
     if (period === "yearly") {
-      const currentYear = now.getFullYear();
-      for (let i = 5; i >= 0; i--) {
-        const yr = currentYear - i;
+      // This Year: 12 months of the current year (JAN - DEC)
+      const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      for (let i = 0; i < 12; i++) {
         last6Buckets.push({
-          name: String(yr),
+          name: monthNames[i],
           value: 0,
           count: 0,
-          key: yr,
+          key: i,
         });
       }
       logs.forEach((log) => {
         const date = new Date(log.createdAt);
         const amount = Number(log.finalQuoteAmount) || 0;
         const status = log.status.toLowerCase();
-        if (validStatuses.includes(status)) {
-          const yr = date.getFullYear();
-          const bucket = last6Buckets.find((b) => b.key === yr);
-          if (bucket) {
-            bucket.value += amount;
-            bucket.count += 1;
+        if (validStatuses.includes(status) && date.getFullYear() === now.getFullYear()) {
+          const m = date.getMonth();
+          if (last6Buckets[m]) {
+            last6Buckets[m].value += amount;
+            last6Buckets[m].count += 1;
           }
         }
       });
     } else if (period === "weekly") {
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+      // This Week: MON to SUN of the current week
+      const dayOfWeek = now.getDay(); // 0 (Sun) - 6 (Sat)
+      const distanceToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + distanceToMonday);
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      const weekDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+      for (let i = 0; i < 7; i++) {
         last6Buckets.push({
-          name: i === 0 ? "THIS WK" : `WK -${i}`,
+          name: weekDays[i],
           value: 0,
           count: 0,
           key: i,
@@ -138,20 +143,20 @@ export async function GET(req: Request) {
         const amount = Number(log.finalQuoteAmount) || 0;
         const status = log.status.toLowerCase();
         if (validStatuses.includes(status)) {
-          const diffMs = now.getTime() - date.getTime();
-          const diffWeeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
-          if (diffWeeks >= 0 && diffWeeks <= 5) {
-            const bucketIndex = 5 - diffWeeks;
-            if (last6Buckets[bucketIndex]) {
-              last6Buckets[bucketIndex].value += amount;
-              last6Buckets[bucketIndex].count += 1;
+          const diffMs = date.getTime() - startOfWeek.getTime();
+          const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+          if (diffDays >= 0 && diffDays < 7) {
+            if (last6Buckets[diffDays]) {
+              last6Buckets[diffDays].value += amount;
+              last6Buckets[diffDays].count += 1;
             }
           }
         }
       });
     } else if (period === "24h") {
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getTime() - i * 4 * 60 * 60 * 1000);
+      // Past 24 Hours: 24 relative hourly intervals ending at current hour
+      for (let i = 23; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 60 * 60 * 1000);
         let hr = d.getHours();
         const ampm = hr >= 12 ? "PM" : "AM";
         hr = hr % 12;
@@ -160,7 +165,7 @@ export async function GET(req: Request) {
           name: `${hr}${ampm}`,
           value: 0,
           count: 0,
-          key: i,
+          key: i, // index from oldest (0) to newest (23)
         });
       }
       logs.forEach((log) => {
@@ -169,9 +174,9 @@ export async function GET(req: Request) {
         const status = log.status.toLowerCase();
         if (validStatuses.includes(status)) {
           const diffMs = now.getTime() - date.getTime();
-          const diff4Hrs = Math.floor(diffMs / (4 * 60 * 60 * 1000));
-          if (diff4Hrs >= 0 && diff4Hrs <= 5) {
-            const bucketIndex = 5 - diff4Hrs;
+          const diffHrs = Math.floor(diffMs / (60 * 60 * 1000));
+          if (diffHrs >= 0 && diffHrs < 24) {
+            const bucketIndex = 23 - diffHrs;
             if (last6Buckets[bucketIndex]) {
               last6Buckets[bucketIndex].value += amount;
               last6Buckets[bucketIndex].count += 1;
@@ -180,24 +185,27 @@ export async function GET(req: Request) {
         }
       });
     } else {
-      // Default: monthly
-      const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      // Default: This Month (1 to N days of current month)
+      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      for (let i = 1; i <= daysInMonth; i++) {
         last6Buckets.push({
-          name: monthNames[d.getMonth()],
+          name: String(i),
           value: 0,
           count: 0,
-          key: `${d.getFullYear()}-${d.getMonth()}`,
+          key: i,
         });
       }
       logs.forEach((log) => {
         const date = new Date(log.createdAt);
         const amount = Number(log.finalQuoteAmount) || 0;
         const status = log.status.toLowerCase();
-        if (validStatuses.includes(status)) {
-          const key = `${date.getFullYear()}-${date.getMonth()}`;
-          const bucket = last6Buckets.find((b) => b.key === key);
+        if (
+          validStatuses.includes(status) &&
+          date.getFullYear() === now.getFullYear() &&
+          date.getMonth() === now.getMonth()
+        ) {
+          const dVal = date.getDate();
+          const bucket = last6Buckets.find((b) => b.key === dVal);
           if (bucket) {
             bucket.value += amount;
             bucket.count += 1;
@@ -206,7 +214,6 @@ export async function GET(req: Request) {
       });
     }
 
-    const maxBucketVal = Math.max(...last6Buckets.map((m) => m.value), 1000);
     const monthsArray = last6Buckets.map((m) => m.name);
     const valuesArray = last6Buckets.map((m) => m.value);
     const countsArray = last6Buckets.map((m) => m.count);

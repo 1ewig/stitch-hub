@@ -318,6 +318,7 @@ export default function DashboardSalesOverview({
               axisLine={false}
               tickLine={false}
               dy={8}
+              minTickGap={25}
             />
 
             {/* Y Axis */}
