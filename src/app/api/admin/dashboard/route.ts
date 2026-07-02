@@ -211,23 +211,6 @@ export async function GET(req: Request) {
     const valuesArray = last6Buckets.map((m) => m.value);
     const countsArray = last6Buckets.map((m) => m.count);
 
-    const polylinePoints = last6Buckets
-      .map((m, idx) => {
-        const x = (idx / 5) * 100;
-        const ratio = m.value / maxBucketVal;
-        const y = 90 - ratio * 80;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
-
-    const baselinePoints = last6Buckets
-      .map((_, idx) => {
-        const x = (idx / 5) * 100;
-        const y = 85 - idx * 2;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
-
     // 6. Inventory Warning Analysis
     const stockAlerts = inventory
       .filter((inv) => inv.stockQuantity <= inv.reorderLevel)
@@ -262,8 +245,6 @@ export async function GET(req: Request) {
       salesOverview: {
         totalRevenue: `$${collectedRevenue.toLocaleString("en-US", { maximumFractionDigits: 0 })}`,
         growthPercent: totalOrdersCount > 1 ? "+12%" : "+0%",
-        goldPolyline: polylinePoints,
-        bluePolyline: baselinePoints,
         months: monthsArray,
         values: valuesArray,
         counts: countsArray,

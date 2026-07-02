@@ -1,108 +1,253 @@
 "use client";
 
 import React from "react";
-import GlassCard from "@/components/admin/GlassCard";
-import type { SalesOverview } from "@/hooks/useAdminDashboard";
 import {
   ResponsiveContainer,
-  ComposedChart,
+  AreaChart,
   Area,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  ReferenceLine,
+  type TooltipProps,
 } from "recharts";
+import {
+  type NameType,
+  type ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
+import GlassCard from "@/components/admin/GlassCard";
+import type { SalesOverview } from "@/hooks/useAdminDashboard";
 
+/* ============================================================
+   TYPES
+   ============================================================ */
 interface DashboardSalesOverviewProps {
   data: SalesOverview;
   period: string;
   setPeriod: (period: string) => void;
 }
 
-export default function DashboardSalesOverview({ data, period, setPeriod }: DashboardSalesOverviewProps) {
-  const chartData = React.useMemo(() => {
-    if (!data.months) return [];
-    return data.months.map((month, idx) => {
-      const value = data.values ? data.values[idx] : 0;
-      const count = data.counts ? data.counts[idx] : 0;
-      // Compute a baseline curve matching the reference dashboard's flat comparison line
-      const baseline = value > 0 ? value * 0.82 + (idx * 40) : 0;
-      return {
-        name: month,
-        value,
-        count,
-        baseline,
-      };
-    });
-  }, [data]);
+/* ============================================================
+   BUILD CHART DATA
+   Transform raw arrays → recharts-friendly object array
+   ============================================================ */
+function buildChartData(data: SalesOverview) {
+  if (!data.months) return [];
+  return data.months.map((month, idx) => {
+    const value = data.values?.[idx] ?? 0;
+    const count = data.counts?.[idx] ?? 0;
 
-  const periodLabels: Record<string, string> = {
-    "24h": "24-Hour Performance",
-    weekly: "Weekly Sourcing Ledger",
-    monthly: "Monthly Sourcing Ledger",
-    yearly: "Yearly Sourcing Ledger",
-  };
+    return {
+      month,
+      revenue: value,
+      orders: count,
+      rfqs: value > 0 ? count * 3 + 2 : 0,
+      // Simulated baseline: 70% of peak value for visual reference line
+      baseline: value > 0 ? Math.round(value * 0.7) : 0,
+      // Conversion logic matching your original formula
+      conversion:
+        value > 0
+          ? parseFloat((30.0 + (value % 7)).toFixed(1))
+          : 0,
+    };
+  });
+}
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const pointData = payload[0].payload;
-      const inquiries = pointData.value > 0 ? (pointData.count * 3) + 2 : 0;
-      const conversion = pointData.value > 0 ? (30.0 + (pointData.value % 7)) : 0;
-      
-      return (
-        <div className="bg-zinc-950/95 border border-[#d4af37]/35 rounded-xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.5),0_0_20px_rgba(212,175,55,0.15)] backdrop-blur-md min-w-[170px] font-mono text-[10px] pointer-events-none">
-          <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest border-b border-white/5 pb-2 mb-2">
-            {pointData.name}
-          </div>
-          <div className="space-y-1.5">
-            <div className="flex justify-between items-center gap-4">
-              <span className="text-zinc-500 uppercase">Revenue</span>
-              <span className="font-bold text-white">
-                ${pointData.value.toLocaleString("en-US", { maximumFractionDigits: 0 })}
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-4">
-              <span className="text-zinc-500 uppercase">POs Issued</span>
-              <span className="font-bold text-white">{pointData.count}</span>
-            </div>
-            <div className="flex justify-between items-center gap-4">
-              <span className="text-zinc-500 uppercase">RFQs Recd</span>
-              <span className="font-bold text-white">{inquiries}</span>
-            </div>
-            <div className="flex justify-between items-center gap-4">
-              <span className="text-zinc-500 uppercase">Conversion</span>
-              <span className="font-bold text-[#d4af37]">{conversion.toFixed(1)}%</span>
-            </div>
-          </div>
+/* ============================================================
+   CUSTOM TOOLTIP COMPONENT
+   Matches your original dark glass tooltip aesthetic
+   ============================================================ */
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: TooltipProps<ValueType, NameType>) {
+  if (!active || !payload?.length) return null;
+
+  const revenue = (payload.find((p) => p.dataKey === "revenue")?.value as number) ?? 0;
+  const orders = (payload.find((p) => p.dataKey === "orders")?.value as number) ?? 0;
+  const rfqs = (payload.find((p) => p.dataKey === "rfqs")?.value as number) ?? 0;
+  const conversion = (payload.find((p) => p.dataKey === "conversion")?.value as number) ?? 0;
+
+  return (
+    <div
+      className={[
+        "bg-zinc-950/95 border border-[#d4af37]/35 rounded-xl",
+        "p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.5),0_0_20px_rgba(212,175,55,0.15)]",
+        "backdrop-blur-md min-w-[170px] pointer-events-none",
+      ].join(" ")}
+    >
+      {/* Header */}
+      <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest border-b border-white/5 pb-2 mb-2 font-mono">
+        {label}
+      </div>
+
+      {/* Metrics */}
+      <div className="space-y-1.5 font-mono text-[10px]">
+        {/* Revenue */}
+        <div className="flex justify-between items-center gap-4">
+          <span className="text-zinc-500 uppercase">Revenue</span>
+          <span className="font-bold text-white">
+            ${revenue.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+          </span>
         </div>
-      );
-    }
-    return null;
-  };
+
+        {/* POs Issued */}
+        <div className="flex justify-between items-center gap-4">
+          <span className="text-zinc-500 uppercase">POs Issued</span>
+          <span className="font-bold text-white">{orders}</span>
+        </div>
+
+        {/* RFQs */}
+        <div className="flex justify-between items-center gap-4">
+          <span className="text-zinc-500 uppercase">RFQs Recd</span>
+          <span className="font-bold text-white">{rfqs}</span>
+        </div>
+
+        {/* Conversion */}
+        <div className="flex justify-between items-center gap-4">
+          <span className="text-zinc-500 uppercase">Conversion</span>
+          <span className="font-bold text-[#d4af37]">
+            {revenue > 0 ? `${conversion}%` : "0.0%"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   CUSTOM DOT COMPONENT
+   Renders gold dots with ping animation on active point
+   ============================================================ */
+interface CustomDotProps {
+  cx?: number;
+  cy?: number;
+  index?: number;
+  activeIndex: number | null;
+}
+
+function CustomDot({ cx = 0, cy = 0, index, activeIndex }: CustomDotProps) {
+  const isActive = index === activeIndex;
+
+  if (!isActive) {
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={3}
+        fill="#d4af37"
+        stroke="none"
+      />
+    );
+  }
+
+  return (
+    <g>
+      {/* Outer ping ring */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={7}
+        fill="none"
+        stroke="#d4af37"
+        strokeWidth={0.8}
+        opacity={0.5}
+      >
+        <animate
+          attributeName="r"
+          from="5"
+          to="10"
+          dur="1s"
+          repeatCount="indefinite"
+        />
+        <animate
+          attributeName="opacity"
+          from="0.6"
+          to="0"
+          dur="1s"
+          repeatCount="indefinite"
+        />
+      </circle>
+      {/* Active dot */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={4}
+        fill="#ffffff"
+        stroke="#d4af37"
+        strokeWidth={2.5}
+      />
+    </g>
+  );
+}
+
+/* ============================================================
+   PERIOD CONFIG
+   ============================================================ */
+const PERIOD_BUTTONS = [
+  { key: "24h",     label: "24 Hours" },
+  { key: "weekly",  label: "Week"     },
+  { key: "monthly", label: "Month"    },
+  { key: "yearly",  label: "Year"     },
+] as const;
+
+const PERIOD_LABELS: Record<string, string> = {
+  "24h":    "24-Hour Performance",
+  weekly:   "Weekly Sourcing Ledger",
+  monthly:  "Monthly Sourcing Ledger",
+  yearly:   "Yearly Sourcing Ledger",
+};
+
+/* ============================================================
+   Y-AXIS FORMATTER
+   ============================================================ */
+function formatYAxis(value: number): string {
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000)     return `$${(value / 1_000).toFixed(0)}k`;
+  return `$${value}`;
+}
+
+/* ============================================================
+   MAIN COMPONENT
+   ============================================================ */
+export default function DashboardSalesOverview({
+  data,
+  period,
+  setPeriod,
+}: DashboardSalesOverviewProps) {
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+
+  // Build recharts-friendly data array
+  const chartData = React.useMemo(() => buildChartData(data), [data]);
 
   return (
     <GlassCard className="p-6 relative overflow-hidden" glow>
-      {/* Visual background gradient accents */}
+      {/* Background gradient accents */}
       <div className="absolute top-0 left-1/4 w-96 h-12 bg-[#d4af37]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-10 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* ===== HEADER SECTION ===== */}
+      {/* ===== HEADER ===== */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 relative z-10">
         <div>
           <h1 className="text-xs font-bold text-zinc-400 uppercase tracking-widest font-mono">
-            {periodLabels[period] || "Sourcing Sales Overview"}
+            {PERIOD_LABELS[period] ?? "Sourcing Sales Overview"}
           </h1>
-          <p className="text-3xl font-display font-bold text-white drop-shadow-md mt-1">{data.totalRevenue}</p>
+          <p className="text-3xl font-display font-bold text-white drop-shadow-md mt-1">
+            {data.totalRevenue}
+          </p>
           <div className="flex items-center gap-1.5 mt-1">
             <span className="inline-flex items-center text-xs font-bold text-emerald-400 font-mono">
               <span>▲</span> {data.growthPercent}
             </span>
-            <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono">vs previous period</span>
+            <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono">
+              vs previous period
+            </span>
           </div>
         </div>
-        
-        {/* Dynamic Legend indicators */}
+
+        {/* Legend */}
         <div className="flex gap-4 text-[10px] font-mono uppercase tracking-wider text-zinc-500 self-end">
           <div className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#d4af37]" />
@@ -115,24 +260,21 @@ export default function DashboardSalesOverview({ data, period, setPeriod }: Dash
         </div>
       </div>
 
-      {/* ===== TIME RANGE SELECTOR PILLS ===== */}
+      {/* ===== PERIOD SELECTOR ===== */}
       <div className="flex flex-wrap gap-2 mb-6 relative z-10">
-        {[
-          { key: "24h", label: "24 Hours" },
-          { key: "weekly", label: "Week" },
-          { key: "monthly", label: "Month" },
-          { key: "yearly", label: "Year" }
-        ].map((btn) => {
+        {PERIOD_BUTTONS.map((btn) => {
           const isActive = period === btn.key;
           return (
             <button
               key={btn.key}
               onClick={() => setPeriod(btn.key)}
-              className={`text-[10px] font-bold px-4 py-1.5 rounded-full border transition-all cursor-pointer font-mono uppercase tracking-wider ${
+              className={[
+                "text-[10px] font-bold px-4 py-1.5 rounded-full border",
+                "transition-all cursor-pointer font-mono uppercase tracking-wider",
                 isActive
-                  ? "bg-[#d4af37] text-[#090a0f] border-transparent shadow-[0_0_15px_rgba(212,175,55,0.25)] scale-102"
-                  : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
-              }`}
+                  ? "bg-[#d4af37] text-[#090a0f] border-transparent shadow-[0_0_15px_rgba(212,175,55,0.25)] scale-105"
+                  : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10",
+              ].join(" ")}
             >
               {btn.label}
             </button>
@@ -140,66 +282,127 @@ export default function DashboardSalesOverview({ data, period, setPeriod }: Dash
         })}
       </div>
 
-      {/* ===== CHART AREA ===== */}
-      <div className="h-60 w-full relative z-10 mt-2 text-zinc-400">
+      {/* ===== RECHARTS AREA CHART ===== */}
+      <div className="h-60 w-full relative z-10 text-zinc-400">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={chartData} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 10, right: 4, left: -20, bottom: 0 }}
+            onMouseMove={(state) => {
+              // Track which data point index is being hovered
+              if (state.isTooltipActive && state.activeTooltipIndex !== undefined) {
+                setActiveIndex(state.activeTooltipIndex);
+              }
+            }}
+            onMouseLeave={() => setActiveIndex(null)}
+          >
             <defs>
-              <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#d4af37" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#d4af37" stopOpacity="0.0" />
+              {/* Gold gradient fill */}
+              <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stopColor="#d4af37" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="#d4af37" stopOpacity="0.00" />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.05)" />
-            <XAxis 
-              dataKey="name" 
-              axisLine={false} 
-              tickLine={false}
-              tick={{ fill: "#71717a", fontSize: 9, fontFamily: "monospace" }}
-              dy={10}
+
+            {/* Horizontal grid lines only — faint white */}
+            <CartesianGrid
+              vertical={false}
+              stroke="rgba(255,255,255,0.05)"
+              strokeWidth={1}
             />
-            <YAxis 
-              axisLine={false} 
-              tickLine={false}
-              tick={{ fill: "#71717a", fontSize: 9, fontFamily: "monospace" }}
-              tickFormatter={(val) => {
-                if (val >= 1000000) return `$${(val/1000000).toFixed(1)}M`;
-                if (val >= 1000) return `$${(val/1000).toFixed(0)}k`;
-                return `$${val}`;
+
+            {/* X Axis */}
+            <XAxis
+              dataKey="month"
+              tick={{
+                fill: "#71717a",
+                fontSize: 10,
+                fontFamily: "monospace",
               }}
-              dx={-5}
+              axisLine={false}
+              tickLine={false}
+              dy={8}
             />
-            <Tooltip 
+
+            {/* Y Axis */}
+            <YAxis
+              tickFormatter={formatYAxis}
+              tick={{
+                fill: "#71717a",
+                fontSize: 10,
+                fontFamily: "monospace",
+              }}
+              axisLine={false}
+              tickLine={false}
+            />
+
+            {/* Vertical crosshair on hover */}
+            {activeIndex !== null && chartData[activeIndex] && (
+              <ReferenceLine
+                x={chartData[activeIndex].month}
+                stroke="rgba(212,175,55,0.25)"
+                strokeWidth={0.8}
+                strokeDasharray="2 2"
+              />
+            )}
+
+            {/* Custom dark glass tooltip */}
+            <Tooltip
               content={<CustomTooltip />}
-              cursor={{ stroke: "rgba(212,175,55,0.2)", strokeDasharray: "3 3", strokeWidth: 1 }}
-              animationDuration={150}
+              cursor={false}           // we draw our own cursor above
+              isAnimationActive={false}
             />
-            
-            {/* Shaded Area for active sales volume */}
+
+            {/*
+              Baseline reference area — blue dashed line
+              We render it as a hidden area so recharts includes
+              it in hover state, then we style only the line
+            */}
             <Area
-              type="monotone"
-              dataKey="value"
-              stroke="#d4af37"
-              strokeWidth={2.5}
-              fill="url(#goldGrad)"
-              dot={false}
-              activeDot={{ r: 5, fill: "#ffffff", stroke: "#d4af37", strokeWidth: 2 }}
-              animationDuration={800}
-            />
-            
-            {/* Dashed baseline line */}
-            <Line
               type="monotone"
               dataKey="baseline"
               stroke="#3b82f6"
               strokeWidth={1}
               strokeDasharray="3 3"
+              strokeOpacity={0.3}
+              fill="none"
               dot={false}
               activeDot={false}
-              opacity={0.3}
-              animationDuration={800}
+              isAnimationActive={true}
+              animationDuration={600}
+              animationEasing="ease-out"
             />
-          </ComposedChart>
+
+            {/* Hidden areas to include orders/rfqs/conversion in tooltip payload */}
+            <Area dataKey="orders"     stroke="none" fill="none" dot={false} activeDot={false} />
+            <Area dataKey="rfqs"       stroke="none" fill="none" dot={false} activeDot={false} />
+            <Area dataKey="conversion" stroke="none" fill="none" dot={false} activeDot={false} />
+
+            {/* Main gold revenue area */}
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stroke="#d4af37"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="url(#goldGradient)"
+              // Custom dot with active state animation
+              dot={(props) => (
+                <CustomDot
+                  key={props.index}
+                  cx={props.cx}
+                  cy={props.cy}
+                  index={props.index}
+                  activeIndex={activeIndex}
+                />
+              )}
+              activeDot={false}           // we handle active state in CustomDot
+              isAnimationActive={true}
+              animationDuration={600}
+              animationEasing="ease-out"
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </GlassCard>
