@@ -23,14 +23,54 @@ export default function AdminDashboardPage() {
     setPeriod
   } = useAdminDashboard();
 
+  const handleExport = async () => {
+    try {
+      const res = await fetch("/api/admin/orders");
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      const data = await res.json();
+      if (!data.success || !data.orders) throw new Error("Invalid response");
+
+      // Generate CSV content
+      const headers = ["Invoice Number", "Client Name", "Client Email", "Status", "Total Amount", "Created At"];
+      const rows = data.orders.map((order: any) => [
+        order.invoiceNumber || "",
+        order.user?.name || "N/A",
+        order.user?.email || "N/A",
+        order.status || "",
+        order.totalAmount || "",
+        new Date(order.createdAt).toLocaleDateString(),
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map((row: any[]) => 
+          row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",")
+        )
+      ].join("\n");
+
+      // Create download link
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `stitchhub_orders_ledger_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("Export failed:", err);
+      alert("Failed to export orders ledger. Please try again.");
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fadeIn pb-12 w-full">
       <AdminPageHeader title="Admin Dashboard" subtitle="Real-time B2B metrics, active sourcing pipeline, and AI logistics status.">
-        <button className="bg-white/5 border border-white/10 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-white/10 transition-colors font-mono">
+        <button 
+          onClick={handleExport}
+          className="bg-[#d4af37] text-[#090a0f] px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-[#bfa032] transition-colors shadow-[0_0_20px_rgba(212,175,55,0.35)] font-mono uppercase tracking-wider cursor-pointer"
+        >
           Export Ledger
-        </button>
-        <button className="bg-[#d4af37] text-[#090a0f] px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#bfa032] transition-colors shadow-[0_0_20px_rgba(212,175,55,0.35)] font-mono uppercase tracking-wider">
-          AI Settings
         </button>
       </AdminPageHeader>
 
