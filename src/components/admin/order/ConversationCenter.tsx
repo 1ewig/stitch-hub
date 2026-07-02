@@ -57,7 +57,7 @@ export default function ConversationCenter({
                 : "border-transparent text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            💬 Client Correspondence
+            Client Correspondence
           </button>
           <button
             onClick={() => setActiveDetailTab("supplier")}
@@ -67,7 +67,7 @@ export default function ConversationCenter({
                 : "border-transparent text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            🏭 Supplier Negotiation
+            Supplier Negotiation
           </button>
         </div>
 
@@ -88,8 +88,7 @@ export default function ConversationCenter({
               onClick={() => setIsSpecsOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-mono font-bold transition-all border border-[#d4af37]/35 bg-[#d4af37]/5 text-[#d4af37] hover:bg-[#d4af37]/15 hover:border-[#d4af37]/60 cursor-pointer shadow-[0_0_10px_rgba(212,175,55,0.05)]"
             >
-              <span>📋</span>
-              <span>VIEW SPECS</span>
+              <span>VIEW DETAIL</span>
             </button>
 
             {activeDetailTab === "details" ? (
@@ -242,12 +241,6 @@ export default function ConversationCenter({
             ) : (
               <div className="py-4 text-center bg-white/[0.02] border border-white/5 rounded-xl px-4 flex flex-col items-center justify-center">
                 <p className="text-xs text-zinc-400">Automatic AI Agent is managing communication for this ticket.</p>
-                <button
-                  onClick={toggleTakeover}
-                  className="mt-2 text-[10px] font-mono font-bold text-[#d4af37] border border-[#d4af37]/35 hover:border-[#d4af37] px-3.5 py-2 rounded-lg bg-[#d4af37]/5 transition-all cursor-pointer hover:bg-[#d4af37]/10"
-                >
-                  Take Over to Compose Reply Manually
-                </button>
               </div>
             )
           ) : (

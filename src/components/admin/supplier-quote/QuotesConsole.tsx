@@ -3,6 +3,9 @@
 import React from "react";
 import GlassCard from "@/components/admin/GlassCard";
 import type { SupplierQuote } from "@/hooks/useAdminSupplierQuotes";
+import QuoteProfitMargin from "./QuoteProfitMargin";
+import QuoteSupplierInfo from "./QuoteSupplierInfo";
+import QuoteRequisitionSpecs from "./QuoteRequisitionSpecs";
 
 interface QuotesConsoleProps {
   selectedQuote: SupplierQuote | null;
@@ -35,81 +38,9 @@ export default function QuotesConsole({
 
           {/* Details Scroll Section */}
           <div className="flex-grow overflow-y-auto p-5 space-y-5 min-h-0 bg-black/10 scrollbar-thin">
-            
-            {/* Profit Margin Analysis Section */}
-            <div>
-              <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 font-mono">Profit Margin Analysis</h3>
-              {(() => {
-                const { supplierTotal, profit, marginPercent } = calculateMargin(selectedQuote);
-                return (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1">
-                      <span className="text-[9px] text-zinc-500 uppercase font-mono tracking-wider">AI Client Price</span>
-                      <p className="text-sm font-bold text-white font-mono">${parseFloat(selectedQuote.clientTotalPrice || "0").toFixed(2)}</p>
-                      <span className="text-[9px] text-zinc-400 font-mono">@ ${parseFloat(selectedQuote.clientUnitPrice || "0").toFixed(2)}/unit</span>
-                    </div>
-
-                    <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1">
-                      <span className="text-[9px] text-zinc-500 uppercase font-mono tracking-wider">Supplier Cost</span>
-                      <p className="text-sm font-bold text-white font-mono">${supplierTotal.toFixed(2)}</p>
-                      <span className="text-[9px] text-zinc-400 font-mono">@ ${parseFloat(selectedQuote.quotedCostPerUnit).toFixed(2)}/unit</span>
-                    </div>
-
-                    <div className={`border p-4 rounded-xl space-y-1 ${
-                      marginPercent > 20 
-                        ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400" 
-                        : marginPercent > 0 
-                          ? "bg-amber-500/5 border-amber-500/20 text-amber-400" 
-                          : "bg-red-500/5 border-red-500/20 text-red-400"
-                    }`}>
-                      <span className="text-[9px] uppercase font-mono tracking-wider">Projected Profit</span>
-                      <p className="text-sm font-bold font-mono">${profit.toFixed(2)}</p>
-                      <span className="text-[9px] font-mono">({marginPercent.toFixed(1)}% margin)</span>
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-
-            {/* Supplier & Delivery Specifications */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Supplier Profile</h3>
-                <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1 text-xs">
-                  <p className="text-white font-bold">{selectedQuote.supplierName}</p>
-                  <p className="text-zinc-400 font-mono">Matches client specifications</p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">Delivery Schedule</h3>
-                <div className="bg-black/20 border border-white/5 p-4 rounded-xl space-y-1 text-xs">
-                  <p className="text-white font-bold">{selectedQuote.estimatedDeliveryDays} Days to Warehouse</p>
-                  <p className="text-zinc-400 font-mono">Fulfillment Lead Time Estimate</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Sourcing Order Items Spec */}
-            <div>
-              <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 font-mono">Requisition Specifications</h3>
-              <div className="space-y-2 bg-black/20 border border-white/5 p-4 rounded-xl max-h-[160px] overflow-y-auto font-sans">
-                {selectedQuote.clientItems && Array.isArray(selectedQuote.clientItems) && selectedQuote.clientItems.length > 0 ? (
-                  selectedQuote.clientItems.map((item: any, idx: number) => (
-                    <div key={idx} className="flex justify-between items-center text-xs border-b border-white/5 pb-2 last:border-0 last:pb-0">
-                      <div>
-                        <span className="font-bold text-zinc-200">{item.product?.title || "Custom Product"}</span>
-                        <span className="text-zinc-500 ml-2">({item.size || "Standard"}, {item.color || "Default"})</span>
-                      </div>
-                      <span className="font-mono text-zinc-400">{item.quantity} units</span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-zinc-500 italic text-xs">No specifications parsed.</p>
-                )}
-              </div>
-            </div>
-
+            <QuoteProfitMargin quote={selectedQuote} calculateMargin={calculateMargin} />
+            <QuoteSupplierInfo supplierName={selectedQuote.supplierName} estimatedDeliveryDays={selectedQuote.estimatedDeliveryDays} />
+            <QuoteRequisitionSpecs items={selectedQuote.clientItems} />
           </div>
 
           {/* Footer Controls */}
