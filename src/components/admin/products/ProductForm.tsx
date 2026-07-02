@@ -63,8 +63,10 @@ export default function ProductForm({
           <FormField label="Min. Order" name="moq" type="number" required value={formData.moq} onChange={handleInputChange} placeholder="25" />
         </div>
 
-        <FormField label="Volume Pricing Range" name="priceRange" required value={formData.priceRange} onChange={handleInputChange} placeholder="e.g. $14.20 - $22.50" />
-        <FormField label="Customization Options" name="customization" required value={formData.customization} onChange={handleInputChange} placeholder="e.g. Screen Print | Embroidery" />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField label="Volume Pricing Range" name="priceRange" required value={formData.priceRange} onChange={handleInputChange} placeholder="e.g. $14.20 - $22.50" />
+          <FormField label="Customization Options" name="customization" required value={formData.customization} onChange={handleInputChange} placeholder="e.g. Screen Print | Embroidery" />
+        </div>
         <FormField label="Description" name="description" type="textarea" required value={formData.description} onChange={handleInputChange} placeholder="Product description and details..." />
 
         <FormField label="Product Image" name="image" type="file"
