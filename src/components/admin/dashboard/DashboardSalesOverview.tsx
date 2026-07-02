@@ -12,10 +12,6 @@ import {
   ReferenceLine,
   type TooltipProps,
 } from "recharts";
-import {
-  type NameType,
-  type ValueType,
-} from "recharts/types/component/DefaultTooltipContent";
 import GlassCard from "@/components/admin/GlassCard";
 import type { SalesOverview } from "@/hooks/useAdminDashboard";
 
@@ -62,13 +58,13 @@ function CustomTooltip({
   active,
   payload,
   label,
-}: TooltipProps<ValueType, NameType>) {
+}: any) {
   if (!active || !payload?.length) return null;
 
-  const revenue = (payload.find((p) => p.dataKey === "revenue")?.value as number) ?? 0;
-  const orders = (payload.find((p) => p.dataKey === "orders")?.value as number) ?? 0;
-  const rfqs = (payload.find((p) => p.dataKey === "rfqs")?.value as number) ?? 0;
-  const conversion = (payload.find((p) => p.dataKey === "conversion")?.value as number) ?? 0;
+  const revenue = (payload.find((p: any) => p.dataKey === "revenue")?.value as number) ?? 0;
+  const orders = (payload.find((p: any) => p.dataKey === "orders")?.value as number) ?? 0;
+  const rfqs = (payload.find((p: any) => p.dataKey === "rfqs")?.value as number) ?? 0;
+  const conversion = (payload.find((p: any) => p.dataKey === "conversion")?.value as number) ?? 0;
 
   return (
     <div
@@ -288,10 +284,10 @@ export default function DashboardSalesOverview({
           <AreaChart
             data={chartData}
             margin={{ top: 10, right: 4, left: -20, bottom: 0 }}
-            onMouseMove={(state) => {
+            onMouseMove={(state: any) => {
               // Track which data point index is being hovered
               if (state.isTooltipActive && state.activeTooltipIndex !== undefined) {
-                setActiveIndex(state.activeTooltipIndex);
+                setActiveIndex(state.activeTooltipIndex as number);
               }
             }}
             onMouseLeave={() => setActiveIndex(null)}
