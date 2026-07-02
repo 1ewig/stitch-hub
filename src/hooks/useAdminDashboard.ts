@@ -91,6 +91,7 @@ export function useAdminDashboard() {
     avgDeliveryDays: 0,
   });
 
+  const [period, setPeriod] = useState("monthly");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -98,7 +99,7 @@ export function useAdminDashboard() {
       try {
         setLoading(true);
         // Fetch dashboard metrics
-        const dashRes = await fetch("/api/admin/dashboard");
+        const dashRes = await fetch(`/api/admin/dashboard?period=${period}`);
         if (dashRes.ok) {
           const dashData = await dashRes.json();
           if (dashData.success) {
@@ -125,7 +126,7 @@ export function useAdminDashboard() {
     }
 
     fetchDashboardData();
-  }, []);
+  }, [period]);
 
   return {
     metrics,
@@ -136,5 +137,7 @@ export function useAdminDashboard() {
     supplierStats,
     escalations,
     loading,
+    period,
+    setPeriod,
   };
 }

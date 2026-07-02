@@ -5,7 +5,7 @@ import { isAdmin } from "@/utils/admin";
 import { emailLogs, invoices, materialsInventory, supplierQuotes } from "@/db/schema";
 import { eq, desc, sql, or } from "drizzle-orm";
 
-export async function GET() {
+export async function GET(req: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -14,6 +14,9 @@ export async function GET() {
   }
 
   try {
+    const { searchParams } = new URL(req.url);
+    const period = searchParams.get("period") || "monthly";
+
     // 1. Fetch all email logs (orders) to calculate metrics
     const logs = await db
       .select({
@@ -92,61 +95,122 @@ export async function GET() {
 
     const automationRate = totalOrdersCount > 0 ? Math.round((automatedCount / totalOrdersCount) * 100) : 100;
 
-    // 5. Build dynamic monthly sales trend for last 6 months
-    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-    const last6Months: { name: string; year: number; monthIndex: number; value: number }[] = [];
-    
-    // Generate empty buckets for last 6 months
+    // 5. Build dynamic sales trend buckets based on selected period
+    const last6Buckets: { name: string; value: number; key?: string | number }[] = [];
     const now = new Date();
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      last6Months.push({
-        name: `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`,
-        year: d.getFullYear(),
-        monthIndex: d.getMonth(),
-        value: 0,
+
+    if (period === "yearly") {
+      const currentYear = now.getFullYear();
+      for (let i = 5; i >= 0; i--) {
+        const yr = currentYear - i;
+        last6Buckets.push({
+          name: String(yr),
+          value: 0,
+          key: yr,
+        });
+      }
+      logs.forEach((log) => {
+        const date = new Date(log.createdAt);
+        const amount = Number(log.finalQuoteAmount) || 0;
+        const status = log.status.toLowerCase();
+        if (validStatuses.includes(status)) {
+          const yr = date.getFullYear();
+          const bucket = last6Buckets.find((b) => b.key === yr);
+          if (bucket) bucket.value += amount;
+        }
+      });
+    } else if (period === "weekly") {
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+        last6Buckets.push({
+          name: i === 0 ? "THIS WK" : `WK -${i}`,
+          value: 0,
+          key: i,
+        });
+      }
+      logs.forEach((log) => {
+        const date = new Date(log.createdAt);
+        const amount = Number(log.finalQuoteAmount) || 0;
+        const status = log.status.toLowerCase();
+        if (validStatuses.includes(status)) {
+          const diffMs = now.getTime() - date.getTime();
+          const diffWeeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
+          if (diffWeeks >= 0 && diffWeeks <= 5) {
+            const bucketIndex = 5 - diffWeeks;
+            if (last6Buckets[bucketIndex]) {
+              last6Buckets[bucketIndex].value += amount;
+            }
+          }
+        }
+      });
+    } else if (period === "24h") {
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 4 * 60 * 60 * 1000);
+        let hr = d.getHours();
+        const ampm = hr >= 12 ? "PM" : "AM";
+        hr = hr % 12;
+        hr = hr ? hr : 12;
+        last6Buckets.push({
+          name: `${hr}${ampm}`,
+          value: 0,
+          key: i,
+        });
+      }
+      logs.forEach((log) => {
+        const date = new Date(log.createdAt);
+        const amount = Number(log.finalQuoteAmount) || 0;
+        const status = log.status.toLowerCase();
+        if (validStatuses.includes(status)) {
+          const diffMs = now.getTime() - date.getTime();
+          const diff4Hrs = Math.floor(diffMs / (4 * 60 * 60 * 1000));
+          if (diff4Hrs >= 0 && diff4Hrs <= 5) {
+            const bucketIndex = 5 - diff4Hrs;
+            if (last6Buckets[bucketIndex]) {
+              last6Buckets[bucketIndex].value += amount;
+            }
+          }
+        }
+      });
+    } else {
+      // Default: monthly
+      const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        last6Buckets.push({
+          name: monthNames[d.getMonth()],
+          value: 0,
+          key: `${d.getFullYear()}-${d.getMonth()}`,
+        });
+      }
+      logs.forEach((log) => {
+        const date = new Date(log.createdAt);
+        const amount = Number(log.finalQuoteAmount) || 0;
+        const status = log.status.toLowerCase();
+        if (validStatuses.includes(status)) {
+          const key = `${date.getFullYear()}-${date.getMonth()}`;
+          const bucket = last6Buckets.find((b) => b.key === key);
+          if (bucket) bucket.value += amount;
+        }
       });
     }
 
-    // Populate buckets with order final quotes
-    logs.forEach((log) => {
-      const date = new Date(log.createdAt);
-      const amount = Number(log.finalQuoteAmount) || 0;
-      const status = log.status.toLowerCase();
+    const maxBucketVal = Math.max(...last6Buckets.map((m) => m.value), 1000);
+    const monthsArray = last6Buckets.map((m) => m.name);
+    const valuesArray = last6Buckets.map((m) => m.value);
 
-      // Only count sales for orders that went past draft
-      if (validStatuses.includes(status)) {
-        const bucket = last6Months.find(
-          (b) => b.year === date.getFullYear() && b.monthIndex === date.getMonth()
-        );
-        if (bucket) {
-          bucket.value += amount;
-        }
-      }
-    });
-
-    // Formulate SVG path polyline coordinates for the chart
-    // Viewport coordinates: width=100, height=100.
-    // X goes 0 -> 100. Y goes 100 (zero value) -> 0 (max value).
-    const maxMonthVal = Math.max(...last6Months.map((m) => m.value), 1000);
-    const monthsArray = last6Months.map((m) => m.name.split(" ")[0]);
-    const valuesArray = last6Months.map((m) => m.value);
-
-    const polylinePoints = last6Months
+    const polylinePoints = last6Buckets
       .map((m, idx) => {
         const x = (idx / 5) * 100;
-        const ratio = m.value / maxMonthVal;
-        // Restrict to range [10, 90] so it doesn't clip the borders
+        const ratio = m.value / maxBucketVal;
         const y = 90 - ratio * 80;
         return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
       .join(" ");
 
-    // Standard baseline path (flat or slightly angled) for previous periods comparisons
-    const baselinePoints = last6Months
+    const baselinePoints = last6Buckets
       .map((_, idx) => {
         const x = (idx / 5) * 100;
-        const y = 85 - (idx * 2); // Slight baseline growth line
+        const y = 85 - idx * 2;
         return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
       .join(" ");

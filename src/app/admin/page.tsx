@@ -18,7 +18,9 @@ export default function AdminDashboardPage() {
     pipeline, 
     inventoryAlerts, 
     escalations, 
-    loading 
+    loading,
+    period,
+    setPeriod
   } = useAdminDashboard();
 
   return (
@@ -97,7 +99,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left Column: Sourcing sales trend and funnel overview */}
         <div className="xl:col-span-2 space-y-6">
-          <DashboardSalesOverview data={salesOverview} />
+          <DashboardSalesOverview data={salesOverview} period={period} setPeriod={setPeriod} />
           <DashboardTaskBreakdown data={pipeline} />
         </div>
 

@@ -6,9 +6,11 @@ import type { SalesOverview } from "@/hooks/useAdminDashboard";
 
 interface DashboardSalesOverviewProps {
   data: SalesOverview;
+  period: string;
+  setPeriod: (period: string) => void;
 }
 
-export default function DashboardSalesOverview({ data }: DashboardSalesOverviewProps) {
+export default function DashboardSalesOverview({ data, period, setPeriod }: DashboardSalesOverviewProps) {
   const [hoveredIdx, setHoveredIdx] = React.useState<number | null>(null);
 
   // Parse points to get coordinates for dots and tooltips
@@ -25,6 +27,13 @@ export default function DashboardSalesOverview({ data }: DashboardSalesOverviewP
     });
   }, [data]);
 
+  const periodLabels: Record<string, string> = {
+    "24h": "24-Hour Sourcing Sales",
+    weekly: "Weekly Sourcing Sales",
+    monthly: "Monthly Sourcing Sales",
+    yearly: "Yearly Sourcing Sales",
+  };
+
   return (
     <GlassCard className="p-6 relative overflow-hidden" glow>
       {/* Visual top glow decoration */}
@@ -32,20 +41,32 @@ export default function DashboardSalesOverview({ data }: DashboardSalesOverviewP
       
       <div className="flex justify-between items-start mb-6 relative z-10">
         <div>
-          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest font-mono">Monthly Sourcing Sales</h3>
+          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest font-mono">
+            {periodLabels[period] || "Sourcing Sales Overview"}
+          </h3>
           <p className="text-3xl font-display font-bold text-white drop-shadow-md mt-1">{data.totalRevenue}</p>
           <p className="text-[10px] text-emerald-400 mt-1 font-mono flex items-center gap-1">
             <span>▲</span> {data.growthPercent} vs previous period
           </p>
         </div>
-        <div className="flex gap-4 text-[10px] font-mono uppercase tracking-wider text-zinc-500">
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#d4af37]" />
-            <span>Active Contract Volume</span>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              className="bg-black/40 border border-white/10 text-white rounded-lg px-2.5 py-1 text-[10px] font-mono focus:outline-none focus:border-[#d4af37]/50 uppercase cursor-pointer"
+            >
+              <option value="24h" className="bg-[#090a0f] text-zinc-300">24 Hours</option>
+              <option value="weekly" className="bg-[#090a0f] text-zinc-300">Weekly</option>
+              <option value="monthly" className="bg-[#090a0f] text-zinc-300">Monthly</option>
+              <option value="yearly" className="bg-[#090a0f] text-zinc-300">Yearly</option>
+            </select>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full border border-dashed border-blue-500/50" />
-            <span>Baseline Trend</span>
+          <div className="hidden sm:flex gap-4 text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-[#d4af37]" />
+              <span>Active Contract Volume</span>
+            </div>
           </div>
         </div>
       </div>
