@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-interface EscalationAlert {
+export interface EscalationAlert {
   id: string;
   subject: string;
   body: string;
@@ -23,64 +23,115 @@ export interface QuoteConversion {
   humanHandoffsPct: number;
 }
 
-export interface TaskBreakdownItem {
-  label: string;
-  height: number;
-  color: string;
+export interface PipelineCounts {
+  sourcing: number;
+  review: number;
+  approved: number;
+  processing: number;
+  shipping: number;
+  delivered: number;
 }
 
-export interface TaskBreakdown {
-  items: TaskBreakdownItem[];
+export interface InventoryAlert {
+  productName: string;
+  stockQuantity: number;
+  reorderLevel: number;
+}
+
+export interface DashboardMetrics {
+  contractVolume: string;
+  collectedRevenue: string;
+  automationRate: number;
+  conversionRate: number;
+  activeSourcingCount: number;
+  totalOrdersCount: number;
+  stockAlertsCount: number;
 }
 
 export function useAdminDashboard() {
   const [escalations, setEscalations] = useState<EscalationAlert[]>([]);
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
+    contractVolume: "$0.00",
+    collectedRevenue: "$0.00",
+    automationRate: 100,
+    conversionRate: 0,
+    activeSourcingCount: 0,
+    totalOrdersCount: 0,
+    stockAlertsCount: 0,
+  });
+
+  const [salesOverview, setSalesOverview] = useState<SalesOverview>({
+    totalRevenue: "$0",
+    growthPercent: "+0%",
+    goldPolyline: "0,90 20,90 40,90 60,90 80,90 100,90",
+    bluePolyline: "0,90 20,90 40,90 60,90 80,90 100,90",
+    months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN"],
+  });
+
+  const [quoteConversion, setQuoteConversion] = useState<QuoteConversion>({
+    sentByAiPct: 0,
+    conversionRate: 0,
+    humanHandoffsPct: 0,
+  });
+
+  const [pipeline, setPipeline] = useState<PipelineCounts>({
+    sourcing: 0,
+    review: 0,
+    approved: 0,
+    processing: 0,
+    shipping: 0,
+    delivered: 0,
+  });
+
+  const [inventoryAlerts, setInventoryAlerts] = useState<InventoryAlert[]>([]);
+  const [supplierStats, setSupplierStats] = useState({
+    totalQuotesCount: 0,
+    avgDeliveryDays: 0,
+  });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchAlerts() {
+    async function fetchDashboardData() {
       try {
-        const res = await fetch("/api/admin/escalations");
-        if (res.ok) {
-          const data = await res.json();
-          setEscalations(data.escalations || []);
+        setLoading(true);
+        // Fetch dashboard metrics
+        const dashRes = await fetch("/api/admin/dashboard");
+        if (dashRes.ok) {
+          const dashData = await dashRes.json();
+          if (dashData.success) {
+            setMetrics(dashData.metrics);
+            setSalesOverview(dashData.salesOverview);
+            setQuoteConversion(dashData.quoteConversion);
+            setPipeline(dashData.pipeline.counts);
+            setInventoryAlerts(dashData.inventoryAlerts);
+            setSupplierStats(dashData.supplierStats);
+          }
         }
-      } catch {
-        console.error("Failed to load alerts");
+
+        // Fetch escalations
+        const escRes = await fetch("/api/admin/escalations");
+        if (escRes.ok) {
+          const escData = await escRes.json();
+          setEscalations(escData.escalations || []);
+        }
+      } catch (err) {
+        console.error("Failed to load dashboard data", err);
       } finally {
         setLoading(false);
       }
     }
-    fetchAlerts();
+
+    fetchDashboardData();
   }, []);
 
-  const salesOverview: SalesOverview = {
-    totalRevenue: "$162,345",
-    growthPercent: "+10%",
-    goldPolyline: "0,80 20,60 40,70 60,30 80,40 100,10",
-    bluePolyline: "0,90 20,80 40,85 60,50 80,55 100,30",
-    months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN"],
-  };
-
-  const quoteConversion: QuoteConversion = {
-    sentByAiPct: 76,
-    conversionRate: 30,
-    humanHandoffsPct: 24,
-  };
-
-  const taskBreakdown: TaskBreakdown = {
-    items: [
-      { label: "Quotes", height: 60, color: "bg-[#d4af37]/80" },
-      { label: "Supply", height: 85, color: "bg-blue-500/80" },
-      { label: "Support", height: 40, color: "bg-emerald-500/80" },
-      { label: "Design", height: 70, color: "bg-purple-500/80" },
-    ],
-  };
-
   return {
+    metrics,
     salesOverview,
     quoteConversion,
-    taskBreakdown,
+    pipeline,
+    inventoryAlerts,
+    supplierStats,
     escalations,
     loading,
   };

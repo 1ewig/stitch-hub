@@ -26,9 +26,16 @@ export default function DashboardSalesOverview({ data }: DashboardSalesOverviewP
             <div key={i} className="border-t border-white/5 w-full" />
           ))}
         </div>
-        <svg className="absolute inset-0 h-full w-full drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]" preserveAspectRatio="none" viewBox="0 0 100 100">
-          <polyline fill="none" stroke="#d4af37" strokeWidth="2.5" points={data.goldPolyline} />
-          <polyline fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="4,4" opacity="0.4" points={data.bluePolyline} />
+        <svg className="absolute inset-0 h-full w-full drop-shadow-[0_0_8px_rgba(212,175,55,0.2)]" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="gold-chart-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#d4af37" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#d4af37" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+          <polygon points={`${data.goldPolyline} 100,100 0,100`} fill="url(#gold-chart-grad)" />
+          <polyline fill="none" stroke="#d4af37" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" points={data.goldPolyline} />
+          <polyline fill="none" stroke="#3b82f6" strokeWidth="1.2" strokeDasharray="4,4" opacity="0.3" points={data.bluePolyline} />
         </svg>
       </div>
       <div className="flex justify-between mt-4 text-[10px] font-mono text-zinc-500 relative z-10">
