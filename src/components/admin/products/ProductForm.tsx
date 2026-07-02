@@ -67,12 +67,13 @@ export default function ProductForm({
           <FormField label="Volume Pricing Range" name="priceRange" required value={formData.priceRange} onChange={handleInputChange} placeholder="e.g. $14.20 - $22.50" />
           <FormField label="Customization Options" name="customization" required value={formData.customization} onChange={handleInputChange} placeholder="e.g. Screen Print | Embroidery" />
         </div>
-        <FormField label="Description" name="description" type="textarea" required value={formData.description} onChange={handleInputChange} placeholder="Product description and details..." />
-
-        <FormField label="Product Image" name="image" type="file"
-          imagePreview={imagePreview} onFileChange={handleImageChange}
-          hiddenFileId="product-image-file" accept="image/*"
-          value="" onChange={() => {}} />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField label="Description" name="description" type="textarea" required value={formData.description} onChange={handleInputChange} placeholder="Product description and details..." />
+          <FormField label="Product Image" name="image" type="file"
+            imagePreview={imagePreview} onFileChange={handleImageChange}
+            hiddenFileId="product-image-file" accept="image/*"
+            value="" onChange={() => {}} />
+        </div>
 
         <div className="flex gap-3">
           {isEditing && (
