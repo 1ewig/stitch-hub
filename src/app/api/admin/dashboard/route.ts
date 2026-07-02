@@ -96,7 +96,7 @@ export async function GET(req: Request) {
     const automationRate = totalOrdersCount > 0 ? Math.round((automatedCount / totalOrdersCount) * 100) : 100;
 
     // 5. Build dynamic sales trend buckets based on selected period
-    const last6Buckets: { name: string; value: number; key?: string | number }[] = [];
+    const last6Buckets: { name: string; value: number; count: number; key?: string | number }[] = [];
     const now = new Date();
 
     if (period === "yearly") {
@@ -106,6 +106,7 @@ export async function GET(req: Request) {
         last6Buckets.push({
           name: String(yr),
           value: 0,
+          count: 0,
           key: yr,
         });
       }
@@ -116,7 +117,10 @@ export async function GET(req: Request) {
         if (validStatuses.includes(status)) {
           const yr = date.getFullYear();
           const bucket = last6Buckets.find((b) => b.key === yr);
-          if (bucket) bucket.value += amount;
+          if (bucket) {
+            bucket.value += amount;
+            bucket.count += 1;
+          }
         }
       });
     } else if (period === "weekly") {
@@ -125,6 +129,7 @@ export async function GET(req: Request) {
         last6Buckets.push({
           name: i === 0 ? "THIS WK" : `WK -${i}`,
           value: 0,
+          count: 0,
           key: i,
         });
       }
@@ -139,6 +144,7 @@ export async function GET(req: Request) {
             const bucketIndex = 5 - diffWeeks;
             if (last6Buckets[bucketIndex]) {
               last6Buckets[bucketIndex].value += amount;
+              last6Buckets[bucketIndex].count += 1;
             }
           }
         }
@@ -153,6 +159,7 @@ export async function GET(req: Request) {
         last6Buckets.push({
           name: `${hr}${ampm}`,
           value: 0,
+          count: 0,
           key: i,
         });
       }
@@ -167,6 +174,7 @@ export async function GET(req: Request) {
             const bucketIndex = 5 - diff4Hrs;
             if (last6Buckets[bucketIndex]) {
               last6Buckets[bucketIndex].value += amount;
+              last6Buckets[bucketIndex].count += 1;
             }
           }
         }
@@ -179,6 +187,7 @@ export async function GET(req: Request) {
         last6Buckets.push({
           name: monthNames[d.getMonth()],
           value: 0,
+          count: 0,
           key: `${d.getFullYear()}-${d.getMonth()}`,
         });
       }
@@ -189,7 +198,10 @@ export async function GET(req: Request) {
         if (validStatuses.includes(status)) {
           const key = `${date.getFullYear()}-${date.getMonth()}`;
           const bucket = last6Buckets.find((b) => b.key === key);
-          if (bucket) bucket.value += amount;
+          if (bucket) {
+            bucket.value += amount;
+            bucket.count += 1;
+          }
         }
       });
     }
@@ -197,6 +209,7 @@ export async function GET(req: Request) {
     const maxBucketVal = Math.max(...last6Buckets.map((m) => m.value), 1000);
     const monthsArray = last6Buckets.map((m) => m.name);
     const valuesArray = last6Buckets.map((m) => m.value);
+    const countsArray = last6Buckets.map((m) => m.count);
 
     const polylinePoints = last6Buckets
       .map((m, idx) => {
@@ -253,6 +266,7 @@ export async function GET(req: Request) {
         bluePolyline: baselinePoints,
         months: monthsArray,
         values: valuesArray,
+        counts: countsArray,
       },
       quoteConversion: {
         sentByAiPct: automationRate,

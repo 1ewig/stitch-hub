@@ -16,6 +16,7 @@ export interface SalesOverview {
   bluePolyline: string;
   months: string[];
   values: number[];
+  counts: number[];
 }
 
 export interface QuoteConversion {
@@ -68,6 +69,7 @@ export function useAdminDashboard() {
     bluePolyline: "0,90 20,90 40,90 60,90 80,90 100,90",
     months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN"],
     values: [0, 0, 0, 0, 0, 0],
+    counts: [0, 0, 0, 0, 0, 0],
   });
 
   const [quoteConversion, setQuoteConversion] = useState<QuoteConversion>({
